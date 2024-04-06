@@ -9,7 +9,7 @@
     </head>
     <body>
         <h1> COLABORADORES </h1>
-        <a href="xxxxxxxxx">Ingresar Nuevo Colaborador </a>
+        <a href="url insertar nuevo">Ingresar Nuevo Colaborador </a>
         
         <br /> <br /> 
         
