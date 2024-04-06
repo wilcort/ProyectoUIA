@@ -24,7 +24,7 @@
             </div>
             <div class="login-box-body">
                 <p class="login-box-msg">Iniciar Sesión</p>
-                
+
                 <form action="SvLogin?accion=verificar" method="POST">              
                     <div class="form-group has-feedback">
                         <input type="text" name="txtUsu" id="txtUsu" class="form-control" placeholder="Usuario">
@@ -41,7 +41,13 @@
                         <!-- /.col -->
                     </div>
                 </form>
-                
+
+                <!-- Mensaje de error -->
+                <% String mensajeError = (String) request.getAttribute("msj");
+                    if (mensajeError != null && !mensajeError.isEmpty()) {%>
+                <p id="errorMessage" style="color: red;"><%= mensajeError%></p>
+                <% }%>
+
             </div>
             <!-- /.login-box-body -->
         </div>
@@ -50,6 +56,17 @@
         <!-- jQuery -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <!-- Bootstrap JS -->
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
+
+        <script>
+            // Mostrar el mensaje de error si no está vacío
+            $(document).ready(function () {
+                var errorMessage = $("#errorMessage").text().trim();
+                if (errorMessage !== "") {
+                    $("#errorMessage").fadeIn().delay(2000).fadeOut();
+                }
+            });
+        </script>
+
     </body>
 </html>

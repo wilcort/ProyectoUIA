@@ -19,7 +19,7 @@ public class UsuarioDAO {
         PreparedStatement pst = null;
         ResultSet rs = null;
         
-        String sql = "SELECT U.ID_USUARIO, C.NOMBRECARGO FROM USUARIO U "
+        String sql = "SELECT U.ID_USUARIO, C.NOMBRE_CARGO FROM USUARIO U "
                    + "INNER JOIN CARGO C "
                    + "ON U.ID_CARGO = C.ID_CARGO "
                    + "WHERE U.ESTADO = 1 AND "
@@ -40,7 +40,7 @@ public class UsuarioDAO {
                 usu.setId_usuario(rs.getInt("ID_USUARIO"));
                 usu.setNombreUsuario(user.getNombreUsuario());
                 usu.setCargo(new Cargo());
-                usu.getCargo().setNombreCargo(rs.getString("NOMBRECARGO"));
+                usu.getCargo().setNombreCargo(rs.getString("NOMBRE_CARGO"));
                 usu.setEstado(true);
                 
             }

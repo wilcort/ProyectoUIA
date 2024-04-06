@@ -34,7 +34,8 @@ public class SvLogin extends HttpServlet {
                 response.sendRedirect("vistasLog/inicio.jsp");
             } else {
                 // Si no, muestra la página de inicio de sesión
-                RequestDispatcher dispatcher = request.getRequestDispatcher("admingLog/identificar.jsp");
+                System.out.println("error");
+                RequestDispatcher dispatcher = request.getRequestDispatcher("inicio.jsp");
                 dispatcher.forward(request, response);
             }
         }
@@ -65,17 +66,20 @@ public class SvLogin extends HttpServlet {
         Usuario usuario = obtenerUsuario(request);
         usuario = dao.identificar(usuario);
 
-        if (usuario != null && usuario.getCargo().getNombreCargo().equals("Administrador")) {
+        if (usuario != null && usuario.getCargo().getNombreCargo().equalsIgnoreCase("administrador")) {
             HttpSession sesion = request.getSession();
             sesion.setAttribute("usuario", usuario);
             response.sendRedirect("vistasLog/administrador.jsp");
             
-        } else if (usuario != null && usuario.getCargo().getNombreCargo().equals("Vendedor")) {
+        } else if (usuario != null && usuario.getCargo().getNombreCargo().equalsIgnoreCase("vendedor")) {
             HttpSession sesion = request.getSession();
             sesion.setAttribute("usuario", usuario);
             response.sendRedirect("vistasLog/vendedor.jsp");
             
         } else {
+            // Añadir una declaración de impresión para depurar
+            System.out.println("Error al verificar credenciales: Usuario o cargo incorrecto.");
+
             request.setAttribute("msj", "ERROR CREDENCIALES");
             request.getRequestDispatcher("identificar.jsp").forward(request, response);
         }
