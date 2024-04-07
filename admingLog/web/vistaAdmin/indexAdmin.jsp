@@ -9,19 +9,20 @@
     </head>
     <body>
         <h1> COLABORADORES </h1>
-        <a href="url insertar nuevo">Ingresar Nuevo Colaborador </a>
+        <a href="SvColaborador?accion=nuevo">Ingresar Nuevo Colaborador</a>
         
         <br /> <br /> 
         
         <table border="1" width="80%">
             <thead>
                 <tr>
-                    <th>ID Empleado</th>
+                    <th>Num. Documento</th>
                     <th>Nombre</th>
-                    <th>Apellidos</th>
+                    <th>Prime Apellido</th>
+                    <th>Segundo Apellido</th>
                     <th>Telefono Principal</th>
                     <th>Dirrección</th>
-                    <th>Identificación</th>
+                    <th>Id. Usuario</th>
                     <th>Cargo</th>
                     <th>Estado</th>
                     <th></th>
@@ -30,13 +31,16 @@
             </thead>
                
         <tbody>
-            <c:forEach var="Usuario" items="${lista}">               
+            <c:forEach var="colaborador" items="${lista}">               
                 
                 <tr>
-                    <td><c:out value="${Usuario}" /></td>
-                    <td><c:out value="${producto.nombre}" /></td>
-                    <td><c:out value="${producto.precio}" /></td>
-                    <td><c:out value="${producto.existencia}" /></td>
+                    <td><c:out value="${colaborador.num_documento}" /></td>
+                    <td><c:out value="${colaborador.Nombre}" /></td>
+                    <td><c:out value="${colaborador.apellido_1}" /></td>
+                    <td><c:out value="${colaborador.apellido_2}" /></td>
+                    <td><c:out value="${colaborador.telefono}" /></td>
+                    <td><c:out value="${colaborador.dirección}" /></td>
+                    <td><c:out value="${colaborador.usuario.id_usuario}" /></td>
                     <td><a href="ProductosController?accion=modificar&id=<c:out value="${producto.id}" />">Modificar</a></td>
                     <td><a href="ProductosController?accion=eliminarProductos&id=<c:out value="${producto.id}" />">Eliminar</a></td>
                 </tr>
