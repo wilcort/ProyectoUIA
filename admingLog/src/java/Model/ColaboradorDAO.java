@@ -24,11 +24,10 @@ public class ColaboradorDAO {
 
         Conexion conex = new Conexion();
         conexion = conex.getConectar();
-        this.usuario = usuario;
 
     }
 
-    public List<Colaborador> listarColaboradores()  {
+    public List<Colaborador> listarColaboradores() {
 
         // PreparedStatement = interfaz en Java que representa una declaración SQL precompilada //
         // resulset =  interfaz en Java que representa el conjunto de resultados de una consulta SQL//
@@ -55,8 +54,6 @@ public class ColaboradorDAO {
                 String direccion = rs.getString("direccion");
                 int usuarioId = rs.getInt("id_usuario");
 
-                
-
                 Colaborador colaborador = new Colaborador(num_documento, nombre,
                         apellido_1, apellido_2, telefono, direccion, usuario);
 
@@ -66,8 +63,133 @@ public class ColaboradorDAO {
             return lista;
         } catch (Exception e) {
 
-            System.out.println(e.toString());
+            System.out.println("Error al listar colaboradores: " + e.getMessage());
             return null;
+        }
+
+    }
+
+    //-----------------------------------------//
+    public Colaborador mostrarColaboradores(int _id) {
+
+        // PreparedStatement = interfaz en Java que representa una declaración SQL precompilada //
+        // resulset =  interfaz en Java que representa el conjunto de resultados de una consulta SQL//
+        PreparedStatement ps;
+        ResultSet rs;
+        Colaborador colaborador = null;
+
+        try {
+
+            ps = conexion.prepareStatement("SELECT num_documento, nombre, "
+                    + "apellido_1, apellido_2, telefono, direccion, id_usuario\n"
+                    + "FROM empleado \n"
+                    + "WHERE id_usuario = ?;");
+
+            ps.setInt(1, _id);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+
+                int num_documento = rs.getInt("num_documento");
+                String nombre = rs.getString("nombre");
+                String apellido_1 = rs.getString("apellido_1");
+                String apellido_2 = rs.getString("apellido_2");
+                int telefono = rs.getInt("telefono");
+                String direccion = rs.getString("direccion");
+                int usuarioId = rs.getInt("id_usuario");
+
+                colaborador = new Colaborador(num_documento, nombre,
+                        apellido_1, apellido_2, telefono, direccion, usuario);
+
+            }
+
+            return colaborador;
+        } catch (Exception e) {
+
+            System.out.println("colaborador no encontrado " + e.getMessage());
+            return null;
+        }
+    }
+
+    //-----------------------------------------------------------------------//
+    public boolean insertar(Colaborador colaborador) {
+
+        PreparedStatement ps;
+
+        try {
+
+            ps = conexion.prepareStatement("INSERT INTO empleado(num_documento, nombre, "
+                    + "apellido_1, apellido_2, telefono, direccion, id_usuario) "
+                    + "VALUES (?,?,?,?,?,?,?)");
+
+            ps.setInt(1, colaborador.getNum_documento());
+            ps.setString(2, colaborador.getNombre());
+            ps.setString(3, colaborador.getApellido_1());
+            ps.setString(4, colaborador.getApellido_2());
+            ps.setInt(5, colaborador.getTelefono());
+            ps.setString(6, colaborador.getDireccion());
+            ps.setInt(7, colaborador.getUsuario().getId_usuario());
+
+            ps.execute();
+
+            return true;
+        } catch (Exception e) {
+
+            System.out.println("Error insercción" + e.getMessage());
+            return false;
+        }
+       
+    }
+    
+     //-----------------------------------------//
+    public boolean actualizar(Colaborador colaborador) {
+
+        PreparedStatement ps;
+
+        try {
+
+            ps = conexion.prepareStatement("UPDATE empleado SET num_documento = ?, nombre = ?, "
+                    + "apellido_1 = ?, apellido_2 = ?, telefono = ?, direccion = ?, id_usuario = ?) "
+                    + "WHERE id=?");
+
+            ps.setInt(1, colaborador.getNum_documento());
+            ps.setString(2, colaborador.getNombre());
+            ps.setString(3, colaborador.getApellido_1());
+            ps.setString(4, colaborador.getApellido_2());
+            ps.setInt(5, colaborador.getTelefono());
+            ps.setString(6, colaborador.getDireccion());
+            ps.setInt(7, colaborador.getUsuario().getId_usuario());
+            // Establecer el ID del empleado (si tienes un método getId(), úsalo aquí)
+            ps.setInt(8, colaborador.getUsuario().getId_usuario());
+
+            ps.execute();
+
+            return true;
+        } catch (Exception e) {
+
+            System.out.println("Error insercción" + e.getMessage());
+            return false;
+        }
+
+    }
+    
+     //-----------------------------------------//
+    public boolean eliminar(int _id) {
+
+        PreparedStatement ps;
+
+        try {
+
+            ps = conexion.prepareStatement("DELETE FROM empleado WHERE id=?");
+
+            ps.setInt(1, _id);
+            ps.execute();
+
+            return true;
+        } catch (Exception e) {
+
+            System.out.println("Error insercción" + e.getMessage());
+            return false;
         }
 
     }
