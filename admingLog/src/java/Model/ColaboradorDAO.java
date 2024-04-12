@@ -131,14 +131,19 @@ public class ColaboradorDAO {
     public boolean insertar(Cargo cargo, Usuario usuario, Colaborador colaborador) {
         PreparedStatement psCargo = null;
         PreparedStatement psUsuario = null;
-
+        
+                
+                
         try {
             // Insertar cargo
             psCargo = conexion.prepareStatement("INSERT INTO cargo(nombre_cargo, "
                     + "estado) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
             
+            
+            
             psCargo.setString(1, cargo.getNombreCargo());
             psCargo.setBoolean(2, cargo.isEstado());
+            
             
             int filasAfectadasCargo = psCargo.executeUpdate();
 
@@ -147,6 +152,8 @@ public class ColaboradorDAO {
                 // Obtener el id_cargo generado
                 ResultSet generatedKeysCargo = psCargo.getGeneratedKeys();
                 int idCargoGenerado = 0;
+                
+               
                 if (generatedKeysCargo.next()) {
                     idCargoGenerado = generatedKeysCargo.getInt(1);
 

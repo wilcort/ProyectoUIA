@@ -10,8 +10,7 @@ public class Usuario {
     private boolean estado;
     private Cargo cargo;
 
-   
-
+  
     
     public int getId_usuario() {
         return id_usuario;

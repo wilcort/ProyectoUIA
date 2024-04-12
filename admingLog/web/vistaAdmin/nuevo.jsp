@@ -19,6 +19,33 @@
         <form action="SvColaborador?accion=insertar" method="POST" autocomplete="off">
             
             
+            <label for="cargo">Cargo:</label>
+            <select id="cargo" name="cargo">
+            <option value="Administrador">Administrador</option>
+            <option value="Vendedor">Vendedor</option>
+            </select><br><br>
+        
+            <label for="estado">Estado:</label>
+            <select id="estado" name="estado">
+            <option value="1">Activo</option>
+            <option value="0">Desactivado</option>
+           </select><br><br>
+            
+            <input type="hidden" name="accion" value="insertarUsuario">
+            
+            <label for="nombreUsuario">Nombre de Usuario:</label>
+            <input type="text" id="nombreUsuario" name="nombreUsuario" required><br><br>
+        
+            <label for="clave">Clave:</label>
+            <input type="password" id="clave" name="clave" required><br><br>
+        
+            <label for="estado">Estado:</label>
+            <select id="estado" name="estado">
+            <option value="1">Activo</option>
+            <option value="0">Desactivado</option>
+           </select><br><br>
+            
+            
             <p>
                 Número Documento:
                 <input id="num_documento" name="codigo" type="text" />

@@ -41,6 +41,8 @@
                     <td><c:out value="${colaborador.telefono}" /></td>
                     <td><c:out value="${colaborador.direccion}" /></td>
                     <td><c:out value="${colaborador.usuario.id_usuario}" /></td>
+                    <td></></td>
+                    <td></></td>
                     <td><a href="ProductosController?accion=modificar&id=<c:out value="${producto.id}" />">Modificar</a></td>
                     <td><a href="ProductosController?accion=eliminarProductos&id=<c:out value="${producto.id}" />">Eliminar</a></td>
                 </tr>

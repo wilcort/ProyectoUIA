@@ -1,8 +1,10 @@
 
 package Controller;
 
+import Model.Cargo;
 import Model.Colaborador;
 import Model.ColaboradorDAO;
+import Model.Usuario;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -19,12 +21,13 @@ import javax.servlet.RequestDispatcher;
 @WebServlet(name = "SvColaborador", urlPatterns = {"/SvColaborador"})
 public class SvColaborador extends HttpServlet {
 
-    
+ 
     
     
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
         
             ColaboradorDAO colaboradorDAO = new ColaboradorDAO();
             String accion;
@@ -52,11 +55,16 @@ public class SvColaborador extends HttpServlet {
                     String apellido_2 = request.getParameter("apellido_2");
                     int telefono = Integer.parseInt(request.getParameter("telefono"));
                     String direccion = request.getParameter("direccion");
-
+                    
+                    Cargo cargo = new Cargo();
+                    cargo.setNombreCargo("Nombre del Cargo");
+                    cargo.setEstado(true);
+                
                     Colaborador colaborador = new Colaborador(num_documento, nombre, apellido_1, apellido_2,
                             telefono, direccion, null);
-
-                    colaboradorDAO.insertar(colaborador);
+                    Usuario usuario = null;
+                                     
+                    colaboradorDAO.insertar(cargo, usuario, colaborador);
                     dispatcher = request.getRequestDispatcher("vistaAdmin/indexAdmin.jsp");
 
                     List<Colaborador> listaColaboradores = colaboradorDAO.listarColaboradores();

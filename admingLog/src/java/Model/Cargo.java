@@ -8,6 +8,13 @@ public class Cargo {
     private String nombreCargo;
     private boolean estado;
 
+    
+    // Constructor que acepta nombreCargo y estado
+    public Cargo() {
+        
+    }
+    
+    
     public int getCargo() {
         return cargo;
     }
