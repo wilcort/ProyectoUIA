@@ -18,7 +18,8 @@
         <div class="container text-center">
             <h1>Bienvenido a mi Aplicación</h1>
             <p>Bienvenido al sistema de RRHH</p>
-            <a href="/admingLog/SvColaborador" class="btn btn-primary">Ingresar</a>
+            
+            <a href="/admingLog/vistaAdmin/indexAdmin.jsp" class="btn btn-primary">Ingresar</a>
             
         </div>
         

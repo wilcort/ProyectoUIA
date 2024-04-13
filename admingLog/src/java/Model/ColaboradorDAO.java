@@ -2,6 +2,7 @@
 package Model;
 
 import Configur.Conexion;
+import static Configur.Conexion.cerrarConexion;
 import java.sql.Connection;
 import java.util.List;
 import java.sql.PreparedStatement;
@@ -10,6 +11,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import Model.Usuario;
 import java.sql.Statement;
+import javax.servlet.RequestDispatcher;
 
 
 
@@ -63,15 +65,22 @@ public class ColaboradorDAO {
 
                 lista.add(colaborador);
             }
-
+            
             return lista;
         } catch (Exception e) {
 
             System.out.println("Error al listar colaboradores: " + e.getMessage());
             return null;
+        }finally {
+            cerrarConexion();
         }
 
     }
+    
+    public void cerrarConexion() {
+        Conexion.cerrarConexion(conexion);
+    }
+    
 
     //-----------------------------------------//
     public Colaborador mostrarColaboradores(int _id) {
@@ -112,8 +121,11 @@ public class ColaboradorDAO {
 
             System.out.println("colaborador no encontrado " + e.getMessage());
             return null;
+        }finally {
+            cerrarConexion();
         }
     }
+    
 
     //-----------------------------------------------------------------------//
         
@@ -128,110 +140,119 @@ public class ColaboradorDAO {
         utilizarlo según sea necesario, como lo hacemos en el código proporcionado para obtener el 
         id_usuario generado después de insertar un nuevo usuario.*/
     
-    public boolean insertar(Cargo cargo, Usuario usuario, Colaborador colaborador) {
+    public boolean insertarColaboradores(Cargo cargo, Usuario usuario, Colaborador colaborador) {
         PreparedStatement psCargo = null;
         PreparedStatement psUsuario = null;
-        
-                
-                
+        PreparedStatement psEmpleado = null;
+        RequestDispatcher dispatcher = null;
+        int idCargoGenerado = 0;
+        int idUsuarioGenerado = 0;
+        int idEmpleadoGenerado = 0;
+
         try {
             // Insertar cargo
-            psCargo = conexion.prepareStatement("INSERT INTO cargo(nombre_cargo, "
-                    + "estado) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
-            
-            
-            
+            psCargo = conexion.prepareStatement("INSERT INTO cargo(nombre_cargo, estado)"
+                    + " VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
+
             psCargo.setString(1, cargo.getNombreCargo());
             psCargo.setBoolean(2, cargo.isEstado());
-            
-            
             int filasAfectadasCargo = psCargo.executeUpdate();
 
+            // Verificar si se insertó correctamente el cargo
             if (filasAfectadasCargo == 1) {
-                
+                System.out.println("Cargo insertado correctamente");
                 // Obtener el id_cargo generado
                 ResultSet generatedKeysCargo = psCargo.getGeneratedKeys();
-                int idCargoGenerado = 0;
-                
-               
+
                 if (generatedKeysCargo.next()) {
                     idCargoGenerado = generatedKeysCargo.getInt(1);
+                    System.out.println("ID del cargo generado: " + idCargoGenerado);
 
-                    // Insertar usuario
-                    psUsuario = conexion.prepareStatement("INSERT INTO usuario(nombre, "
-                            + "clave, estado, id_cargo) VALUES (?, ?, ?, ?)", 
-                            Statement.RETURN_GENERATED_KEYS);
-                    
-                    psUsuario.setString(1, usuario.getNombreUsuario());
-                    psUsuario.setString(2, usuario.getClave());
-                    psUsuario.setBoolean(3, usuario.isEstado());
-                    psUsuario.setInt(4, idCargoGenerado);
-                    
-                    int filasAfectadasUsuario = psUsuario.executeUpdate();
-
-                    if (filasAfectadasUsuario == 1) {
-                        
-                        // Obtener el id_usuario generado
-                        ResultSet generatedKeysUsuario = psUsuario.getGeneratedKeys();
-                        int idUsuarioGenerado = 0;
-                        if (generatedKeysUsuario.next()) {
-                            idUsuarioGenerado = generatedKeysUsuario.getInt(1);
-
-                            // Insertar empleado
-                            PreparedStatement psEmpleado = conexion.prepareStatement("INSERT "
-                                    + "INTO empleado(num_documento, nombre, apellido_1, "
-                                    + "apellido_2, telefono, direccion, id_usuario)"
-                                    + " VALUES (?, ?, ?, ?, ?, ?, ?)");
-                            
-                            psEmpleado.setInt(1, colaborador.getNum_documento());
-                            psEmpleado.setString(2, colaborador.getNombre());
-                            psEmpleado.setString(3, colaborador.getApellido_1());
-                            psEmpleado.setString(4, colaborador.getApellido_2());
-                            psEmpleado.setInt(5, colaborador.getTelefono());
-                            psEmpleado.setString(6, colaborador.getDireccion());
-                            psEmpleado.setInt(7, idUsuarioGenerado);
-                            
-                            int filasAfectadasEmpleado = psEmpleado.executeUpdate();
-
-                            if (filasAfectadasEmpleado == 1) {
-                                return true;
-                            } else {
-                                System.out.println("Error al insertar empleado.");
-                                return false;
-                            }
-                        } else {
-                            System.out.println("Error al obtener el id_usuario generado.");
-                            return false;
-                        }
-                    } else {
-                        System.out.println("Error al insertar usuario.");
-                        return false;
-                    }
                 } else {
-                    System.out.println("Error al insertar cargo.");
-                    return false;
+                    System.out.println("No se pudo obtener el ID del cargo generado");
                 }
-            } else {
-                System.out.println("Error al insertar cargo.");
-                return false;
+            //------------------------------------------------------------------
+
+            // Insertar usuario
+                psUsuario = conexion.prepareStatement("INSERT INTO usuario(nombre, "
+                        + "clave, estado, id_cargo) VALUES (?, ?, ?, ?)",
+                        Statement.RETURN_GENERATED_KEYS);
+
+                psUsuario.setString(1, usuario.getNombreUsuario());
+                psUsuario.setString(2, usuario.getClave());
+                psUsuario.setBoolean(3, usuario.isEstado());
+                psUsuario.setInt(4, idCargoGenerado); // Establecer el id_cargo generado como clave foránea
+                int filasAfectadasUsuario = psUsuario.executeUpdate();
+
+                // Verificar si se insertó correctamente el usuario
+                if (filasAfectadasUsuario == 1) {
+                    System.out.println("usuario insertado correctamente");
+                    // Obtener el id_cargo generado
+                    ResultSet generatedKeysUsuario = psCargo.getGeneratedKeys();
+
+                    if (generatedKeysUsuario.next()) {
+                        idUsuarioGenerado = generatedKeysUsuario.getInt(1);
+                        System.out.println("ID del cargo generado: " + idUsuarioGenerado);
+
+                    } else {
+                        System.out.println("No se pudo obtener el ID del usuario generado");
+                    }
+                }
+            //----------------------------------------
+                
+            // Insertar colaborador
+                psEmpleado = conexion.prepareStatement("INSERT INTO empleado(num_documento, "
+                        + "nombre, apellido_1, apellido_2, telefono, direccion, id_usuario)"
+                        + " VALUES (?, ?, ?, ?, ?, ?, ?)");
+
+                psEmpleado.setInt(1, colaborador.getNum_documento());
+                psEmpleado.setString(2, colaborador.getNombre());
+                psEmpleado.setString(3, colaborador.getApellido_1());
+                psEmpleado.setString(4, colaborador.getApellido_2());
+                psEmpleado.setInt(5, colaborador.getTelefono());
+                psEmpleado.setString(6, colaborador.getDireccion());
+                psEmpleado.setInt(7, idUsuarioGenerado);
+                
+                int filasAfectadasEmpleado = psEmpleado.executeUpdate();
+                
+                // Verificar si se insertó correctamente el empleado
+                if (filasAfectadasEmpleado == 1) {
+                    System.out.println("Empleado insertado correctamente");
+
+                    // Obtener el id_empleado generado
+                    ResultSet generatedKeysEmpleado = psEmpleado.getGeneratedKeys();
+                    
+                    if (generatedKeysEmpleado.next()) {
+                        idEmpleadoGenerado = generatedKeysEmpleado.getInt(1);
+                        System.out.println("ID del empleado generado: " + idUsuarioGenerado);
+
+                    }else {
+                        System.out.println("No se pudo obtener el ID del usuario generado");
+                    }
+                   
+                }
+                
+               
+            
+
             }
-        } catch (Exception e) {
-            System.out.println("Error en la inserción: " + e.getMessage());
-            return false;
+        } catch (SQLException e) {
+            System.out.println("Error al insertar el cargo: " + e.getMessage());
         } finally {
-            // Cerrar PreparedStatement en el bloque finally
-            try {
-                if (psCargo != null) {
+            // Cerrar PreparedStatement
+            if (psCargo != null) {
+                try {
                     psCargo.close();
+                } catch (SQLException ex) {
+                    System.out.println("Error al cerrar PreparedStatement: " + ex.getMessage());
                 }
-                if (psUsuario != null) {
-                    psUsuario.close();
-                }
-            } catch (Exception e) {
-                System.out.println("Error al cerrar PreparedStatement: " + e.getMessage());
             }
         }
+        cerrarConexion();
+        return true;
+       
     }
+
      //-----------------------------------------//
     public boolean actualizar(Colaborador colaborador) {
 
@@ -284,5 +305,5 @@ public class ColaboradorDAO {
         }
 
     }
-
+ 
 }

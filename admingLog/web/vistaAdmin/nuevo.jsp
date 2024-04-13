@@ -4,80 +4,62 @@
     Author     : Dell
 --%>
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
-    </head>
-    <body>
-         <h2>Nuevo Registro</h2>
-        
-        <br /> 
-        
-        <form action="SvColaborador?accion=insertar" method="POST" autocomplete="off">
-            
-            
-            <label for="cargo">Cargo:</label>
-            <select id="cargo" name="cargo">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>JSP Page</title>
+</head>
+<body>
+    <h2>Nuevo Registro</h2>
+    <br/> 
+    <form action="SvColaborador" method="POST" autocomplete="off">
+        <label for="cargo">Cargo:</label>
+        <select id="cargo" name="cargo">
             <option value="Administrador">Administrador</option>
             <option value="Vendedor">Vendedor</option>
-            </select><br><br>
-        
-            <label for="estado">Estado:</label>
-            <select id="estado" name="estado">
+        </select><br><br>
+    
+        <label for="estado_cargo">Estado del Cargo:</label>
+        <select id="estado_cargo" name="estado_cargo">
             <option value="1">Activo</option>
             <option value="0">Desactivado</option>
-           </select><br><br>
-            
-            <input type="hidden" name="accion" value="insertarUsuario">
-            
-            <label for="nombreUsuario">Nombre de Usuario:</label>
-            <input type="text" id="nombreUsuario" name="nombreUsuario" required><br><br>
+        </select><br><br>
         
-            <label for="clave">Clave:</label>
-            <input type="password" id="clave" name="clave" required><br><br>
-        
-            <label for="estado">Estado:</label>
-            <select id="estado" name="estado">
+        <label for="nombreUsuario">Nombre de Usuario:</label>
+        <input type="text" id="nombreUsuario" name="nombreUsuario" required><br><br>
+    
+        <label for="clave">Clave:</label>
+        <input type="password" id="clave" name="clave" required><br><br>
+    
+        <label for="estado_usuario">Estado del Usuario:</label>
+        <select id="estado_usuario" name="estado_usuario">
             <option value="1">Activo</option>
             <option value="0">Desactivado</option>
-           </select><br><br>
-            
-            
-            <p>
-                NÃºmero Documento:
-                <input id="num_documento" name="codigo" type="text" />
-            </p>
-            
-            <p>
-                Nombre:
-                <input id="nombre" name="nombre" type="text" />
-            </p>
-            
-            <p>
-                Primer Apellido
-                <input id="apellido_1" name="precio" type="text" />
-            </p>
-            
-            <p>
-                Segundo Apellido
-                <input id="apellido_2" name="precio" type="text" />
-            </p>
-            
-            <p>
-                TelÃ©fono:
-                <input id="telefono" name="existencia" type="text" />
-            </p>
-            
-             <p>
-                DirecciÃ³n
-                <input id="direccion" name="existencia" type="text" />
-            </p>
-            
-            <button id="guardar" name="guardar" type="submit"> Guardar </button>
-            
-        </form>
-    </body>
+        </select><br><br>
+        
+        <label for="num_documento">Número de Documento:</label>
+        <input id="num_documento" name="num_documento" type="text"  autocomplete="off" required /><br><br>
+        
+        <label for="nombre">Nombre:</label>
+        <input id="nombre" name="nombre" type="text"  autocomplete="off" required /><br><br>
+        
+        <label for="apellido_1">Primer Apellido:</label>
+        <input id="apellido_1" name="apellido_1" type="text"  autocomplete="off" required /><br><br>
+        
+        <label for="apellido_2">Segundo Apellido:</label>
+        <input id="apellido_2" name="apellido_2" type="text"  autocomplete="off" required /><br><br>
+        
+        <label for="telefono">Teléfono:</label>
+        <input id="telefono" name="telefono" type="text"  autocomplete="off" required /><br><br>
+        
+        <label for="direccion">Dirección:</label>
+        <input id="direccion" name="direccion" type="text"  autocomplete="off" required /><br><br>
+        
+        <button id="guardar" name="guardar" type="submit">Guardar</button>
+        
+        <!-- Agregado un campo oculto para enviar la acción "insertar" al servlet -->
+        <input type="hidden" name="accion" value="insertar">
+    </form>
+</body>
 </html>
