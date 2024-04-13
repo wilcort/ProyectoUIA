@@ -27,63 +27,67 @@ public class SvColaborador extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        
-            ColaboradorDAO colaboradorDAO = new ColaboradorDAO();
-            String accion;
-            RequestDispatcher dispatcher = null;
-            
-            accion = request.getParameter("accion");
-            
-            if (accion == null || accion.isEmpty()) {
-                
-                dispatcher = request.getRequestDispatcher("vistaAdmin/indexAdmin.jsp");
-                List<Colaborador> listaColaboradores = colaboradorDAO.listarColaboradores();
-                request.setAttribute("lista", listaColaboradores);
-     
-        } else if("nuevo".equals(accion)){
-            
+
+        ColaboradorDAO colaboradorDAO = new ColaboradorDAO();
+        String accion;
+        RequestDispatcher dispatcher = null;
+
+        accion = request.getParameter("accion");
+
+        if (accion == null || accion.isEmpty()) {
+
+            dispatcher = request.getRequestDispatcher("vistaAdmin/indexAdmin.jsp");
+            List<Colaborador> listaColaboradores = colaboradorDAO.listarColaboradores();
+            request.setAttribute("lista", listaColaboradores);
+
+        } else if ("nuevo".equals(accion)) {
+
             dispatcher = request.getRequestDispatcher("vistaAdmin/nuevo.jsp");
-        
+
         } else if ("insertar".equals(accion)) {
+
+            System.out.println("hola");
+
             try {
-                // Verificar si los parámetros no son nulos antes de convertirlos a enteros
-                if (request.getParameter("num_documento") != null && request.getParameter("telefono") != null) {
-                    int num_documento = Integer.parseInt(request.getParameter("num_documento"));
-                    String nombre = request.getParameter("nombre");
-                    String apellido_1 = request.getParameter("apellido_1");
-                    String apellido_2 = request.getParameter("apellido_2");
-                    int telefono = Integer.parseInt(request.getParameter("telefono"));
-                    String direccion = request.getParameter("direccion");
-                    
-                    Cargo cargo = new Cargo();
-                    cargo.setNombreCargo("Nombre del Cargo");
-                    cargo.setEstado(true);
-                
-                    Colaborador colaborador = new Colaborador(num_documento, nombre, apellido_1, apellido_2,
-                            telefono, direccion, null);
-                    Usuario usuario = null;
-                                     
-                    colaboradorDAO.insertar(cargo, usuario, colaborador);
-                    dispatcher = request.getRequestDispatcher("vistaAdmin/indexAdmin.jsp");
+                // Crear el objeto Cargo
+                Cargo cargo = new Cargo();
+                cargo.setNombreCargo(request.getParameter("cargo")); // Obtener el cargo del formulario
+                cargo.setEstado(Integer.parseInt(request.getParameter("estado")) == 1); // Obtener el estado del formulario
 
-                    List<Colaborador> listaColaboradores = colaboradorDAO.listarColaboradores();
-                    request.setAttribute("lista", listaColaboradores);
-                } else {
-                    // Manejo de error si los parámetros son nulos
-                    // Por ejemplo, redirigir a una página de error o mostrar un mensaje al usuario
-                    
-                    dispatcher = request.getRequestDispatcher("vistaAdmin/nuevo.jsp");
-                }
-            } catch (NumberFormatException e) {
+                // Crear el objeto Usuario
+                Usuario usuario = new Usuario();
+                usuario.setNombreUsuario(request.getParameter("nombreUsuario")); // Obtener el nombre de usuario del formulario
+                usuario.setClave(request.getParameter("clave")); // Obtener la clave del formulario
+                usuario.setEstado(Integer.parseInt(request.getParameter("estado")) == 1); // Obtener el estado del formulario
+
+                //  objeto Colaborador
+                int num_documento = Integer.parseInt(request.getParameter("num_documento"));
+                String nombre = request.getParameter("nombre");
+                String apellido_1 = request.getParameter("apellido_1");
+                String apellido_2 = request.getParameter("apellido_2");
+                int telefono = Integer.parseInt(request.getParameter("telefono"));
+                String direccion = request.getParameter("direccion");
+
+                Colaborador colaborador = new Colaborador(num_documento, nombre, apellido_1, apellido_2,
+                        telefono, direccion, null);
+
+
+                // Insertar los datos en la base de datos
+                colaboradorDAO.insertarColaboradores(cargo, usuario, colaborador);
+
+                // Redirigir a la página de índice
+                dispatcher = request.getRequestDispatcher("vistaAdmin/indexAdmin.jsp");
+
+            } catch (Exception e) {
+
                 // Manejo de error si los parámetros no son números enteros válidos
-                // Por ejemplo, redirigir a una página de error o mostrar un mensaje al usuario
-                 dispatcher = request.getRequestDispatcher("vistaAdmin/nuevo.jsp");
+                dispatcher = request.getRequestDispatcher("vistaAdmin/nuevo.jsp");
             }
-        }
-        dispatcher.forward(request, response);
-    }
 
+            dispatcher.forward(request, response);
+        }
+    }
+    
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
