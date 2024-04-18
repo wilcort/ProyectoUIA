@@ -46,42 +46,74 @@ public class SvColaborador extends HttpServlet {
             dispatcher = request.getRequestDispatcher("vistaAdmin/nuevo.jsp");
         
         } else if ("insertar".equals(accion)) {
-            try {
-                // Verificar si los parámetros no son nulos antes de convertirlos a enteros
-                if (request.getParameter("num_documento") != null && request.getParameter("telefono") != null) {
-                    int num_documento = Integer.parseInt(request.getParameter("num_documento"));
-                    String nombre = request.getParameter("nombre");
-                    String apellido_1 = request.getParameter("apellido_1");
-                    String apellido_2 = request.getParameter("apellido_2");
-                    int telefono = Integer.parseInt(request.getParameter("telefono"));
-                    String direccion = request.getParameter("direccion");
-                    
-                    Cargo cargo = new Cargo();
-                    cargo.setNombreCargo("Nombre del Cargo");
-                    cargo.setEstado(true);
-                
-                    Colaborador colaborador = new Colaborador(num_documento, nombre, apellido_1, apellido_2,
-                            telefono, direccion, null);
-                    Usuario usuario = null;
-                                     
-                    colaboradorDAO.insertar(cargo, usuario, colaborador);
-                    dispatcher = request.getRequestDispatcher("vistaAdmin/indexAdmin.jsp");
+            System.out.println("hola inserat");
+        try {
+            // Crear el objeto Cargo
+            Cargo cargo = new Cargo();
+            cargo.setNombreCargo(request.getParameter("cargo")); // Obtener el cargo del formulario
+            cargo.setEstado(Integer.parseInt(request.getParameter("estado_cargo")) == 1); // Obtener el estado del formulario
 
-                    List<Colaborador> listaColaboradores = colaboradorDAO.listarColaboradores();
-                    request.setAttribute("lista", listaColaboradores);
+
+            // Crear el objeto Usuario
+            Usuario usuario = new Usuario();
+            usuario.setNombreUsuario(request.getParameter("nombreUsuario")); // Obtener el nombre de usuario del formulario
+            usuario.setClave(request.getParameter("clave")); // Obtener la clave del formulario
+            usuario.setEstado(Integer.parseInt(request.getParameter("estado_cargo")) == 1); // Obtener el estado del formulario
+
+            String estadoCargoParam = request.getParameter("estado_cargo");
+                if (estadoCargoParam != null && !estadoCargoParam.isEmpty()) {
+                    usuario.setEstado(Integer.parseInt(estadoCargoParam) == 1);
                 } else {
-                    // Manejo de error si los parámetros son nulos
-                    // Por ejemplo, redirigir a una página de error o mostrar un mensaje al usuario
-                    
-                    dispatcher = request.getRequestDispatcher("vistaAdmin/nuevo.jsp");
+                    // Manejar el caso en que el parámetro "estado_cargo" es nulo o vacío
+                    // Por ejemplo, establecer un valor predeterminado
+                    usuario.setEstado(false);
                 }
-            } catch (NumberFormatException e) {
+
+            //  objeto Colaborador
+            int num_documento;
+            String nombre;
+            String apellido_1;
+            String apellido_2;
+            int telefono = 0;
+            String direccion;
+
+            String num_documentoParam = request.getParameter("num_documento");
+            if (num_documentoParam != null && !num_documentoParam.isEmpty()) {
+                num_documento = Integer.parseInt(num_documentoParam);
+            } else {
+                 num_documento = 0;
+            }
+
+            nombre = request.getParameter("nombre");
+            apellido_1 = request.getParameter("apellido_1");
+            apellido_2 = request.getParameter("apellido_2");
+            direccion = request.getParameter("direccion");
+            
+            Colaborador colaborador = new Colaborador(num_documento, nombre, apellido_1, apellido_2,
+                        telefono, direccion, null); 
+             
+            
+            // Insertar los datos en la base de datos
+                colaboradorDAO.insertarColaboradores(cargo, usuario, colaborador);
+
+            // Redirigir a la página de índice
+           dispatcher = request.getRequestDispatcher("vistaAdmin/indexAdmin.jsp");
+           List<Colaborador> listaColaboradores = colaboradorDAO.listarColaboradores();
+           request.setAttribute("lista", listaColaboradores);
+
+        } catch (NumberFormatException e) {
                 // Manejo de error si los parámetros no son números enteros válidos
                 // Por ejemplo, redirigir a una página de error o mostrar un mensaje al usuario
-                 dispatcher = request.getRequestDispatcher("vistaAdmin/nuevo.jsp");
+                dispatcher = request.getRequestDispatcher("vistaAdmin/nuevo.jsp");
             }
         }
-        dispatcher.forward(request, response);
+        
+        
+        if (dispatcher != null) {
+            dispatcher.forward(request, response);
+        } else {
+            System.out.println("El dispatcher es nulo. No se puede redirigir la solicitud.");
+        }
     }
 
     @Override
