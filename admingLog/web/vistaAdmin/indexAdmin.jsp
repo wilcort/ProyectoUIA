@@ -36,12 +36,12 @@
                     <td><c:out value="${colaborador.nombre}" /></td>
                     <td><c:out value="${colaborador.apellido_1}" /></td>
                     <td><c:out value="${colaborador.apellido_2}" /></td>
-                    <td><c:out value="${colaborador.telefono}" /></td>
+                     <td><c:out value="${colaborador.telefono}" /></td>
                     <td><c:out value="${colaborador.direccion}" /></td>
                     <td><c:out value="${colaborador.usuario.id_usuario}" /></td>
                     <td><c:out value="${colaborador.usuario.cargo.nombreCargo}" /></td>
                     <td><c:out value="${colaborador.usuario.cargo.estado}" /></td>
-                       
+
                     <td><a href="ProductosController?accion=modificar&id=<c:out value="${producto.id}" />">Modificar</a></td>
                     <td><a href="ProductosController?accion=eliminarProductos&id=<c:out value="${producto.id}" />">Eliminar</a></td>
                 </tr>

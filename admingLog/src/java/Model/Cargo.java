@@ -1,30 +1,32 @@
 
 package Model;
 
-
 public class Cargo {
-    
-    private int id_cargo;
+    private int idCargo;
     private String nombreCargo;
     private boolean estado;
 
-    public Cargo(int id_cargo, String nombreCargo, boolean estado) {
-        this.id_cargo = id_cargo;
+    // Constructor por defecto
+    public Cargo() {
+    }
+
+    // Constructor con parámetros
+    public Cargo(int idCargo, String nombreCargo, boolean estado) {
+        this.idCargo = idCargo;
         this.nombreCargo = nombreCargo;
         this.estado = estado;
     }
 
-    
-    
-
-    public int getId_cargo() {
-        return id_cargo;
+    // Métodos getter y setter para idCargo
+    public int getIdCargo() {
+        return idCargo;
     }
 
-    public void setId_cargo(int id_cargo) {
-        this.id_cargo = id_cargo;
+    public void setIdCargo(int idCargo) {
+        this.idCargo = idCargo;
     }
 
+    // Métodos getter y setter para nombreCargo
     public String getNombreCargo() {
         return nombreCargo;
     }
@@ -33,6 +35,7 @@ public class Cargo {
         this.nombreCargo = nombreCargo;
     }
 
+    // Métodos getter y setter para estado
     public boolean isEstado() {
         return estado;
     }
@@ -40,6 +43,4 @@ public class Cargo {
     public void setEstado(boolean estado) {
         this.estado = estado;
     }
-    
-    
 }
