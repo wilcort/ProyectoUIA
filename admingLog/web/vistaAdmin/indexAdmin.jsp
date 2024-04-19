@@ -24,9 +24,7 @@
                     <th>Dirrección</th>
                     <th>Id. Usuario</th>
                     <th>Cargo</th>
-                    <th>Estado</th>
-                    <th></th>
-                    <th></th>
+                    <th>Estado</th>                   
                 </tr>
             </thead>
                
@@ -41,8 +39,9 @@
                     <td><c:out value="${colaborador.telefono}" /></td>
                     <td><c:out value="${colaborador.direccion}" /></td>
                     <td><c:out value="${colaborador.usuario.id_usuario}" /></td>
-                    <td></></td>
-                    <td></></td>
+                    <td><c:out value="${colaborador.usuario.cargo.nombreCargo}" /></td>
+                    <td><c:out value="${colaborador.usuario.cargo.estado}" /></td>
+                       
                     <td><a href="ProductosController?accion=modificar&id=<c:out value="${producto.id}" />">Modificar</a></td>
                     <td><a href="ProductosController?accion=eliminarProductos&id=<c:out value="${producto.id}" />">Eliminar</a></td>
                 </tr>

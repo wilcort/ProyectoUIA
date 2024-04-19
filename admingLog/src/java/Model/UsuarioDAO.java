@@ -39,7 +39,7 @@ public class UsuarioDAO {
                 usu = new Usuario();
                 usu.setId_usuario(rs.getInt("ID_USUARIO"));
                 usu.setNombreUsuario(user.getNombreUsuario());
-                usu.setCargo(new Cargo());
+                usu.setCargo(new Cargo(0, sql, true));
                 usu.getCargo().setNombreCargo(rs.getString("NOMBRE_CARGO"));
                 usu.setEstado(true);
                 
