@@ -35,11 +35,16 @@ public class SvColaborador extends HttpServlet {
             request.setAttribute("lista", listaColaboradores);
         } else if ("nuevo".equals(accion)) {
             vista = "vistaAdmin/nuevo.jsp";
+        } else if ("Ver_Empleado".equals(accion)) {
+            vista = "vistaAdmin/nuevo.jsp";
         }
 
         request.getRequestDispatcher(vista).forward(request, response);
     }
 
+//-------------------------------------------------------------------------------------//    
+    
+    
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -49,11 +54,15 @@ public class SvColaborador extends HttpServlet {
             insertarColaborador(request, response);
         }
     }
+    
+//-------------------------------------------------------------------------------------//
+//------------------------------ INSERTAR -----------------------------------------//
+
 
     private void insertarColaborador(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Obtener datos cargo desde formulario nuevo html
+        // Solicitar datos cargo desde formulario nuevo html
         String nombreCargo = request.getParameter("cargo_Usuario");
         Cargo cargo = colaboradorDAO.obtenerCargoPorNombre(nombreCargo);
 
@@ -96,6 +105,22 @@ public class SvColaborador extends HttpServlet {
         }
     }
 
+//-------------------------------------------------------------------------------------//
+//------------------------------ ELIMINAR -----------------------------------------//    
+    
+    private void ver_Empleado(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+    
+        int num_documento = Integer.parseInt(request.getParameter("num_documento"));
+        
+        Colaborador colaborado = ColaboradorDAO.mostrarEmpleado(num_documento);
+    
+    }
+    
+    
+   //-------------------------------------------------------------------------------------// 
+    
+    
     @Override
     public String getServletInfo() {
         return "Short description";

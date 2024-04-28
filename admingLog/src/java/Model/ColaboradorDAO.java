@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.sql.CallableStatement;
 
 public class ColaboradorDAO {
 
@@ -16,20 +17,21 @@ public class ColaboradorDAO {
         Conexion conex = new Conexion();
         conexion = conex.getConectar();
     }
-
+//-------------------------------------------------------------------------------------//
+//------------------------------ LISTAR -----------------------------------------//   
+    
     public List<Colaborador> listarColaboradores() {
-        PreparedStatement ps = null;
+        CallableStatement cs = null;
         ResultSet rs = null;
         List<Colaborador> lista = new ArrayList<>();
 
         try {
-            ps = conexion.prepareStatement("SELECT e.num_documento, e.nombre, "
-                    + "e.apellido_1, e.apellido_2, e.telefono, e.direccion, u.id_usuario\n"
-                    + "FROM empleado e\n"
-                    + "INNER JOIN usuario u ON e.id_usuario = u.id_usuario;");
-            rs = ps.executeQuery();
+            // Llamar al procedimiento almacenado
+            cs = conexion.prepareCall("{call ObtenerDatosUsuarios()}");
+            rs = cs.executeQuery();
 
             while (rs.next()) {
+                // Obtener los datos del colaborador
                 int num_documento = rs.getInt("num_documento");
                 String nombre = rs.getString("nombre");
                 String apellido_1 = rs.getString("apellido_1");
@@ -37,34 +39,40 @@ public class ColaboradorDAO {
                 int telefono = rs.getInt("telefono");
                 String direccion = rs.getString("direccion");
                 int id_usuario = rs.getInt("id_usuario");
+                                
 
+                // Obtener el usuario
                 Usuario usuario = new Usuario();
                 usuario.setId_usuario(id_usuario);
 
+
+                // Crear objeto Colaborador y agregarlo a la lista
                 Colaborador colaborador = new Colaborador(num_documento, nombre,
                         apellido_1, apellido_2, telefono, direccion, usuario);
 
                 lista.add(colaborador);
             }
-
-            return lista;
-        } catch (Exception e) {
+        } catch (SQLException e) {
             System.out.println("Error al listar colaboradores: " + e.getMessage());
-            return null;
         } finally {
-            // Cerrar PreparedStatement y ResultSet, pero no la conexión
+            // Cerrar CallableStatement y ResultSet, pero no la conexión
             try {
                 if (rs != null) {
                     rs.close();
                 }
-                if (ps != null) {
-                    ps.close();
+                if (cs != null) {
+                    cs.close();
                 }
             } catch (SQLException ex) {
-                System.out.println("Error al cerrar PreparedStatement o ResultSet: " + ex.getMessage());
+                System.out.println("Error al cerrar CallableStatement o ResultSet: " + ex.getMessage());
             }
         }
+
+        return lista;
     }
+    
+    //-------------------------------------------------------------------------------------//
+//------------------------------ OBTENER CARGO -----------------------------------------//   
 
     public Cargo obtenerCargoPorNombre(String nombreCargo) {
         PreparedStatement ps;
@@ -78,10 +86,10 @@ public class ColaboradorDAO {
 
             if (rs.next()) {
                 int id_Cargo = rs.getInt("id_Cargo");
-                String nombre = rs.getString("nombre_Cargo");
+                String nombre_cargo = rs.getString("nombre_Cargo");
                 boolean estado = rs.getBoolean("estado");
 
-                cargo = new Cargo(id_Cargo, nombreCargo, estado);
+                cargo = new Cargo(id_Cargo, nombre_cargo, estado);
 
             }
 
@@ -92,6 +100,9 @@ public class ColaboradorDAO {
         return cargo;
     }
 
+    //-------------------------------------------------------------------------------------//
+//------------------------------ INSERTAR -----------------------------------------//  
+    
     public boolean insertarColaboradores(Usuario usuario, Colaborador colaborador) {
         PreparedStatement psUsuario = null;
         PreparedStatement psEmpleado = null;
@@ -160,4 +171,19 @@ public class ColaboradorDAO {
             }
         }
     }
+    
+    
+ //-------------------------------------------------------------------------------------//
+//------------------------------ MOSTRAR -----------------------------------------//   
+    
+    public boolean mostrarEmpleado(int num_documento) {
+         PreparedStatement ps;
+         ResultSet rs;
+         
+         
+         
+        
+        return true;
+    }
+    
 }

@@ -13,7 +13,7 @@
     
     <br/><br/>
     
-    <table border="1" width="80%">
+    <table border="1" width="100%">
         <thead>
             <tr>
                 <th>Num. Documento</th>
@@ -23,8 +23,6 @@
                 <th>Teléfono Principal</th>
                 <th>Dirección</th>
                 <th>Id. Usuario</th>
-                <th>Cargo</th>
-                <th>Estado</th>
                 <th></th>
                 <th></th>
             </tr>
@@ -39,9 +37,8 @@
                     <td><c:out value="${colaborador.apellido_2}" /></td>
                     <td><c:out value="${colaborador.telefono}" /></td>
                     <td><c:out value="${colaborador.direccion}" /></td>
-                    <td><c:out value="${colaborador.usuario.id_usuario}" /></td>
-                    <td><c:out value="${colaborador.usuario.cargo.nombreCargo}" /></td>
-                    <td><c:out value="${colaborador.usuario.estado ? 'Activo' : 'Inactivo'}" /></td>
+                    <td><c:out value="${colaborador.usuario.id_usuario}" /></td> 
+                    <td><a href="SvColaborador?accion=Ver_Empleado&id=<c:out value="${colaborador.num_documento}" />">Ver Empleado</a></td>
                     <td><a href="SvColaborador?accion=modificar&id=<c:out value="${colaborador.num_documento}" />">Modificar</a></td>
                     <td><a href="SvColaborador?accion=eliminar&id=<c:out value="${colaborador.num_documento}" />">Eliminar</a></td>
                 </tr>
