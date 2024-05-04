@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.CallableStatement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ColaboradorDAO {
 
@@ -81,7 +83,7 @@ public class ColaboradorDAO {
 
         try {
             ps = conexion.prepareStatement("SELECT * FROM cargo WHERE nombre_cargo = ?");
-            ps.setString(1, nombreCargo);
+            ps.setString (1,nombreCargo);
             rs = ps.executeQuery();
 
             if (rs.next()) {
@@ -90,6 +92,8 @@ public class ColaboradorDAO {
                 boolean estado = rs.getBoolean("estado");
 
                 cargo = new Cargo(id_Cargo, nombre_cargo, estado);
+                
+                System.out.println("cargo uno " + nombre_cargo);
 
             }
 
@@ -100,7 +104,8 @@ public class ColaboradorDAO {
         return cargo;
     }
 
-    //-------------------------------------------------------------------------------------//
+
+ //-------------------------------------------------------------------------------------//
 //------------------------------ INSERTAR -----------------------------------------//  
     
     public boolean insertarColaboradores(Usuario usuario, Colaborador colaborador) {
@@ -175,15 +180,68 @@ public class ColaboradorDAO {
     
  //-------------------------------------------------------------------------------------//
 //------------------------------ MOSTRAR -----------------------------------------//   
-    
-    public boolean mostrarEmpleado(int num_documento) {
-         PreparedStatement ps;
-         ResultSet rs;
-         
-         
-         
-        
-        return true;
+     public Colaborador mostrarEmpleado(int idUsuario) {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        Colaborador colaborador = null;
+
+        try {
+            ps = conexion.prepareStatement("SELECT e.num_documento, e.nombre, e.apellido_1, "
+                    + "e.apellido_2, e.telefono, e.direccion,\n"
+                    + "u.id_usuario, u.nombre, u.estado,\n"
+                    + "c.nombre_cargo FROM empleado as e\n"
+                    + "INNER JOIN usuario as u ON e.id_usuario = u.id_usuario\n"
+                    + "INNER JOIN cargo as c ON u.id_cargo = c.id_cargo\n"
+                    + "WHERE e.id_usuario = ?");
+
+            ps.setInt(1, idUsuario);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+
+                // Obtener los datos del colaborador
+                int num_documento = rs.getInt("num_documento");
+                String nombre = rs.getString("nombre");
+                String apellido_1 = rs.getString("apellido_1");
+                String apellido_2 = rs.getString("apellido_2");
+                int telefono = rs.getInt("telefono");
+                String direccion = rs.getString("direccion");
+                int id_usuario = rs.getInt("id_usuario");
+                String nombreUsuario = rs.getString("nombre");
+                boolean estado = rs.getBoolean("estado");
+                String nombre_cargo = rs.getString("nombre_cargo"); // Obtener el nombre del cargo
+
+                // Obtener el usuario
+                Usuario usuario = new Usuario();
+                usuario.setId_usuario(id_usuario);
+                usuario.setNombreUsuario(nombre);
+                usuario.setEstado(estado);
+
+                // Obtener el cargo
+                Cargo cargo = new Cargo();
+                cargo.setNombreCargo(nombre_cargo);
+
+                usuario.setCargo(cargo);
+
+                // Crear el colaborador
+                colaborador = new Colaborador(num_documento, nombre, apellido_1, apellido_2, telefono, direccion, usuario);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ColaboradorDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            // Cerrar PreparedStatement y ResultSet
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(ColaboradorDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return colaborador;
     }
-    
+
 }

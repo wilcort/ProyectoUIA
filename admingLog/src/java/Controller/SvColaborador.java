@@ -32,11 +32,15 @@ public class SvColaborador extends HttpServlet {
 
         if (accion == null || accion.isEmpty()) {
             List<Colaborador> listaColaboradores = colaboradorDAO.listarColaboradores();
-            request.setAttribute("lista", listaColaboradores);
+            request.setAttribute("lista", listaColaboradores);      
         } else if ("nuevo".equals(accion)) {
-            vista = "vistaAdmin/nuevo.jsp";
+            vista = "vistaAdmin/nuevo.jsp";    
+            
         } else if ("Ver_Empleado".equals(accion)) {
-            vista = "vistaAdmin/nuevo.jsp";
+             ver_Empleado(request, response);
+        }else {
+            // Si el método ver_Empleado devuelve false, maneja el caso de error
+            response.sendRedirect("/WEB-INF/error.jsp");
         }
 
         request.getRequestDispatcher(vista).forward(request, response);
@@ -52,6 +56,8 @@ public class SvColaborador extends HttpServlet {
 
         if ("insertar".equals(accion)) {
             insertarColaborador(request, response);
+        } else if ("Ver_Empleado".equals(accion)) {
+            ver_Empleado(request, response);
         }
     }
     
@@ -64,9 +70,8 @@ public class SvColaborador extends HttpServlet {
 
         // Solicitar datos cargo desde formulario nuevo html
         String nombreCargo = request.getParameter("cargo_Usuario");
-        Cargo cargo = colaboradorDAO.obtenerCargoPorNombre(nombreCargo);
-
-
+        Cargo cargo = colaboradorDAO.obtenerCargoPorNombre(nombreCargo);       
+        
         // Obtener datos Usuario desde formulario nuevo html
         Usuario usuario = new Usuario();
         usuario.setNombreUsuario(request.getParameter("nombreUsuario"));
@@ -106,15 +111,25 @@ public class SvColaborador extends HttpServlet {
     }
 
 //-------------------------------------------------------------------------------------//
-//------------------------------ ELIMINAR -----------------------------------------//    
+//------------------------------ VER EMPLEADO -----------------------------------------//    
     
     private void ver_Empleado(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    
-        int num_documento = Integer.parseInt(request.getParameter("num_documento"));
+
+        int idUsuario = Integer.parseInt(request.getParameter("id"));
         
-        Colaborador colaborado = ColaboradorDAO.mostrarEmpleado(num_documento);
-    
+        Colaborador colaborador = colaboradorDAO.mostrarEmpleado(idUsuario);
+       /* Usuario usuario = colaboradorDAO.mostrarUsuario(idUsuario);*/
+          
+         if (colaborador != null ){
+            // Si se encuentra el colaborador, establecerlo como atributo de solicitud
+            request.setAttribute("colaborador", colaborador);
+            // Llamar a la página JSP para mostrar los detalles del empleado
+            request.getRequestDispatcher("vistaAdmin/verEmpleado.jsp").forward(request, response);
+        } else {
+            // Si no se encuentra el colaborador, manejar el caso de error
+            response.sendRedirect("/WEB-INF/error.jsp");
+        }
     }
     
     

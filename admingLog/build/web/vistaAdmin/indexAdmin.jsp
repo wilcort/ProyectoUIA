@@ -24,7 +24,6 @@
                 <th>Dirección</th>
                 <th>Id. Usuario</th>
                 <th></th>
-                <th></th>
             </tr>
         </thead>
            
@@ -38,9 +37,7 @@
                     <td><c:out value="${colaborador.telefono}" /></td>
                     <td><c:out value="${colaborador.direccion}" /></td>
                     <td><c:out value="${colaborador.usuario.id_usuario}" /></td> 
-                    <td><a href="SvColaborador?accion=Ver_Empleado&id=<c:out value="${colaborador.num_documento}" />">Ver Empleado</a></td>
-                    <td><a href="SvColaborador?accion=modificar&id=<c:out value="${colaborador.num_documento}" />">Modificar</a></td>
-                    <td><a href="SvColaborador?accion=eliminar&id=<c:out value="${colaborador.num_documento}" />">Eliminar</a></td>
+                    <td><a href="SvColaborador?accion=Ver_Empleado&id=<c:out value="${colaborador.usuario.id_usuario}" />">Ver Empleado</a></td>
                 </tr>
             </c:forEach>
         </tbody>

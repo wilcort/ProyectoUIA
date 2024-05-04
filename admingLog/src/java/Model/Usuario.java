@@ -8,10 +8,9 @@ public class Usuario {
     private String nombreUsuario;
     private String clave;
     private boolean estado;
-    private Cargo cargo;
+    Cargo cargo;
 
-  
-    
+   
     public int getId_usuario() {
         return id_usuario;
     }
