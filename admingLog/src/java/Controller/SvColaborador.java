@@ -32,15 +32,23 @@ public class SvColaborador extends HttpServlet {
 
         if (accion == null || accion.isEmpty()) {
             List<Colaborador> listaColaboradores = colaboradorDAO.listarColaboradores();
-            request.setAttribute("lista", listaColaboradores);      
+            request.setAttribute("lista", listaColaboradores);
         } else if ("nuevo".equals(accion)) {
-            vista = "vistaAdmin/nuevo.jsp";    
-            
+            vista = "vistaAdmin/nuevo.jsp";
         } else if ("Ver_Empleado".equals(accion)) {
-             ver_Empleado(request, response);
-        }else {
-            // Si el método ver_Empleado devuelve false, maneja el caso de error
+            ver_Empleado(request, response);
+        } else if ("eliminar_Empleado".equals(accion)) {
+            eliminar_Empleado(request, response);
+            
+            // Después de eliminar el empleado, redirige nuevamente a la lista de empleados
+            List<Colaborador> listaColaboradores = colaboradorDAO.listarColaboradores();
+            request.setAttribute("lista", listaColaboradores);
+            vista = "vistaAdmin/indexAdmin.jsp"; 
+            
+        } else {
+            // Si la acción no coincide con ninguna de las anteriores, redirige a una página de error
             response.sendRedirect("/WEB-INF/error.jsp");
+            return; 
         }
 
         request.getRequestDispatcher(vista).forward(request, response);
@@ -58,6 +66,8 @@ public class SvColaborador extends HttpServlet {
             insertarColaborador(request, response);
         } else if ("Ver_Empleado".equals(accion)) {
             ver_Empleado(request, response);
+        } else if ("eliminar_Empleado".equals(accion)) {
+            eliminar_Empleado(request, response);
         }
     }
     
@@ -133,8 +143,32 @@ public class SvColaborador extends HttpServlet {
     }
     
     
-   //-------------------------------------------------------------------------------------// 
-    
+//-------------------------------------------------------------------------------------//
+//------------------------------ ELIMINAR -----------------------------------------//  
+    private void eliminar_Empleado(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String idUsuarioStr = request.getParameter("idUsuario");
+
+        if (idUsuarioStr != null && !idUsuarioStr.isEmpty()) {
+            try {
+                int idUsuario = Integer.parseInt(idUsuarioStr);
+                colaboradorDAO.eliminarEmpleado(idUsuario);
+                
+            } catch (NumberFormatException e) {
+                // Maneja el error de formato de número
+                request.setAttribute("error", "ID de Usuario inválido.");
+                request.getRequestDispatcher("/WEB-INF/error.jsp").forward(request, response);
+                return;
+            }
+        } else {
+            // Maneja el caso cuando idUsuario es nulo o vacío
+            request.setAttribute("error", "ID de Usuario no proporcionado.");
+            request.getRequestDispatcher("/WEB-INF/error.jsp").forward(request, response);
+            return;
+        }
+    }
+//-------------------------------------------------------------------------------------//     
+     
     
     @Override
     public String getServletInfo() {

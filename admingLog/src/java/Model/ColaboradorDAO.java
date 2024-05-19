@@ -243,5 +243,27 @@ public class ColaboradorDAO {
         }
         return colaborador;
     }
+  
+//-------------------------------------------------------------------------------------//
+//------------------------------ ELIMINAR -----------------------------------------//  
+     
+    public boolean eliminarEmpleado(int id_usuario) {
+        PreparedStatement ps;
 
+        try {
+            ps = conexion.prepareStatement(
+                    "DELETE usuario, empleado "
+                    + "FROM usuario "
+                    + "JOIN empleado ON usuario.id_usuario = empleado.id_usuario "
+                    + "WHERE usuario.id_usuario = ?"
+            );
+
+            ps.setInt(1, id_usuario);
+            ps.execute();
+            return true;
+        } catch (SQLException e) {
+            System.out.println(e.toString());
+            return false;
+        }
+    }
 }
