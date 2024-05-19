@@ -39,12 +39,7 @@ public class SvColaborador extends HttpServlet {
             ver_Empleado(request, response);
         } else if ("eliminar_Empleado".equals(accion)) {
             eliminar_Empleado(request, response);
-            
-            // Después de eliminar el empleado, redirige nuevamente a la lista de empleados
-            List<Colaborador> listaColaboradores = colaboradorDAO.listarColaboradores();
-            request.setAttribute("lista", listaColaboradores);
-            vista = "vistaAdmin/indexAdmin.jsp"; 
-            
+         
         } else {
             // Si la acción no coincide con ninguna de las anteriores, redirige a una página de error
             response.sendRedirect("/WEB-INF/error.jsp");
@@ -147,26 +142,27 @@ public class SvColaborador extends HttpServlet {
 //------------------------------ ELIMINAR -----------------------------------------//  
     private void eliminar_Empleado(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String idUsuarioStr = request.getParameter("idUsuario");
 
-        if (idUsuarioStr != null && !idUsuarioStr.isEmpty()) {
-            try {
-                int idUsuario = Integer.parseInt(idUsuarioStr);
-                colaboradorDAO.eliminarEmpleado(idUsuario);
-                
-            } catch (NumberFormatException e) {
-                // Maneja el error de formato de número
-                request.setAttribute("error", "ID de Usuario inválido.");
-                request.getRequestDispatcher("/WEB-INF/error.jsp").forward(request, response);
-                return;
-            }
-        } else {
-            // Maneja el caso cuando idUsuario es nulo o vacío
-            request.setAttribute("error", "ID de Usuario no proporcionado.");
+        try {
+            int idUsuario = Integer.parseInt(request.getParameter("id"));
+
+            colaboradorDAO.eliminarEmpleado(idUsuario);
+            
+            // Obtener la lista actualizada de colaboradores
+            List<Colaborador> listaColaboradores = colaboradorDAO.listarColaboradores();
+            // Establecer la lista como atributo de solicitud
+            request.setAttribute("lista", listaColaboradores);
+            // Redirigir al usuario a la página principal
+            request.getRequestDispatcher("/vistaAdmin/indexAdmin.jsp").forward(request, response);
+            
+        } catch (NumberFormatException e) {
+            // Manejar el error de formato de número
+            request.setAttribute("error", "ID de Usuario inválido.");
             request.getRequestDispatcher("/WEB-INF/error.jsp").forward(request, response);
-            return;
         }
     }
+  
+    
 //-------------------------------------------------------------------------------------//     
      
     

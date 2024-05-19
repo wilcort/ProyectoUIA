@@ -251,12 +251,11 @@ public class ColaboradorDAO {
         PreparedStatement ps;
 
         try {
-            ps = conexion.prepareStatement(
-                    "DELETE usuario, empleado "
-                    + "FROM usuario "
-                    + "JOIN empleado ON usuario.id_usuario = empleado.id_usuario "
-                    + "WHERE usuario.id_usuario = ?"
-            );
+            ps = conexion.prepareStatement("DELETE  empleado, usuario\n" 
+                                            +"FROM empleado\n" 
+                                            +"JOIN usuario \n" 
+                                            +"ON empleado.id_usuario = usuario.id_usuario\n" 
+                                            +"WHERE empleado.id_usuario = ?");
 
             ps.setInt(1, id_usuario);
             ps.execute();

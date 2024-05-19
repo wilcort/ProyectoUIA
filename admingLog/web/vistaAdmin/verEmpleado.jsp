@@ -78,7 +78,7 @@
         <div style="text-align: center; margin-top: 20px;">
             
             <form action="SvColaborador?accion=eliminar_Empleado" method="post" style="display: inline;">
-                <input type="hidden" name="idUsuario" value="${colaborador.usuario.id_usuario}">
+                <input type="hidden" name="id" value="${colaborador.usuario.id_usuario}">
                 <button type="submit" name="eliminar" value="eliminar">Eliminar</button>
             </form>
 
