@@ -83,8 +83,8 @@
             </form>
 
                 
-            <form action="" method="post" style="display: inline; margin-left: 10px;">
-                <input type="hidden" name="idUsuario" value="${colaborador.usuario.id_usuario}">
+            <form action="SvColaborador?accion=modificar_Empleado" method="post" style="display: inline; margin-left: 10px;">
+                <input type="hidden" name="id" value="${colaborador.usuario.id_usuario}">
                 <button type="submit">Modificar</button>
             </form>
                 

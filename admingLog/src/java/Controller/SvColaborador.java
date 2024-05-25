@@ -40,7 +40,13 @@ public class SvColaborador extends HttpServlet {
         } else if ("eliminar_Empleado".equals(accion)) {
             eliminar_Empleado(request, response);
          
-        } else {
+        } else if("modificar_Empleado".equals(accion)){
+            int idUsuario = Integer.parseInt(request.getParameter("id"));
+            Colaborador colaborador = colaboradorDAO.mostrarEmpleado(idUsuario);
+            request.setAttribute("colaborador", colaborador);
+            vista = "vistaAdmin/modificar.jsp";;
+        
+        }else {
             // Si la acción no coincide con ninguna de las anteriores, redirige a una página de error
             response.sendRedirect("/WEB-INF/error.jsp");
             return; 
@@ -63,6 +69,8 @@ public class SvColaborador extends HttpServlet {
             ver_Empleado(request, response);
         } else if ("eliminar_Empleado".equals(accion)) {
             eliminar_Empleado(request, response);
+        } else if ("modificar_Empleado".equals(accion)) {
+            modificar_Empleado(request, response);
         }
     }
     
@@ -150,8 +158,10 @@ public class SvColaborador extends HttpServlet {
             
             // Obtener la lista actualizada de colaboradores
             List<Colaborador> listaColaboradores = colaboradorDAO.listarColaboradores();
+            
             // Establecer la lista como atributo de solicitud
             request.setAttribute("lista", listaColaboradores);
+            
             // Redirigir al usuario a la página principal
             request.getRequestDispatcher("/vistaAdmin/indexAdmin.jsp").forward(request, response);
             
@@ -163,11 +173,55 @@ public class SvColaborador extends HttpServlet {
     }
   
     
-//-------------------------------------------------------------------------------------//     
-     
+//-------------------------------------------------------------------------------------//  
+//------------------------------ MODIFICAR -----------------------------------------// 
     
+    private void modificar_Empleado(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        int idUsuario = Integer.parseInt(request.getParameter("id"));
+
+        // Obtener datos del cargo desde formulario
+        String nombreCargo = request.getParameter("cargo_Usuario");
+        Cargo cargo = colaboradorDAO.obtenerCargoPorNombre(nombreCargo);
+
+        // Obtener datos del Usuario desde formulario
+        Usuario usuario = new Usuario();
+        usuario.setId_usuario(idUsuario);
+        usuario.setNombreUsuario(request.getParameter("nombreUsuario"));
+        usuario.setClave(request.getParameter("claveUsuario"));
+        usuario.setEstado(Integer.parseInt(request.getParameter("estado_cargoUsuario")) == 1);
+        usuario.setCargo(cargo);
+
+        // Crear colaborador
+        int num_documento = Integer.parseInt(request.getParameter("num_documento"));
+        String nombre = request.getParameter("nombre");
+        String apellido_1 = request.getParameter("apellido_1");
+        String apellido_2 = request.getParameter("apellido_2");
+        int telefono = Integer.parseInt(request.getParameter("telefono"));
+        String direccion = request.getParameter("direccion");
+
+        Colaborador colaborador = new Colaborador(num_documento, nombre, apellido_1, apellido_2,
+                telefono, direccion, usuario);
+
+        // Modificar datos en la base de datos
+        boolean modificacionExitosa = colaboradorDAO.modificarEmpleado(idUsuario, usuario, colaborador);
+
+        if (modificacionExitosa) {
+            // Redirigir al usuario a la página principal
+            List<Colaborador> listaColaboradores = colaboradorDAO.listarColaboradores();
+            request.setAttribute("lista", listaColaboradores);
+            request.getRequestDispatcher("/vistaAdmin/indexAdmin.jsp").forward(request, response);
+        } else {
+            response.sendRedirect("/WEB-INF/error.jsp");
+        }
+    }
+    
+//-------------------------------------------------------------------------------------// 
     @Override
     public String getServletInfo() {
         return "Short description";
     }
+
+    
 }

@@ -265,4 +265,69 @@ public class ColaboradorDAO {
             return false;
         }
     }
+    
+//-------------------------------------------------------------------------------------//
+//------------------------------ ACTUALIZAR -----------------------------------------//   
+    
+    public boolean modificarEmpleado(int id_usuario, Usuario usuario, Colaborador colaborador) {
+        PreparedStatement psUsuario = null;
+        PreparedStatement psEmpleado = null;
+
+        try {
+            // Actualizar datos del usuario
+            psUsuario = conexion.prepareStatement(
+                    "UPDATE usuario SET nombre = ?, clave = ?, estado = ?, id_cargo = ? WHERE id_usuario = ?"
+            );
+
+            psUsuario.setString(1, usuario.getNombreUsuario());
+            psUsuario.setString(2, usuario.getClave());
+            psUsuario.setBoolean(3, usuario.isEstado());
+            psUsuario.setInt(4, usuario.getCargo().getIdCargo());
+            psUsuario.setInt(5, id_usuario);
+
+            int filasAfectadasUsuario = psUsuario.executeUpdate();
+            if (filasAfectadasUsuario != 1) {
+                throw new SQLException("No se pudo actualizar el usuario");
+            }
+
+            // Actualizar datos del empleado
+            psEmpleado = conexion.prepareStatement(
+                    "UPDATE empleado SET num_documento = ?, nombre = ?, apellido_1 = ?, apellido_2 = ?, telefono = ?, direccion = ? WHERE id_usuario = ?"
+            );
+
+            psEmpleado.setInt(1, colaborador.getNum_documento());
+            psEmpleado.setString(2, colaborador.getNombre());
+            psEmpleado.setString(3, colaborador.getApellido_1());
+            psEmpleado.setString(4, colaborador.getApellido_2());
+            psEmpleado.setInt(5, colaborador.getTelefono());
+            psEmpleado.setString(6, colaborador.getDireccion());
+            psEmpleado.setInt(7, id_usuario);
+
+            int filasAfectadasEmpleado = psEmpleado.executeUpdate();
+            if (filasAfectadasEmpleado != 1) {
+                throw new SQLException("No se pudo actualizar el colaborador");
+            }
+
+            return true;
+        } catch (SQLException e) {
+            System.out.println(e.toString());
+            return false;
+        } finally {
+            if (psUsuario != null) {
+                try {
+                    psUsuario.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (psEmpleado != null) {
+                try {
+                    psEmpleado.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+//-------------------------------------------------------------------------------------//
 }
