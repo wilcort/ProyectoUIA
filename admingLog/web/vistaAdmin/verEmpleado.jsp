@@ -83,9 +83,9 @@
             </form>
 
                 
-            <form action="" method="post" style="display: inline; margin-left: 10px;">
+            <form action="SvColaborador?accion=actualizar_Empleado" method="post" style="display: inline; margin-left: 10px;">
                 <input type="hidden" name="idUsuario" value="${colaborador.usuario.id_usuario}">
-                <button type="submit">Modificar</button>
+                <button type="submit" name="actualizar" value="actualizar">Actualizar</button>
             </form>
                 
             <form action="http://localhost:8080/admingLog/SvColaborador" style="display: inline; margin-left: 10px;">

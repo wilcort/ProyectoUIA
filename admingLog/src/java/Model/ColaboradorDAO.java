@@ -21,7 +21,7 @@ public class ColaboradorDAO {
     }
 //-------------------------------------------------------------------------------------//
 //------------------------------ LISTAR -----------------------------------------//   
-    
+
     public List<Colaborador> listarColaboradores() {
         CallableStatement cs = null;
         ResultSet rs = null;
@@ -41,12 +41,10 @@ public class ColaboradorDAO {
                 int telefono = rs.getInt("telefono");
                 String direccion = rs.getString("direccion");
                 int id_usuario = rs.getInt("id_usuario");
-                                
 
                 // Obtener el usuario
                 Usuario usuario = new Usuario();
                 usuario.setId_usuario(id_usuario);
-
 
                 // Crear objeto Colaborador y agregarlo a la lista
                 Colaborador colaborador = new Colaborador(num_documento, nombre,
@@ -72,42 +70,57 @@ public class ColaboradorDAO {
 
         return lista;
     }
-    
-    //-------------------------------------------------------------------------------------//
-//------------------------------ OBTENER CARGO -----------------------------------------//   
 
-    public Cargo obtenerCargoPorNombre(String nombreCargo) {
+//-------------------------------------------------------------------------------------//
+//------------------------------ OBTENER LISTA CARGO -----------------------------------------//   
+    public List<Cargo> listarCargos() {
+        List<Cargo> listaCargos = new ArrayList<>();
+        String sql = "SELECT * FROM cargo";
+        try {
+            PreparedStatement ps = conexion.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                int id_Cargo = rs.getInt("id_cargo");
+                String nombre_cargo = rs.getString("nombre_cargo");
+                boolean estado = rs.getBoolean("estado");
+                Cargo cargo = new Cargo(id_Cargo, nombre_cargo, estado);
+                listaCargos.add(cargo);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al listar cargos: " + e.getMessage());
+        }
+        return listaCargos;
+    }
+
+//-------------------------------------------------------------------------------------//
+//------------------------------ OBTENER CARGO POR NOMBRE -----------------------------------------//   
+    public Cargo obtenerCargoPorId(int idCargo) {
         PreparedStatement ps;
         ResultSet rs;
         Cargo cargo = null;
 
         try {
-            ps = conexion.prepareStatement("SELECT * FROM cargo WHERE nombre_cargo = ?");
-            ps.setString (1,nombreCargo);
+            ps = conexion.prepareStatement("SELECT * FROM cargo WHERE id_cargo = ?");
+            ps.setInt(1, idCargo);
             rs = ps.executeQuery();
 
             if (rs.next()) {
-                int id_Cargo = rs.getInt("id_Cargo");
-                String nombre_cargo = rs.getString("nombre_Cargo");
+                int id_Cargo = rs.getInt("id_cargo");
+                String nombre_cargo = rs.getString("nombre_cargo");
                 boolean estado = rs.getBoolean("estado");
 
                 cargo = new Cargo(id_Cargo, nombre_cargo, estado);
-                
-                System.out.println("cargo uno " + nombre_cargo);
-
             }
 
         } catch (SQLException e) {
-            System.out.println("Error al obtener el cargo por nombre: " + e.getMessage());
+            System.out.println("Error al obtener el cargo por ID: " + e.getMessage());
         }
 
         return cargo;
     }
 
-
- //-------------------------------------------------------------------------------------//
+    //-------------------------------------------------------------------------------------//
 //------------------------------ INSERTAR -----------------------------------------//  
-    
     public boolean insertarColaboradores(Usuario usuario, Colaborador colaborador) {
         PreparedStatement psUsuario = null;
         PreparedStatement psEmpleado = null;
@@ -176,11 +189,10 @@ public class ColaboradorDAO {
             }
         }
     }
-    
-    
- //-------------------------------------------------------------------------------------//
+
+    //-------------------------------------------------------------------------------------//
 //------------------------------ MOSTRAR -----------------------------------------//   
-     public Colaborador mostrarEmpleado(int idUsuario) {
+    public Colaborador mostrarEmpleado(int idUsuario) {
         PreparedStatement ps = null;
         ResultSet rs = null;
         Colaborador colaborador = null;
@@ -243,19 +255,18 @@ public class ColaboradorDAO {
         }
         return colaborador;
     }
-  
+
 //-------------------------------------------------------------------------------------//
 //------------------------------ ELIMINAR -----------------------------------------//  
-     
     public boolean eliminarEmpleado(int id_usuario) {
         PreparedStatement ps;
 
         try {
-            ps = conexion.prepareStatement("DELETE  empleado, usuario\n" 
-                                            +"FROM empleado\n" 
-                                            +"JOIN usuario \n" 
-                                            +"ON empleado.id_usuario = usuario.id_usuario\n" 
-                                            +"WHERE empleado.id_usuario = ?");
+            ps = conexion.prepareStatement("DELETE  empleado, usuario\n"
+                    + "FROM empleado\n"
+                    + "JOIN usuario \n"
+                    + "ON empleado.id_usuario = usuario.id_usuario\n"
+                    + "WHERE empleado.id_usuario = ?");
 
             ps.setInt(1, id_usuario);
             ps.execute();
@@ -264,5 +275,63 @@ public class ColaboradorDAO {
             System.out.println(e.toString());
             return false;
         }
+
     }
-}
+//-------------------------------------------------------------------------------------//
+//------------------------------ ACTUALIZAR -----------------------------------------//  
+
+    public boolean actualizarEmpleado(Usuario usuario, Colaborador colaborador) {
+        PreparedStatement psActUsuario = null;
+        PreparedStatement psActEmpleado = null;
+        int idUsuarioGenerado = 0;
+
+        try {
+            psActEmpleado = conexion.prepareStatement("UPDATE empleado SET "
+                    + "num_documento = ?, "
+                    + "nombre = ?, "
+                    + "apellido_1 = ?, "
+                    + "apellido_2 = ?, "
+                    + "telefono = ?, "
+                    + "direccion = ? "
+                    + "WHERE id_usuario = ?");
+
+            psActEmpleado.setInt(1, colaborador.getNum_documento());
+            psActEmpleado.setString(2, colaborador.getNombre());
+            psActEmpleado.setString(3, colaborador.getApellido_1());
+            psActEmpleado.setString(4, colaborador.getApellido_2());
+            psActEmpleado.setInt(5, colaborador.getTelefono());
+            psActEmpleado.setString(6, colaborador.getDireccion());
+            psActEmpleado.setInt(7, idUsuarioGenerado);
+
+            psActUsuario = conexion.prepareStatement("UPDATE usuario SET "
+                    + "estado = ?, "
+                    + "id_cargo = ? "
+                    + "WHERE id_usuario = ?");
+
+            psActUsuario.setBoolean(1, usuario.isEstado());
+            psActUsuario.setInt(2, usuario.getCargo().getIdCargo());
+            psActUsuario.setInt(3, idUsuarioGenerado);
+
+            // Ejecutar las actualizaciones
+            psActEmpleado.executeUpdate();
+            psActUsuario.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.println("Error al actualizar empleado: " + e.getMessage());
+            return false;
+        } finally {
+            // Cerrar PreparedStatements
+            try {
+                if (psActUsuario != null) {
+                    psActUsuario.close();
+                }
+                if (psActEmpleado != null) {
+                    psActEmpleado.close();
+                }
+            } catch (SQLException ex) {
+                System.out.println("Error al cerrar PreparedStatements: " + ex.getMessage());
+            }
+        }
+        return true;
+    }
+} //fin class
