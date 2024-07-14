@@ -76,18 +76,19 @@
         </table>
         <!-- Botones -->
         <div style="text-align: center; margin-top: 20px;">
-            
+
             <form action="SvColaborador?accion=eliminar_Empleado" method="post" style="display: inline;">
                 <input type="hidden" name="id" value="${colaborador.usuario.id_usuario}">
                 <button type="submit" name="eliminar" value="eliminar">Eliminar</button>
             </form>
 
-                
-            <form action="SvColaborador?accion=actualizar_Empleado" method="post" style="display: inline; margin-left: 10px;">
-                <input type="hidden" name="idUsuario" value="${colaborador.usuario.id_usuario}">
+            <form action="SvColaborador?accion=modificar_Empleado" method="post"
+                  style="display: inline; margin-left: 10px;">
+                <input type="hidden" name="id" value="${colaborador.usuario.id_usuario}">
                 <button type="submit" name="actualizar" value="actualizar">Actualizar</button>
             </form>
-                
+
+
             <form action="http://localhost:8080/admingLog/SvColaborador" style="display: inline; margin-left: 10px;">
                 <button type="submit">Regresar</button>
             </form>

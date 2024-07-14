@@ -70,8 +70,7 @@ public class ColaboradorDAO {
 
         return lista;
     }
-
-//-------------------------------------------------------------------------------------//
+    //-------------------------------------------------------------------------------------//
 //------------------------------ OBTENER LISTA CARGO -----------------------------------------//   
     public List<Cargo> listarCargos() {
         List<Cargo> listaCargos = new ArrayList<>();
@@ -91,9 +90,8 @@ public class ColaboradorDAO {
         }
         return listaCargos;
     }
-
 //-------------------------------------------------------------------------------------//
-//------------------------------ OBTENER CARGO POR NOMBRE -----------------------------------------//   
+//------------------------------ OBTENER CARGO POR id -----------------------------------------//   
     public Cargo obtenerCargoPorId(int idCargo) {
         PreparedStatement ps;
         ResultSet rs;
@@ -114,6 +112,36 @@ public class ColaboradorDAO {
 
         } catch (SQLException e) {
             System.out.println("Error al obtener el cargo por ID: " + e.getMessage());
+        }
+
+        return cargo;
+    }
+
+    //-------------------------------------------------------------------------------------//
+//------------------------------ OBTENER CARGO por nombre-----------------------------------------//   
+    public Cargo obtenerCargoPorNombre(String nombreCargo) {
+        PreparedStatement ps;
+        ResultSet rs;
+        Cargo cargo = null;
+
+        try {
+            ps = conexion.prepareStatement("SELECT * FROM cargo WHERE nombre_cargo = ?");
+            ps.setString(1, nombreCargo);
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                int id_Cargo = rs.getInt("id_Cargo");
+                String nombre_cargo = rs.getString("nombre_Cargo");
+                boolean estado = rs.getBoolean("estado");
+
+                cargo = new Cargo(id_Cargo, nombre_cargo, estado);
+
+                System.out.println("cargo uno " + nombre_cargo);
+
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error al obtener el cargo por nombre: " + e.getMessage());
         }
 
         return cargo;
@@ -275,63 +303,51 @@ public class ColaboradorDAO {
             System.out.println(e.toString());
             return false;
         }
-
     }
-//-------------------------------------------------------------------------------------//
-//------------------------------ ACTUALIZAR -----------------------------------------//  
 
-    public boolean actualizarEmpleado(Usuario usuario, Colaborador colaborador) {
-        PreparedStatement psActUsuario = null;
-        PreparedStatement psActEmpleado = null;
-        int idUsuarioGenerado = 0;
+//-------------------------------------------------------------------------------------//
+//------------------------------ ACTUALIZAR -----------------------------------------//   
+    public boolean modificarEmpleado(Usuario usuario, Colaborador colaborador) {
+        PreparedStatement psUsuario = null;
+        PreparedStatement psEmpleado = null;
 
         try {
-            psActEmpleado = conexion.prepareStatement("UPDATE empleado SET "
-                    + "num_documento = ?, "
-                    + "nombre = ?, "
-                    + "apellido_1 = ?, "
-                    + "apellido_2 = ?, "
-                    + "telefono = ?, "
-                    + "direccion = ? "
-                    + "WHERE id_usuario = ?");
+            // Actualizar usuario
+            psUsuario = conexion.prepareStatement("UPDATE usuario SET nombre=?, clave=?, estado=?, id_cargo=? WHERE id_usuario=?");
+            psUsuario.setString(1, usuario.getNombreUsuario());
+            psUsuario.setString(2, usuario.getClave());
+            psUsuario.setBoolean(3, usuario.isEstado());
+            psUsuario.setInt(4, usuario.getCargo().getIdCargo());
+            psUsuario.setInt(5, usuario.getId_usuario());
+            psUsuario.executeUpdate();
 
-            psActEmpleado.setInt(1, colaborador.getNum_documento());
-            psActEmpleado.setString(2, colaborador.getNombre());
-            psActEmpleado.setString(3, colaborador.getApellido_1());
-            psActEmpleado.setString(4, colaborador.getApellido_2());
-            psActEmpleado.setInt(5, colaborador.getTelefono());
-            psActEmpleado.setString(6, colaborador.getDireccion());
-            psActEmpleado.setInt(7, idUsuarioGenerado);
+            // Actualizar empleado
+            psEmpleado = conexion.prepareStatement("UPDATE empleado SET num_documento=?, nombre=?, apellido_1=?, apellido_2=?, telefono=?, direccion=? WHERE id_usuario=?");
+            psEmpleado.setInt(1, colaborador.getNum_documento());
+            psEmpleado.setString(2, colaborador.getNombre());
+            psEmpleado.setString(3, colaborador.getApellido_1());
+            psEmpleado.setString(4, colaborador.getApellido_2());
+            psEmpleado.setInt(5, colaborador.getTelefono());
+            psEmpleado.setString(6, colaborador.getDireccion());
+            psEmpleado.setInt(7, colaborador.getUsuario().getId_usuario());
+            int filasAfectadasEmpleado = psEmpleado.executeUpdate();
 
-            psActUsuario = conexion.prepareStatement("UPDATE usuario SET "
-                    + "estado = ?, "
-                    + "id_cargo = ? "
-                    + "WHERE id_usuario = ?");
-
-            psActUsuario.setBoolean(1, usuario.isEstado());
-            psActUsuario.setInt(2, usuario.getCargo().getIdCargo());
-            psActUsuario.setInt(3, idUsuarioGenerado);
-
-            // Ejecutar las actualizaciones
-            psActEmpleado.executeUpdate();
-            psActUsuario.executeUpdate();
-
+            return filasAfectadasEmpleado > 0;
         } catch (SQLException e) {
-            System.out.println("Error al actualizar empleado: " + e.getMessage());
+            System.out.println("Error al actualizar colaborador: " + e.getMessage());
             return false;
         } finally {
-            // Cerrar PreparedStatements
             try {
-                if (psActUsuario != null) {
-                    psActUsuario.close();
+                if (psUsuario != null) {
+                    psUsuario.close();
                 }
-                if (psActEmpleado != null) {
-                    psActEmpleado.close();
+                if (psEmpleado != null) {
+                    psEmpleado.close();
                 }
             } catch (SQLException ex) {
                 System.out.println("Error al cerrar PreparedStatements: " + ex.getMessage());
             }
         }
-        return true;
     }
-} //fin class
+//-------------------------------------------------------------------------------------//
+}

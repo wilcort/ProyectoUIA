@@ -5,6 +5,7 @@ import Model.Colaborador;
 import Model.ColaboradorDAO;
 import Model.Usuario;
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -39,11 +40,13 @@ public class SvColaborador extends HttpServlet {
             vista = "vistaAdmin/nuevo.jsp";
         } else if ("Ver_Empleado".equals(accion)) {
             ver_Empleado(request, response);
+            return;
         } else if ("eliminar_Empleado".equals(accion)) {
-            eliminar_Empleado(request, response);        
-        } else if ("actualizar_Empleado".equals(accion)) {
-            actualizar_Empleado(request, response); 
-            vista = "vistaAdmin/modificar.jsp";
+            eliminar_Empleado(request, response); 
+            return;
+        } else if ("modificar_Empleado".equals(accion)) {
+            modificar_Empleado(request, response);
+            return;
         }else {
             // Si la acción no coincide con ninguna de las anteriores, redirige a una página de error
             response.sendRedirect("/WEB-INF/error.jsp");
@@ -67,8 +70,9 @@ public class SvColaborador extends HttpServlet {
             ver_Empleado(request, response);
         } else if ("eliminar_Empleado".equals(accion)) {
             eliminar_Empleado(request, response);
-        } else if ("actualizar_Empleado".equals(accion)) {
-            actualizar_Empleado(request, response);
+        } else if ("modificar_Empleado".equals(accion)) {
+            modificar_Empleado(request, response);
+            
         }
     }
 //-------------------------------------------------------------------------------------//
@@ -163,47 +167,55 @@ public class SvColaborador extends HttpServlet {
         }
     }
  //-------------------------------------------------------------------------------------//
+//-------------------------------------------------------------------------------------//
+    private void modificar_Empleado(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
+         System.out.println("hola2 ");
+        int idUsuario = Integer.parseInt(request.getParameter("id"));
+
+        Colaborador colaborador = colaboradorDAO.mostrarEmpleado(idUsuario);
+        /* Usuario usuario = colaboradorDAO.mostrarUsuario(idUsuario);*/
+           
+        if (colaborador != null) {
+            // Si se encuentra el colaborador, establecerlo como atributo de solicitud
+            request.setAttribute("colaborador", colaborador);
+            // Llamar a la página JSP para mostrar los detalles del empleado
+            request.getRequestDispatcher("vistaAdmin/modificar.jsp").forward(request, response);
+        } else {
+            // Si no se encuentra el colaborador, manejar el caso de error
+            response.sendRedirect("/WEB-INF/error.jsp");
+        }
+    }
+ //-------------------------------------------------------------------------------------//
 //------------------------------ VER ACTUALIZA -----------------------------------------//    
-   
-    private void actualizar_Empleado(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        try {
-            int idUsuario = Integer.parseInt(request.getParameter("id"));
+//-------------------------------------------------------------------------------------//   
 
-            int idCargo = Integer.parseInt(request.getParameter("cargo_Usuario"));
-            Cargo cargo = colaboradorDAO.obtenerCargoPorId(idCargo);
+    private void actualizar_Empleado(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String numDocumento = request.getParameter("num_documento");
+        String nombre = request.getParameter("nombre");
+        String apellido1 = request.getParameter("apellido_1");
+        String apellido2 = request.getParameter("apellido_2");
+        String telefono = request.getParameter("telefono");
+        String direccion = request.getParameter("direccion");
 
-            // Obtener datos Usuario desde formulario nuevo html
-            Usuario usuario = new Usuario();
-            usuario.setNombreUsuario(request.getParameter("nombreUsuario"));
-            usuario.setEstado(Integer.parseInt(request.getParameter("estado_cargoUsuario")) == 1);
-
-            // Asociar el cargo al usuario
-            usuario.setCargo(cargo);
-
-            // Crear un nuevo colaborador           
-            int num_documento = Integer.parseInt(request.getParameter("num_documento"));
-            String nombre = request.getParameter("nombre");
-            String apellido_1 = request.getParameter("apellido_1");
-            String apellido_2 = request.getParameter("apellido_2");
-            int telefono = Integer.parseInt(request.getParameter("telefono"));
-            String direccion = request.getParameter("direccion");
-
-            Colaborador colaborador = new Colaborador(num_documento, nombre, apellido_1,
-                    apellido_2, telefono, direccion, usuario);
-
-            colaboradorDAO.actualizarEmpleado(usuario, colaborador);
-
-        } catch (Exception e) {
-            // Manejo de errores
-        request.getRequestDispatcher("/WEB-INF/error.jsp").forward(request, response);
+        // Ejemplo de impresión en consola
+        System.out.println("Número de Documento: " + numDocumento);
+        System.out.println("Nombre: " + nombre);
+        System.out.println("Primer Apellido: " + apellido1);
+        System.out.println("Segundo Apellido: " + apellido2);
+        System.out.println("Teléfono: " + telefono);
+        System.out.println("Dirección: " + direccion);
     }
-    }
-//-------------------------------------------------------------------------------------//     
+//------------------------------------------------------------------------------------//
      
-    
+    // request.getRequestDispatcher("vistaAdmin/actualizar.jsp").forward(request, response);
     
     @Override
     public String getServletInfo() {
         return "Short description";
     }
 }
+
+// actualizacion
