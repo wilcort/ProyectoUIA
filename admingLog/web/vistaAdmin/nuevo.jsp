@@ -32,6 +32,7 @@
  --%>
             <label for="estado_cargoUsuario">Estado Cargo:</label>
             <select id="estado_cargoUsuario" name="estado_cargoUsuario">
+                <option value="" disabled selected>Escoja opción</option>
                 <option value="1">Activo</option>
                 <option value="0">Desactivado</option>
             </select><br><br>

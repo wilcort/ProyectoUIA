@@ -228,7 +228,7 @@ public class ColaboradorDAO {
         try {
             ps = conexion.prepareStatement("SELECT e.num_documento, e.nombre, e.apellido_1, "
                     + "e.apellido_2, e.telefono, e.direccion,\n"
-                    + "u.id_usuario, u.nombre, u.estado,\n"
+                    + "u.id_usuario, u.nombreUsuario, u.estado,\n"
                     + "c.nombre_cargo FROM empleado as e\n"
                     + "INNER JOIN usuario as u ON e.id_usuario = u.id_usuario\n"
                     + "INNER JOIN cargo as c ON u.id_cargo = c.id_cargo\n"
@@ -247,14 +247,14 @@ public class ColaboradorDAO {
                 int telefono = rs.getInt("telefono");
                 String direccion = rs.getString("direccion");
                 int id_usuario = rs.getInt("id_usuario");
-                String nombreUsuario = rs.getString("nombre");
+                String nombreUsuario = rs.getString("u.nombreUsuario"); ///***
                 boolean estado = rs.getBoolean("estado");
                 String nombre_cargo = rs.getString("nombre_cargo"); // Obtener el nombre del cargo
 
                 // Obtener el usuario
                 Usuario usuario = new Usuario();
                 usuario.setId_usuario(id_usuario);
-                usuario.setNombreUsuario(nombre);
+                usuario.setNombreUsuario(nombreUsuario); //******
                 usuario.setEstado(estado);
 
                 // Obtener el cargo
@@ -308,19 +308,10 @@ public class ColaboradorDAO {
 //-------------------------------------------------------------------------------------//
 //------------------------------ ACTUALIZAR -----------------------------------------//   
     public boolean modificarEmpleado(Usuario usuario, Colaborador colaborador) {
-        PreparedStatement psUsuario = null;
         PreparedStatement psEmpleado = null;
+        PreparedStatement psActUsuario = null;
 
         try {
-            // Actualizar usuario
-            psUsuario = conexion.prepareStatement("UPDATE usuario SET nombre=?, clave=?, estado=?, id_cargo=? WHERE id_usuario=?");
-            psUsuario.setString(1, usuario.getNombreUsuario());
-            psUsuario.setString(2, usuario.getClave());
-            psUsuario.setBoolean(3, usuario.isEstado());
-            psUsuario.setInt(4, usuario.getCargo().getIdCargo());
-            psUsuario.setInt(5, usuario.getId_usuario());
-            psUsuario.executeUpdate();
-
             // Actualizar empleado
             psEmpleado = conexion.prepareStatement("UPDATE empleado SET num_documento=?, nombre=?, apellido_1=?, apellido_2=?, telefono=?, direccion=? WHERE id_usuario=?");
             psEmpleado.setInt(1, colaborador.getNum_documento());
@@ -332,20 +323,23 @@ public class ColaboradorDAO {
             psEmpleado.setInt(7, colaborador.getUsuario().getId_usuario());
             int filasAfectadasEmpleado = psEmpleado.executeUpdate();
 
-            return filasAfectadasEmpleado > 0;
+            // Actualizar usuario
+            psActUsuario = conexion.prepareStatement("UPDATE usuario SET estado = ? WHERE id_usuario = ?");
+            psActUsuario.setBoolean(1, usuario.isEstado());
+            psActUsuario.setInt(2, colaborador.getUsuario().getId_usuario());
+            int filasAfectadasUsuario = psActUsuario.executeUpdate();
+
+            return filasAfectadasEmpleado > 0 && filasAfectadasUsuario > 0;
         } catch (SQLException e) {
-            System.out.println("Error al actualizar colaborador: " + e.getMessage());
+            e.printStackTrace();  // Imprimir el stack trace para más detalles del error
             return false;
         } finally {
             try {
-                if (psUsuario != null) {
-                    psUsuario.close();
-                }
                 if (psEmpleado != null) {
                     psEmpleado.close();
                 }
             } catch (SQLException ex) {
-                System.out.println("Error al cerrar PreparedStatements: " + ex.getMessage());
+                ex.printStackTrace();  // Imprimir el stack trace para más detalles del error
             }
         }
     }

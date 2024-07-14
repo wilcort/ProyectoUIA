@@ -44,10 +44,7 @@ public class SvColaborador extends HttpServlet {
         } else if ("eliminar_Empleado".equals(accion)) {
             eliminar_Empleado(request, response); 
             return;
-        } else if ("modificar_Empleado".equals(accion)) {
-            modificar_Empleado(request, response);
-            return;
-        }else {
+        } else {
             // Si la acción no coincide con ninguna de las anteriores, redirige a una página de error
             response.sendRedirect("/WEB-INF/error.jsp");
             return; 
@@ -71,9 +68,12 @@ public class SvColaborador extends HttpServlet {
         } else if ("eliminar_Empleado".equals(accion)) {
             eliminar_Empleado(request, response);
         } else if ("modificar_Empleado".equals(accion)) {
-            modificar_Empleado(request, response);
-            
-        }
+             modificar_Empleado(request, response);
+             System.out.println("poeppe");           
+        } else if ("actualizar_Empleado".equals(accion)) {
+             actualizar_Empleado(request, response);
+             System.out.println("pe");
+    }
     }
 //-------------------------------------------------------------------------------------//
 //------------------------------ INSERTAR -----------------------------------------//
@@ -193,20 +193,41 @@ public class SvColaborador extends HttpServlet {
 
     private void actualizar_Empleado(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String numDocumento = request.getParameter("num_documento");
-        String nombre = request.getParameter("nombre");
-        String apellido1 = request.getParameter("apellido_1");
-        String apellido2 = request.getParameter("apellido_2");
-        String telefono = request.getParameter("telefono");
-        String direccion = request.getParameter("direccion");
+        try {
+            int idUsuario = Integer.parseInt(request.getParameter("id"));
 
-        // Ejemplo de impresión en consola
-        System.out.println("Número de Documento: " + numDocumento);
-        System.out.println("Nombre: " + nombre);
-        System.out.println("Primer Apellido: " + apellido1);
-        System.out.println("Segundo Apellido: " + apellido2);
-        System.out.println("Teléfono: " + telefono);
-        System.out.println("Dirección: " + direccion);
+            // Obtener datos desde el formulario empleado
+            int num_documento = Integer.parseInt(request.getParameter("num_documento"));
+            String nombre = request.getParameter("nombre");
+            String apellido_1 = request.getParameter("apellido_1");
+            String apellido_2 = request.getParameter("apellido_2");
+            int telefono = Integer.parseInt(request.getParameter("telefono"));
+            String direccion = request.getParameter("direccion");
+            
+            
+
+            // Crear un nuevo usuario y colaborador
+            Usuario usuario = new Usuario();
+            usuario.setId_usuario(idUsuario);
+
+            Colaborador colaborador = new Colaborador(num_documento, nombre, apellido_1, apellido_2, telefono, direccion, usuario);
+            
+            // Obtener datos desde el formulario usuario
+            usuario.setEstado(Integer.parseInt(request.getParameter("estado_cargoUsuario")) == 1);
+            
+            // Llamar al método de modificación en DAO
+            boolean exito = colaboradorDAO.modificarEmpleado(usuario, colaborador);
+
+            if (exito) {
+                response.sendRedirect("SvColaborador?accion=Ver_Empleado&id=" + idUsuario);
+            } else {
+                request.getRequestDispatcher("/WEB-INF/error.jsp").forward(request, response);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();  // Imprimir el stack trace para más detalles del error
+            request.getRequestDispatcher("/WEB-INF/error.jsp").forward(request, response);
+        }
     }
 //------------------------------------------------------------------------------------//
      

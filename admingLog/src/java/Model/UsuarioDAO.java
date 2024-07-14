@@ -23,7 +23,7 @@ public class UsuarioDAO {
                    + "INNER JOIN CARGO C "
                    + "ON U.ID_CARGO = C.ID_CARGO "
                    + "WHERE U.ESTADO = 1 AND "
-                   + "U.NOMBRE = ? AND U.CLAVE = ?";
+                   + "U.nombreUsuario = ? AND U.CLAVE = ?";
                    
         
         try {
