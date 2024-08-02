@@ -44,7 +44,7 @@ public class SvColaborador extends HttpServlet {
         } else if ("eliminar_Empleado".equals(accion)) {
             eliminar_Empleado(request, response); 
             return;
-        } else {
+        }else {
             // Si la acción no coincide con ninguna de las anteriores, redirige a una página de error
             response.sendRedirect("/WEB-INF/error.jsp");
             return; 
@@ -68,11 +68,10 @@ public class SvColaborador extends HttpServlet {
         } else if ("eliminar_Empleado".equals(accion)) {
             eliminar_Empleado(request, response);
         } else if ("modificar_Empleado".equals(accion)) {
-             modificar_Empleado(request, response);
-             System.out.println("poeppe");           
+             modificar_Empleado(request, response);         
         } else if ("actualizar_Empleado".equals(accion)) {
              actualizar_Empleado(request, response);
-             System.out.println("pe");
+
     }
     }
 //-------------------------------------------------------------------------------------//
@@ -81,6 +80,7 @@ public class SvColaborador extends HttpServlet {
     private void insertarColaborador(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
     // Solicitar datos cargo desde formulario nuevo html
+    
     int idCargo = Integer.parseInt(request.getParameter("cargo_Usuario"));
     Cargo cargo = colaboradorDAO.obtenerCargoPorId(idCargo);
 
@@ -171,15 +171,18 @@ public class SvColaborador extends HttpServlet {
     private void modificar_Empleado(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-         System.out.println("hola2 ");
         int idUsuario = Integer.parseInt(request.getParameter("id"));
 
         Colaborador colaborador = colaboradorDAO.mostrarEmpleado(idUsuario);
         /* Usuario usuario = colaboradorDAO.mostrarUsuario(idUsuario);*/
-           
+        
+         List<Cargo> listaCargos = colaboradorDAO.listarCargos(); // Obtener lista de cargos
+       
+                 
         if (colaborador != null) {
             // Si se encuentra el colaborador, establecerlo como atributo de solicitud
             request.setAttribute("colaborador", colaborador);
+            request.setAttribute("cargos", listaCargos);
             // Llamar a la página JSP para mostrar los detalles del empleado
             request.getRequestDispatcher("vistaAdmin/modificar.jsp").forward(request, response);
         } else {
@@ -202,19 +205,23 @@ public class SvColaborador extends HttpServlet {
             String apellido_1 = request.getParameter("apellido_1");
             String apellido_2 = request.getParameter("apellido_2");
             int telefono = Integer.parseInt(request.getParameter("telefono"));
-            String direccion = request.getParameter("direccion");
-            
-            
+            String direccion = request.getParameter("direccion");              
 
             // Crear un nuevo usuario y colaborador
             Usuario usuario = new Usuario();
             usuario.setId_usuario(idUsuario);
 
             Colaborador colaborador = new Colaborador(num_documento, nombre, apellido_1, apellido_2, telefono, direccion, usuario);
-            
+       
+        
             // Obtener datos desde el formulario usuario
-            usuario.setEstado(Integer.parseInt(request.getParameter("estado_cargoUsuario")) == 1);
+             usuario.setEstado(Integer.parseInt(request.getParameter("estado_cargoUsuario")) == 1);
             
+            // Obtener datos desde el formulario usuario ***
+            int idCargo = Integer.parseInt(request.getParameter("cargo_Usuario"));
+            Cargo cargo = colaboradorDAO.obtenerCargoPorId(idCargo);
+            usuario.setCargo(cargo);
+                                           
             // Llamar al método de modificación en DAO
             boolean exito = colaboradorDAO.modificarEmpleado(usuario, colaborador);
 
@@ -229,6 +236,50 @@ public class SvColaborador extends HttpServlet {
             request.getRequestDispatcher("/WEB-INF/error.jsp").forward(request, response);
         }
     }
+                     
+            
+    
+    /*
+            
+            
+         // Obtener datos desde el formulario usuario
+        String modificarEstadoCargo = request.getParameter("modificar_estado_cargo");
+        if ("si".equals(modificarEstadoCargo)) {
+            usuario.setEstado(Integer.parseInt(request.getParameter("estado_cargoUsuario")) == 1);
+        } else {
+            usuario.setEstado(Integer.parseInt(request.getParameter("estado_actual")) == 1);
+        }
+
+        // Obtener datos desde el formulario usuario ***
+        String modificarCargoActual = request.getParameter("modificar_cargo_actual");
+        if ("si".equals(modificarCargoActual)) {
+            int idCargo = Integer.parseInt(request.getParameter("cargo_Usuario"));
+            Cargo cargo = colaboradorDAO.obtenerCargoPorId(idCargo);
+            usuario.setCargo(cargo);
+        } else {
+            int idCargo = Integer.parseInt(request.getParameter("cargo_actual"));
+            Cargo cargo = colaboradorDAO.obtenerCargoPorId(idCargo);
+            usuario.setCargo(cargo);
+        }
+
+        // Llamar al método de modificación en DAO
+        boolean exito = colaboradorDAO.modificarEmpleado(usuario, colaborador);
+
+        if (exito) {
+            response.sendRedirect("SvColaborador?accion=Ver_Empleado&id=" + idUsuario);
+        } else {
+            request.getRequestDispatcher("/WEB-INF/error.jsp").forward(request, response);
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();  // Imprimir el stack trace para más detalles del error
+        request.getRequestDispatcher("/WEB-INF/error.jsp").forward(request, response);
+    }
+}
+    */
+    
+    
+   
 //------------------------------------------------------------------------------------//
      
     // request.getRequestDispatcher("vistaAdmin/actualizar.jsp").forward(request, response);

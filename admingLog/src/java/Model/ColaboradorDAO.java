@@ -70,6 +70,7 @@ public class ColaboradorDAO {
 
         return lista;
     }
+
     //-------------------------------------------------------------------------------------//
 //------------------------------ OBTENER LISTA CARGO -----------------------------------------//   
     public List<Cargo> listarCargos() {
@@ -92,6 +93,7 @@ public class ColaboradorDAO {
     }
 //-------------------------------------------------------------------------------------//
 //------------------------------ OBTENER CARGO POR id -----------------------------------------//   
+
     public Cargo obtenerCargoPorId(int idCargo) {
         PreparedStatement ps;
         ResultSet rs;
@@ -156,7 +158,7 @@ public class ColaboradorDAO {
 
         try {
             // Insertar usuario
-            psUsuario = conexion.prepareStatement("INSERT INTO usuario(nombre, "
+            psUsuario = conexion.prepareStatement("INSERT INTO usuario(nombreUsuario, "
                     + "clave, estado, id_cargo) VALUES (?, ?, ?, ?)",
                     PreparedStatement.RETURN_GENERATED_KEYS);
 
@@ -263,7 +265,7 @@ public class ColaboradorDAO {
 
                 usuario.setCargo(cargo);
 
-                // Crear el colaborador
+           
                 colaborador = new Colaborador(num_documento, nombre, apellido_1, apellido_2, telefono, direccion, usuario);
             }
         } catch (SQLException ex) {
@@ -307,13 +309,16 @@ public class ColaboradorDAO {
 
 //-------------------------------------------------------------------------------------//
 //------------------------------ ACTUALIZAR -----------------------------------------//   
-    public boolean modificarEmpleado(Usuario usuario, Colaborador colaborador) {
+    // Método para actualizar los datos del empleado
+    public boolean actualizarEmpleado(Colaborador colaborador) {
         PreparedStatement psEmpleado = null;
-        PreparedStatement psActUsuario = null;
 
         try {
-            // Actualizar empleado
-            psEmpleado = conexion.prepareStatement("UPDATE empleado SET num_documento=?, nombre=?, apellido_1=?, apellido_2=?, telefono=?, direccion=? WHERE id_usuario=?");
+            String sql = "UPDATE empleado SET num_documento=?, nombre=?, "
+                    + "apellido_1=?, apellido_2=?, telefono=?, direccion=? "
+                    + "WHERE id_usuario=?";
+
+            psEmpleado = conexion.prepareStatement(sql);
             psEmpleado.setInt(1, colaborador.getNum_documento());
             psEmpleado.setString(2, colaborador.getNombre());
             psEmpleado.setString(3, colaborador.getApellido_1());
@@ -321,15 +326,9 @@ public class ColaboradorDAO {
             psEmpleado.setInt(5, colaborador.getTelefono());
             psEmpleado.setString(6, colaborador.getDireccion());
             psEmpleado.setInt(7, colaborador.getUsuario().getId_usuario());
-            int filasAfectadasEmpleado = psEmpleado.executeUpdate();
 
-            // Actualizar usuario
-            psActUsuario = conexion.prepareStatement("UPDATE usuario SET estado = ? WHERE id_usuario = ?");
-            psActUsuario.setBoolean(1, usuario.isEstado());
-            psActUsuario.setInt(2, colaborador.getUsuario().getId_usuario());
-            int filasAfectadasUsuario = psActUsuario.executeUpdate();
-
-            return filasAfectadasEmpleado > 0 && filasAfectadasUsuario > 0;
+            int filasAfectadas = psEmpleado.executeUpdate();
+            return filasAfectadas > 0;
         } catch (SQLException e) {
             e.printStackTrace();  // Imprimir el stack trace para más detalles del error
             return false;
@@ -343,5 +342,71 @@ public class ColaboradorDAO {
             }
         }
     }
+
+    // Método para actualizar el estado del usuario
+    public boolean actualizarUsuario(Usuario usuario) {
+        PreparedStatement psActUsuario = null;
+
+        try {
+            String sql = "UPDATE usuario SET estado = ?"
+                    + " WHERE id_usuario = ?";
+
+            psActUsuario = conexion.prepareStatement(sql);
+            psActUsuario.setBoolean(1, usuario.isEstado());
+            psActUsuario.setInt(2, usuario.getId_usuario());
+
+            int filasAfectadas = psActUsuario.executeUpdate();
+            return filasAfectadas > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();  // Imprimir el stack trace para más detalles del error
+            return false;
+        } finally {
+            try {
+                if (psActUsuario != null) {
+                    psActUsuario.close();
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();  // Imprimir el stack trace para más detalles del error
+            }
+        }
+    }
+
+    // Método para actualizar el cargo del usuario
+    public boolean actualizarCargo(Usuario usuario) {
+        PreparedStatement psActualizarCargo = null;
+
+        try {
+            String sql = "UPDATE usuario SET id_cargo = ? WHERE id_usuario = ?";
+
+            psActualizarCargo = conexion.prepareStatement(sql);
+            psActualizarCargo.setInt(1, usuario.getCargo().getIdCargo()); // Asignar el nuevo id_cargo
+            psActualizarCargo.setInt(2, usuario.getId_usuario());
+
+            int filasAfectadas = psActualizarCargo.executeUpdate();
+            return filasAfectadas > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();  // Imprimir el stack trace para más detalles del error
+            return false;
+        } finally {
+            try {
+                if (psActualizarCargo != null) {
+                    psActualizarCargo.close();
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();  // Imprimir el stack trace para más detalles del error
+            }
+        }
+    }
+
+    // Método para modificar empleado y usuario
+    public boolean modificarEmpleado(Usuario usuario, Colaborador colaborador) {
+        boolean empleadoActualizado = actualizarEmpleado(colaborador);
+        boolean usuarioActualizado = actualizarUsuario(usuario);
+        boolean cargoActualizado = actualizarCargo(usuario);
+
+        return empleadoActualizado && usuarioActualizado && cargoActualizado;
+    }
+
 //-------------------------------------------------------------------------------------//
+   
 }

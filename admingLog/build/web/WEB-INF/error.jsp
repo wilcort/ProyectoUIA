@@ -14,6 +14,6 @@
     <body>
         <h1>Ocurrió un error</h1>
         <p>${error}</p>
-        <a href="vistaAdmin/indexAdmin.jsp">Volver a la página principal</a>
+        <a href="/admingLog/SvColaborador">Volver a la página principal</a>
     </body>
 </html>
