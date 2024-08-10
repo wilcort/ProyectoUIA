@@ -95,27 +95,36 @@ public class ColaboradorDAO {
 //------------------------------ OBTENER CARGO POR id -----------------------------------------//   
 
     public Cargo obtenerCargoPorId(int idCargo) {
-        PreparedStatement ps;
-        ResultSet rs;
         Cargo cargo = null;
-
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
         try {
-            ps = conexion.prepareStatement("SELECT * FROM cargo WHERE id_cargo = ?");
+            ps = conexion.prepareStatement("SELECT * FROM cargo WHERE id_Cargo = ?");
             ps.setInt(1, idCargo);
             rs = ps.executeQuery();
-
             if (rs.next()) {
-                int id_Cargo = rs.getInt("id_cargo");
-                String nombre_cargo = rs.getString("nombre_cargo");
-                boolean estado = rs.getBoolean("estado");
-
-                cargo = new Cargo(id_Cargo, nombre_cargo, estado);
+                cargo = new Cargo();
+                cargo.setIdCargo(rs.getInt("id_Cargo"));
+                cargo.setNombreCargo(rs.getString("nombre_Cargo"));
             }
-
         } catch (SQLException e) {
-            System.out.println("Error al obtener el cargo por ID: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
-
         return cargo;
     }
 
@@ -287,6 +296,92 @@ public class ColaboradorDAO {
     }
 
 //-------------------------------------------------------------------------------------//
+    
+    public Colaborador mostrarDatosEmpleado(int idUsuario) {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        Colaborador colaborador = null;
+
+        try {
+            ps = conexion.prepareStatement("SELECT * FROM empleado WHERE id_usuario = ?");
+            ps.setInt(1, idUsuario);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                // Obtener los datos del colaborador
+                int num_documento = rs.getInt("num_documento");
+                String nombre = rs.getString("nombre");
+                String apellido_1 = rs.getString("apellido_1");
+                String apellido_2 = rs.getString("apellido_2");
+                int telefono = rs.getInt("telefono");
+                String direccion = rs.getString("direccion");
+                int id_usuario = rs.getInt("id_usuario");
+
+                colaborador = new Colaborador(num_documento, nombre, apellido_1, apellido_2, telefono, direccion, null);
+            }
+        } catch (Exception e) {
+            e.printStackTrace(); // Agregar manejo de errores
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace(); // Agregar manejo de errores
+            }
+        }
+
+        return colaborador;
+    }
+ //----------------------------------------------------------------------------
+    
+    public Usuario mostrarDatosUsuario(int idUsuario) {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        Usuario usuario = null; // Definir la variable aquí
+
+        try {
+            ps = conexion.prepareStatement("SELECT * FROM usuario WHERE id_usuario = ?");
+            ps.setInt(1, idUsuario);
+            rs = ps.executeQuery();
+
+            if (rs.next()) { // Usar if si esperas un solo registro
+                // Obtener los datos del usuario
+                int id_usuario = rs.getInt("id_usuario");
+                String nombreUsuario = rs.getString("nombreUsuario");
+                String clave = rs.getString("clave");
+                boolean estado = rs.getBoolean("estado");
+                int id_cargo = rs.getInt("id_cargo");
+
+                // Crear y configurar el objeto Usuario
+                usuario = new Usuario();
+                usuario.setId_usuario(id_usuario);
+                usuario.setNombreUsuario(nombreUsuario);
+                usuario.setClave(clave); // Asegúrate de tener un setter para 'clave'
+                usuario.setEstado(estado);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Registrar el error
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace(); // Registrar el error
+            }
+        }
+
+        return usuario; // Ahora esta variable está accesible aquí
+    }
+    
+    
 //------------------------------ ELIMINAR -----------------------------------------//  
     public boolean eliminarEmpleado(int id_usuario) {
         PreparedStatement ps;
@@ -376,12 +471,20 @@ public class ColaboradorDAO {
         PreparedStatement psActualizarCargo = null;
 
         try {
+            
+             if (usuario.getCargo() == null) {
+                System.out.println("El cargo del usuario es nulo. No se puede actualizar.");
+                return false;
+            }
+             
             String sql = "UPDATE usuario SET id_cargo = ? WHERE id_usuario = ?";
 
             psActualizarCargo = conexion.prepareStatement(sql);
             psActualizarCargo.setInt(1, usuario.getCargo().getIdCargo()); // Asignar el nuevo id_cargo
             psActualizarCargo.setInt(2, usuario.getId_usuario());
-
+            
+            System.out.println(" cargo update " + usuario.getCargo());
+            
             int filasAfectadas = psActualizarCargo.executeUpdate();
             return filasAfectadas > 0;
         } catch (SQLException e) {
@@ -404,7 +507,7 @@ public class ColaboradorDAO {
         boolean usuarioActualizado = actualizarUsuario(usuario);
         boolean cargoActualizado = actualizarCargo(usuario);
 
-        return empleadoActualizado && usuarioActualizado && cargoActualizado;
+         return empleadoActualizado && usuarioActualizado && cargoActualizado;
     }
 
 //-------------------------------------------------------------------------------------//

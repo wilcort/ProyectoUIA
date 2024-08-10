@@ -43,4 +43,6 @@ public class Cargo {
     public void setEstado(boolean estado) {
         this.estado = estado;
     }
+    
+    
 }

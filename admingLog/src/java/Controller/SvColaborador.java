@@ -129,6 +129,7 @@ public class SvColaborador extends HttpServlet {
         int idUsuario = Integer.parseInt(request.getParameter("id"));
         
         Colaborador colaborador = colaboradorDAO.mostrarEmpleado(idUsuario);
+        
        /* Usuario usuario = colaboradorDAO.mostrarUsuario(idUsuario);*/
           
          if (colaborador != null ){
@@ -173,12 +174,12 @@ public class SvColaborador extends HttpServlet {
         
         int idUsuario = Integer.parseInt(request.getParameter("id"));
 
-        Colaborador colaborador = colaboradorDAO.mostrarEmpleado(idUsuario);
+       Colaborador colaborador = colaboradorDAO.mostrarEmpleado(idUsuario);             
         /* Usuario usuario = colaboradorDAO.mostrarUsuario(idUsuario);*/
         
          List<Cargo> listaCargos = colaboradorDAO.listarCargos(); // Obtener lista de cargos
        
-                 
+              System.out.println("cargo " + colaborador.getUsuario().getCargo());   
         if (colaborador != null) {
             // Si se encuentra el colaborador, establecerlo como atributo de solicitud
             request.setAttribute("colaborador", colaborador);
@@ -193,8 +194,7 @@ public class SvColaborador extends HttpServlet {
  //-------------------------------------------------------------------------------------//
 //------------------------------ VER ACTUALIZA -----------------------------------------//    
 //-------------------------------------------------------------------------------------//   
-
-    private void actualizar_Empleado(HttpServletRequest request, HttpServletResponse response)
+private void actualizar_Empleado(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
             int idUsuario = Integer.parseInt(request.getParameter("id"));
@@ -205,44 +205,26 @@ public class SvColaborador extends HttpServlet {
             String apellido_1 = request.getParameter("apellido_1");
             String apellido_2 = request.getParameter("apellido_2");
             int telefono = Integer.parseInt(request.getParameter("telefono"));
-            String direccion = request.getParameter("direccion");              
+            String direccion = request.getParameter("direccion");
 
             // Crear un nuevo usuario y colaborador
             Usuario usuario = new Usuario();
             usuario.setId_usuario(idUsuario);
 
             Colaborador colaborador = new Colaborador(num_documento, nombre, apellido_1, apellido_2, telefono, direccion, usuario);
-       
-        
-            // Obtener datos desde el formulario usuario
-             usuario.setEstado(Integer.parseInt(request.getParameter("estado_cargoUsuario")) == 1);
-            
-            // Obtener datos desde el formulario usuario ***
-            int idCargo = Integer.parseInt(request.getParameter("cargo_Usuario"));
-            Cargo cargo = colaboradorDAO.obtenerCargoPorId(idCargo);
-            usuario.setCargo(cargo);
-                                           
-            // Llamar al método de modificación en DAO
-            boolean exito = colaboradorDAO.modificarEmpleado(usuario, colaborador);
 
-            if (exito) {
-                response.sendRedirect("SvColaborador?accion=Ver_Empleado&id=" + idUsuario);
+            // Manejo del estado del usuario
+            boolean modificarEstado = "si".equals(request.getParameter("modificar_estado_usuario"));
+            if (modificarEstado) {
+                int estadoCargo = Integer.parseInt(request.getParameter("estado_Usuario"));
+                usuario.setEstado(estadoCargo == 1);
             } else {
-                request.getRequestDispatcher("/WEB-INF/error.jsp").forward(request, response);
+                // Utilizar el valor del input hidden
+                boolean estadoAnterior = "1".equals(request.getParameter("estado_actual"));
+                usuario.setEstado(estadoAnterior);
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();  // Imprimir el stack trace para más detalles del error
-            request.getRequestDispatcher("/WEB-INF/error.jsp").forward(request, response);
-        }
-    }
-                     
-            
-    
-    /*
-            
-            
-         // Obtener datos desde el formulario usuario
+     
+              // Obtener datos desde el formulario usuario
         String modificarEstadoCargo = request.getParameter("modificar_estado_cargo");
         if ("si".equals(modificarEstadoCargo)) {
             usuario.setEstado(Integer.parseInt(request.getParameter("estado_cargoUsuario")) == 1);
@@ -261,25 +243,25 @@ public class SvColaborador extends HttpServlet {
             Cargo cargo = colaboradorDAO.obtenerCargoPorId(idCargo);
             usuario.setCargo(cargo);
         }
+        
+            System.out.println("estado usuario " + colaborador.getUsuario().isEstado());
+            System.out.println("cargo " + colaborador.getUsuario().getCargo());
+            // Llamar al método de modificación en DAO
+            boolean exito = colaboradorDAO.modificarEmpleado(usuario, colaborador);
 
-        // Llamar al método de modificación en DAO
-        boolean exito = colaboradorDAO.modificarEmpleado(usuario, colaborador);
+            if (exito) {
+                response.sendRedirect("SvColaborador?accion=Ver_Empleado&id=" + idUsuario);
+            } else {
+                request.getRequestDispatcher("/WEB-INF/error.jsp").forward(request, response);
+            }
 
-        if (exito) {
-            response.sendRedirect("SvColaborador?accion=Ver_Empleado&id=" + idUsuario);
-        } else {
+        } catch (Exception e) {
+   
+         e.printStackTrace();
             request.getRequestDispatcher("/WEB-INF/error.jsp").forward(request, response);
         }
-
-    } catch (Exception e) {
-        e.printStackTrace();  // Imprimir el stack trace para más detalles del error
-        request.getRequestDispatcher("/WEB-INF/error.jsp").forward(request, response);
     }
-}
-    */
-    
-    
-   
+
 //------------------------------------------------------------------------------------//
      
     // request.getRequestDispatcher("vistaAdmin/actualizar.jsp").forward(request, response);
