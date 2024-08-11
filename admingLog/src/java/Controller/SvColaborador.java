@@ -214,20 +214,11 @@ private void actualizar_Empleado(HttpServletRequest request, HttpServletResponse
             Colaborador colaborador = new Colaborador(num_documento, nombre, apellido_1, apellido_2, telefono, direccion, usuario);
 
             // Manejo del estado del usuario
-            boolean modificarEstado = "si".equals(request.getParameter("modificar_estado_usuario"));
-            if (modificarEstado) {
-                int estadoCargo = Integer.parseInt(request.getParameter("estado_Usuario"));
-                usuario.setEstado(estadoCargo == 1);
-            } else {
-                // Utilizar el valor del input hidden
-                boolean estadoAnterior = "1".equals(request.getParameter("estado_actual"));
-                usuario.setEstado(estadoAnterior);
-            }
-     
+         
               // Obtener datos desde el formulario usuario
-        String modificarEstadoCargo = request.getParameter("modificar_estado_cargo");
+        String modificarEstadoCargo = request.getParameter("modificar_estado_usuario");
         if ("si".equals(modificarEstadoCargo)) {
-            usuario.setEstado(Integer.parseInt(request.getParameter("estado_cargoUsuario")) == 1);
+            usuario.setEstado(Integer.parseInt(request.getParameter("estado_usuario")) == 1);
         } else {
             usuario.setEstado(Integer.parseInt(request.getParameter("estado_actual")) == 1);
         }
@@ -235,7 +226,7 @@ private void actualizar_Empleado(HttpServletRequest request, HttpServletResponse
         // Obtener datos desde el formulario usuario ***
         String modificarCargoActual = request.getParameter("modificar_cargo_actual");
         if ("si".equals(modificarCargoActual)) {
-            int idCargo = Integer.parseInt(request.getParameter("cargo_Usuario"));
+            int idCargo = Integer.parseInt(request.getParameter("cargo_usuario"));
             Cargo cargo = colaboradorDAO.obtenerCargoPorId(idCargo);
             usuario.setCargo(cargo);
         } else {
@@ -246,6 +237,7 @@ private void actualizar_Empleado(HttpServletRequest request, HttpServletResponse
         
             System.out.println("estado usuario " + colaborador.getUsuario().isEstado());
             System.out.println("cargo " + colaborador.getUsuario().getCargo());
+            
             // Llamar al método de modificación en DAO
             boolean exito = colaboradorDAO.modificarEmpleado(usuario, colaborador);
 
@@ -261,7 +253,6 @@ private void actualizar_Empleado(HttpServletRequest request, HttpServletResponse
             request.getRequestDispatcher("/WEB-INF/error.jsp").forward(request, response);
         }
     }
-
 //------------------------------------------------------------------------------------//
      
     // request.getRequestDispatcher("vistaAdmin/actualizar.jsp").forward(request, response);

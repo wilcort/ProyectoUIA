@@ -240,7 +240,7 @@ public class ColaboradorDAO {
             ps = conexion.prepareStatement("SELECT e.num_documento, e.nombre, e.apellido_1, "
                     + "e.apellido_2, e.telefono, e.direccion,\n"
                     + "u.id_usuario, u.nombreUsuario, u.estado,\n"
-                    + "c.nombre_cargo FROM empleado as e\n"
+                    + "c.nombre_cargo, c.id_cargo FROM empleado as e\n"
                     + "INNER JOIN usuario as u ON e.id_usuario = u.id_usuario\n"
                     + "INNER JOIN cargo as c ON u.id_cargo = c.id_cargo\n"
                     + "WHERE e.id_usuario = ?");
@@ -261,7 +261,8 @@ public class ColaboradorDAO {
                 String nombreUsuario = rs.getString("u.nombreUsuario"); ///***
                 boolean estado = rs.getBoolean("estado");
                 String nombre_cargo = rs.getString("nombre_cargo"); // Obtener el nombre del cargo
-
+                int id_cargo = rs.getInt("id_cargo");
+                
                 // Obtener el usuario
                 Usuario usuario = new Usuario();
                 usuario.setId_usuario(id_usuario);
@@ -271,7 +272,7 @@ public class ColaboradorDAO {
                 // Obtener el cargo
                 Cargo cargo = new Cargo();
                 cargo.setNombreCargo(nombre_cargo);
-
+                cargo.setIdCargo(id_cargo);
                 usuario.setCargo(cargo);
 
            
@@ -476,15 +477,14 @@ public class ColaboradorDAO {
                 System.out.println("El cargo del usuario es nulo. No se puede actualizar.");
                 return false;
             }
-             
+                        
             String sql = "UPDATE usuario SET id_cargo = ? WHERE id_usuario = ?";
 
             psActualizarCargo = conexion.prepareStatement(sql);
+            
             psActualizarCargo.setInt(1, usuario.getCargo().getIdCargo()); // Asignar el nuevo id_cargo
             psActualizarCargo.setInt(2, usuario.getId_usuario());
-            
-            System.out.println(" cargo update " + usuario.getCargo());
-            
+                      
             int filasAfectadas = psActualizarCargo.executeUpdate();
             return filasAfectadas > 0;
         } catch (SQLException e) {

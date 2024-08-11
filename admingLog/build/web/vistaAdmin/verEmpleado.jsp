@@ -69,9 +69,11 @@
         <table>
             <tr>         
                 <th>Nombre de Cargo</th>
+                <th>Id del Cargo</th>
             </tr>
             <tr>
                 <td>${colaborador.usuario.cargo.nombreCargo}</td>
+                <td>${colaborador.usuario.cargo.idCargo}</td>
             </tr>
         </table>
         <!-- Botones -->

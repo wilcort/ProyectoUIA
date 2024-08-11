@@ -28,11 +28,11 @@
         }
 
         document.addEventListener('DOMContentLoaded', (event) => {
-            document.getElementById('modificar_estado_cargo').addEventListener('change', () => {
-                toggleModification('modificar_estado_cargo', 'estado_cargoUsuario');
+            document.getElementById('modificar_estado_usuario').addEventListener('change', () => {
+                toggleModification('modificar_estado_usuario', 'estado_usuario');
             });
             document.getElementById('modificar_cargo_actual').addEventListener('change', () => {
-                toggleModification('modificar_cargo_actual', 'cargo_Usuario');
+                toggleModification('modificar_cargo_actual', 'cargo_usuario');
             });
         });
     </script>
@@ -77,7 +77,7 @@
             <tr>
                 <th>Modificar Estado Cargo</th>
                 <td>
-                    <select id="modificar_estado_cargo" name="modificar_estado_cargo">
+                    <select id="modificar_estado_usuario" name="modificar_estado_usuario">
                         <option value="" disabled selected>Seleccione</option>
                         <option value="si">Sí</option>
                         <option value="no">No</option>
@@ -87,7 +87,7 @@
             <tr>
                 <th>Estado Cargo:</th>
                 <td>
-                    <select id="estado_cargoUsuario" name="estado_cargoUsuario" disabled>
+                    <select id="estado_usuario" name="estado_usuario" disabled>
                         <option value="" disabled selected>Escoja opción</option>
                         <option value="1">Activo</option>
                         <option value="0">Desactivado</option>
@@ -97,6 +97,7 @@
             <tr>
                 <th>Cargo Actual</th>
                 <td>${colaborador.usuario.cargo.nombreCargo}</td>
+                <td>${colaborador.usuario.cargo.idCargo}</td>
             </tr>
             <tr>
                 <th>Modificar Cargo Actual</th>
@@ -111,7 +112,7 @@
             <tr>
                 <th>Cargo:</th>
                 <td>
-                    <select id="cargo_Usuario" name="cargo_Usuario" disabled>
+                    <select id="cargo_usuario" name="cargo_usuario" disabled>
                         <option value="" disabled selected>Escoja opción</option>
                         <c:forEach var="cargo" items="${cargos}">
                             <option value="${cargo.idCargo}">${cargo.nombreCargo}</option>
@@ -124,7 +125,7 @@
         <button id="guardar" type="submit">Guardar</button>
     </form>
 
-    <form action="http://localhost:8080/admingLog/SvColaborador" style="display: inline; margin-left: 10px;">
+    <form action="/vistasLog/administrador.jsp" style="display: inline; margin-left: 10px;">
         <button type="submit">Regresar</button>
     </form>
 </body>
