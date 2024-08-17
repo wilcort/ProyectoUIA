@@ -16,7 +16,7 @@
         <table border="1" width="100%">
             <thead>
                 <tr>
-                    <th>Num. Documento</th>
+                    <th>Num. Documentos</th>
                     <th>Nombre</th>
                     <th>Primer Apellido</th>
                     <th>Segundo Apellido</th>
@@ -42,5 +42,8 @@
                 </c:forEach>
             </tbody>
         </table>
+        <form action="vistasLog/administrador.jsp" style="display: inline; margin-left: 10px;">
+            <button type="submit">Regresar</button>
+        </form>
     </body>
 </html>

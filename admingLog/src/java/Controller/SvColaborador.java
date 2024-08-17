@@ -271,5 +271,3 @@ private void actualizar_Empleado(HttpServletRequest request, HttpServletResponse
         return "Short description";
     }
 }
-
-// actualizacion
