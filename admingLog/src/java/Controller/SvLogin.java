@@ -66,12 +66,15 @@ public class SvLogin extends HttpServlet {
         Usuario usuario = obtenerUsuario(request);
         usuario = dao.identificar(usuario);
 
-        if (usuario != null && usuario.getCargo().getNombreCargo().equalsIgnoreCase("administrador")) {
+        
+        if (usuario != null && (usuario.getCargo().getNombreCargo().equalsIgnoreCase("administrador") || 
+    usuario.getCargo().getNombreCargo().equalsIgnoreCase("IT"))){
+        
             HttpSession sesion = request.getSession();
             sesion.setAttribute("usuario", usuario);
             response.sendRedirect("vistasLog/administrador.jsp");
             
-        } else if (usuario != null && usuario.getCargo().getNombreCargo().equalsIgnoreCase("vendedor")) {
+        } else if (usuario != null) {
             HttpSession sesion = request.getSession();
             sesion.setAttribute("usuario", usuario);
             response.sendRedirect("vistasLog/vendedor.jsp");

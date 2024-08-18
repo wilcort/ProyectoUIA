@@ -194,7 +194,9 @@ public class SvColaborador extends HttpServlet {
  //-------------------------------------------------------------------------------------//
 //------------------------------ VER ACTUALIZA -----------------------------------------//    
 //-------------------------------------------------------------------------------------//   
-private void actualizar_Empleado(HttpServletRequest request, HttpServletResponse response)
+    
+    // -- bbb -- // 
+    private void actualizar_Empleado(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
             int idUsuario = Integer.parseInt(request.getParameter("id"));

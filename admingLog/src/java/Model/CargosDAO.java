@@ -214,8 +214,38 @@ public class CargosDAO {
                 System.out.println("Error al cerrar PreparedStatements: " + ex.getMessage());
             }
         }
-    }    
-    
+    }
+     
+     
+    public boolean actualizarCargo(int idCargo) {
+        PreparedStatement ps = null;
+        
+        Cargo cargo = new Cargo();
+        
+        try {
+            //  se actualiza la tabla cargo usando id_cargo
+            ps = conexion.prepareStatement("UPDATE cargo SET estado = ? WHERE id_cargo = ?");
+
+          
+            ps.setBoolean(1, cargo.isEstado());
+            ps.setInt(2, idCargo);
+
+            int filasAfectadas = ps.executeUpdate();
+            return filasAfectadas > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();  // Imprimir el stack trace para más detalles del error
+            return false;
+        } finally {
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();  // Imprimir el stack trace para más detalles del error
+            }
+        }
+    }
  //--------------------------------------------------------------------------------   
 }
 
