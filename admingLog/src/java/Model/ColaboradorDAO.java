@@ -232,68 +232,67 @@ public class ColaboradorDAO {
     //-------------------------------------------------------------------------------------//
 //------------------------------ MOSTRAR -----------------------------------------//   
     public Colaborador mostrarEmpleado(int idUsuario) {
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        Colaborador colaborador = null;
+    PreparedStatement ps = null;
+    ResultSet rs = null;
+    Colaborador colaborador = null;
 
+    try {
+        ps = conexion.prepareStatement("SELECT e.num_documento, e.nombre, e.apellido_1, "
+                + "e.apellido_2, e.telefono, e.direccion, u.id_usuario, u.nombreUsuario, u.estado, "
+                + "c.nombre_cargo, c.id_cargo AS idCargo "
+                + "FROM empleado AS e "
+                + "INNER JOIN usuario AS u ON e.id_usuario = u.id_usuario "
+                + "INNER JOIN cargo AS c ON u.id_cargo = c.id_cargo "
+                + "WHERE e.id_usuario = ?");
+
+        ps.setInt(1, idUsuario);
+        rs = ps.executeQuery();
+
+        if (rs.next()) {
+            // Obtener los datos del colaborador
+            int num_documento = rs.getInt("num_documento");
+            String nombre = rs.getString("nombre");
+            String apellido_1 = rs.getString("apellido_1");
+            String apellido_2 = rs.getString("apellido_2");
+            int telefono = rs.getInt("telefono");
+            String direccion = rs.getString("direccion");
+            int id_usuario = rs.getInt("id_usuario");
+            String nombreUsuario = rs.getString("nombreUsuario");
+            boolean estado = rs.getBoolean("estado");
+            String nombre_cargo = rs.getString("nombre_cargo"); // Obtener el nombre del cargo
+            int idCargo = rs.getInt("idCargo"); // Obtener el id del cargo
+
+            // Obtener el usuario
+            Usuario usuario = new Usuario();
+            usuario.setId_usuario(id_usuario);
+            usuario.setNombreUsuario(nombreUsuario);
+            usuario.setEstado(estado);
+
+            // Obtener el cargo
+            Cargo cargo = new Cargo();
+            cargo.setNombreCargo(nombre_cargo);
+            cargo.setIdCargo(idCargo);
+            usuario.setCargo(cargo);
+
+            colaborador = new Colaborador(num_documento, nombre, apellido_1, apellido_2, telefono, direccion, usuario);
+        }
+    } catch (SQLException ex) {
+        Logger.getLogger(ColaboradorDAO.class.getName()).log(Level.SEVERE, null, ex);
+    } finally {
+        // Cerrar PreparedStatement y ResultSet
         try {
-            ps = conexion.prepareStatement("SELECT e.num_documento, e.nombre, e.apellido_1, "
-                    + "e.apellido_2, e.telefono, e.direccion,\n"
-                    + "u.id_usuario, u.nombreUsuario, u.estado,\n"
-                    + "c.nombre_cargo FROM empleado as e\n"
-                    + "INNER JOIN usuario as u ON e.id_usuario = u.id_usuario\n"
-                    + "INNER JOIN cargo as c ON u.id_cargo = c.id_cargo\n"
-                    + "WHERE e.id_usuario = ?");
-
-            ps.setInt(1, idUsuario);
-            rs = ps.executeQuery();
-
-            while (rs.next()) {
-
-                // Obtener los datos del colaborador
-                int num_documento = rs.getInt("num_documento");
-                String nombre = rs.getString("nombre");
-                String apellido_1 = rs.getString("apellido_1");
-                String apellido_2 = rs.getString("apellido_2");
-                int telefono = rs.getInt("telefono");
-                String direccion = rs.getString("direccion");
-                int id_usuario = rs.getInt("id_usuario");
-                String nombreUsuario = rs.getString("u.nombreUsuario"); ///***
-                boolean estado = rs.getBoolean("estado");
-                String nombre_cargo = rs.getString("nombre_cargo"); // Obtener el nombre del cargo
-
-                // Obtener el usuario
-                Usuario usuario = new Usuario();
-                usuario.setId_usuario(id_usuario);
-                usuario.setNombreUsuario(nombreUsuario); //******
-                usuario.setEstado(estado);
-
-                // Obtener el cargo
-                Cargo cargo = new Cargo();
-                cargo.setNombreCargo(nombre_cargo);
-
-                usuario.setCargo(cargo);
-
-           
-                colaborador = new Colaborador(num_documento, nombre, apellido_1, apellido_2, telefono, direccion, usuario);
+            if (rs != null) {
+                rs.close();
+            }
+            if (ps != null) {
+                ps.close();
             }
         } catch (SQLException ex) {
             Logger.getLogger(ColaboradorDAO.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            // Cerrar PreparedStatement y ResultSet
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (ps != null) {
-                    ps.close();
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(ColaboradorDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
         }
-        return colaborador;
     }
+    return colaborador;
+}
 
 //-------------------------------------------------------------------------------------//
     

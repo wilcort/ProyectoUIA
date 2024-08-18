@@ -44,5 +44,13 @@ public class Cargo {
         this.estado = estado;
     }
     
-    
+    // Sobrescribir el método toString()
+    @Override
+    public String toString() {
+        return "Cargo{" +
+                "idCargo=" + idCargo +
+                ", nombreCargo='" + nombreCargo + '\'' +
+                ", estado=" + estado +
+                '}';
+    }
 }

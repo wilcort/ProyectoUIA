@@ -3,13 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/src/java/Controller/SvCargo.java</file>
+            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/web/vistaAdmin/modificar.jsp</file>
             <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/src/java/Controller/SvColaborador.java</file>
-            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/web/vistaCargos/verCargo.jsp</file>
             <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/src/java/Model/ColaboradorDAO.java</file>
-            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/web/vistaCargos/indexCargo.jsp</file>
+            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/src/java/Model/Cargo.java</file>
             <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/web/vistaAdmin/verEmpleado.jsp</file>
-            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/src/java/Model/CargosDAO.java</file>
         </group>
     </open-files>
 </project-private>

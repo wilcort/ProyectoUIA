@@ -1,4 +1,4 @@
-<!-- p -->
+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -29,8 +29,8 @@
         }
 
         document.addEventListener('DOMContentLoaded', (event) => {
-            document.getElementById('modificar_estado_cargo').addEventListener('change', () => {
-                toggleModification('modificar_estado_cargo', 'estado_cargoUsuario');
+            document.getElementById('modificar_estado_usuario').addEventListener('change', () => {
+                toggleModification('modificar_estado_usuario', 'estado_usuario');
             });
             document.getElementById('modificar_cargo_actual').addEventListener('change', () => {
                 toggleModification('modificar_cargo_actual', 'cargo_Usuario');
@@ -76,9 +76,9 @@
                 <td><input type="text" name="estado" value="${colaborador.usuario.estado ? 'activo' : 'inactivo'}" required></td>
             </tr>
             <tr>
-                <th>Modificar Estado Cargo</th>
+                <th>Modificar Estado Usuario</th>
                 <td>
-                    <select id="modificar_estado_cargo" name="modificar_estado_cargo">
+                    <select id="modificar_estado_usuario" name="modificar_estado_usuario">
                         <option value="" disabled selected>Seleccione</option>
                         <option value="si">Sí</option>
                         <option value="no">No</option>
@@ -88,7 +88,7 @@
             <tr>
                 <th>Estado Cargo:</th>
                 <td>
-                    <select id="estado_cargoUsuario" name="estado_cargoUsuario" disabled>
+                    <select id="estado_usuario" name="estado_usuario" disabled>
                         <option value="" disabled selected>Escoja opción</option>
                         <option value="1">Activo</option>
                         <option value="0">Desactivado</option>
