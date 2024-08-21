@@ -148,46 +148,7 @@ public class CargosDAO {
     }
      
  //------------------------------------------------------------------------------
-     public boolean modificar_Cargos(Cargo cargo ) {
-
-        PreparedStatement ps = null;
-         
-        try {
-            // Llamar al procedimiento almacenado
-            String sql = ("UPDATE cargo SET id_cargo = ?, nombre_cargo = ?, estado = ? "
-                         + "WHERE id_cargo = ?");               
-            
-            ps.setInt(1,cargo.getIdCargo());
-            ps.setString(2, cargo.getNombreCargo());
-            ps.setBoolean(3, cargo.isEstado());
-            ps.setInt(4, cargo.getIdCargo());
-          
-            ps.execute();
-            
-            int filasAfectadasEmpleado = ps.executeUpdate();
-
-            if (filasAfectadasEmpleado == 1) {
-                return true;
-                
-            } else {
-                throw new SQLException("No se pudo insertar el colaborador");
-            }
-
-         } catch (SQLException e) {
-            System.out.println("Error al insertar colaboradores: " + e.getMessage());
-            return false;
-        } finally {
-            // Cerrar PreparedStatements
-            try {
-                if (ps != null) {
-                    ps.close();
-                }
-                
-            } catch (SQLException ex) {
-                System.out.println("Error al cerrar PreparedStatements: " + ex.getMessage());
-            }
-        }
-    }
+ 
 //------------------------------------------------------------------------------
      public boolean eliminar_Cargos(int idCargo ) {
 
@@ -217,5 +178,33 @@ public class CargosDAO {
     }    
     
  //--------------------------------------------------------------------------------   
+    public boolean modificar_Cargos(Cargo cargo) {
+        PreparedStatement ps = null;
+        try {
+            ps = conexion.prepareStatement("UPDATE cargo SET nombre_cargo = ?,"
+                               + " estado = ? WHERE id_cargo = ?");
+            ps.setString(1, cargo.getNombreCargo());
+            ps.setBoolean(2, cargo.isEstado());
+            ps.setInt(3, cargo.getIdCargo());
+
+            int filasAfectadas = ps.executeUpdate();
+
+            return filasAfectadas == 1;
+        } catch (SQLException e) {
+            System.out.println("Error al modificar cargo: " + e.getMessage());
+            return false;
+        } finally {
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (SQLException ex) {
+                System.out.println("Error al cerrar PreparedStatement: " + ex.getMessage());
+            }
+        }
+    }
+
+
+     
 }
 

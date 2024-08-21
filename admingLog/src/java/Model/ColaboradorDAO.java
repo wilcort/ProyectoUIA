@@ -505,9 +505,9 @@ public class ColaboradorDAO {
     public boolean modificarEmpleado(Usuario usuario, Colaborador colaborador) {
         boolean empleadoActualizado = actualizarEmpleado(colaborador);
         boolean usuarioActualizado = actualizarUsuario(usuario);
-        boolean cargoActualizado = actualizarCargo(usuario);
 
-         return empleadoActualizado && usuarioActualizado && cargoActualizado;
+
+         return empleadoActualizado && usuarioActualizado;
     }
 
 //-------------------------------------------------------------------------------------//

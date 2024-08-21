@@ -69,9 +69,11 @@
         <table>
             <tr>         
                 <th>Nombre de Cargo</th>
+                <th>Estado</th>
             </tr>
             <tr>
                 <td>${colaborador.usuario.cargo.nombreCargo}</td>
+                <td>${colaborador.usuario.cargo.estado ? 'activo' : 'inactivo'}</td>
             </tr>
         </table>
         <!-- Botones -->

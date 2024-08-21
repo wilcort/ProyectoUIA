@@ -232,18 +232,6 @@ private void actualizar_Empleado(HttpServletRequest request, HttpServletResponse
             usuario.setEstado(Integer.parseInt(request.getParameter("estado_actual")) == 1);
         }
 
-        // Obtener datos desde el formulario usuario ***
-        String modificarCargoActual = request.getParameter("modificar_cargo_actual");
-        if ("si".equals(modificarCargoActual)) {
-            int idCargo = Integer.parseInt(request.getParameter("cargo_Usuario"));
-            Cargo cargo = colaboradorDAO.obtenerCargoPorId(idCargo);
-            usuario.setCargo(cargo);
-        } else {
-            int idCargo = Integer.parseInt(request.getParameter("cargo_actual"));
-            Cargo cargo = colaboradorDAO.obtenerCargoPorId(idCargo);
-            usuario.setCargo(cargo);
-        }
-        
             System.out.println("estado usuario " + colaborador.getUsuario().isEstado());
             System.out.println("cargo " + colaborador.getUsuario().getCargo());
             // Llamar al método de modificación en DAO

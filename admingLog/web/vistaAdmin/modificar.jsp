@@ -31,9 +31,6 @@
             document.getElementById('modificar_estado_cargo').addEventListener('change', () => {
                 toggleModification('modificar_estado_cargo', 'estado_cargoUsuario');
             });
-            document.getElementById('modificar_cargo_actual').addEventListener('change', () => {
-                toggleModification('modificar_cargo_actual', 'cargo_Usuario');
-            });
         });
     </script>
 </head>
@@ -97,28 +94,7 @@
             <tr>
                 <th>Cargo Actual</th>
                 <td>${colaborador.usuario.cargo.nombreCargo}</td>
-            </tr>
-            <tr>
-                <th>Modificar Cargo Actual</th>
-                <td>
-                    <select id="modificar_cargo_actual" name="modificar_cargo_actual">
-                        <option value="" disabled selected>Seleccione</option>
-                        <option value="si">Sí</option>
-                        <option value="no">No</option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <th>Cargo:</th>
-                <td>
-                    <select id="cargo_Usuario" name="cargo_Usuario" disabled>
-                        <option value="" disabled selected>Escoja opción</option>
-                        <c:forEach var="cargo" items="${cargos}">
-                            <option value="${cargo.idCargo}">${cargo.nombreCargo}</option>
-                        </c:forEach>
-                    </select>
-                </td>
-            </tr>
+            </tr>          
         </table>
         <input type="hidden" name="accion" value="actualizar_Empleado">
         <button id="guardar" type="submit">Guardar</button>
