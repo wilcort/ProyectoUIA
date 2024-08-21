@@ -89,8 +89,6 @@
                 <input type="hidden" name="id" value="${colaborador.usuario.id_usuario}">
                 <button type="submit" name="actualizar" value="actualizar">Actualizar</button>
             </form>
-
-
             <form action="http://localhost:8080/admingLog/SvColaborador" style="display: inline; margin-left: 10px;">
                 <button type="submit">Regresar</button>
             </form>
