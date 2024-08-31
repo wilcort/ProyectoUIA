@@ -149,34 +149,6 @@ public class CargosDAO {
      
  //------------------------------------------------------------------------------
  
-//------------------------------------------------------------------------------
-     public boolean eliminar_Cargos(int idCargo ) {
-
-        PreparedStatement ps = null;
-         
-        try {
-            // Llamar al procedimiento almacenado
-            ps = conexion.prepareStatement ("DELETE FROM cargo  WHERE id_cargo = ?");               
-            
-            ps.setInt(1, idCargo);          
-            ps.execute();
-            return true;
-         } catch (SQLException e) {
-            System.out.println("Error al eliminar cargo: " + e.getMessage());
-            return false;
-        } finally {
-            // Cerrar PreparedStatements
-            try {
-                if (ps != null) {
-                    ps.close();
-                }
-                
-            } catch (SQLException ex) {
-                System.out.println("Error al cerrar PreparedStatements: " + ex.getMessage());
-            }
-        }
-    }    
-    
  //--------------------------------------------------------------------------------   
     public boolean modificar_Cargos(Cargo cargo) {
         PreparedStatement ps = null;

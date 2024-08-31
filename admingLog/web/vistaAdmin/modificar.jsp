@@ -45,7 +45,7 @@
         <table>
             <tr>
                 <th>Número de Documento</th>
-                <td><input type="text" name="num_documento" value="${colaborador.num_documento}" required></td>
+                <td><input type="text" name="num_documento" value="${colaborador.num_Documento}" required></td>
             </tr>
             <tr>
                 <th>Nombre</th>
@@ -67,10 +67,19 @@
                 <th>Dirección</th>
                 <td><input type="text" name="direccion" value="${colaborador.direccion}" required></td>
             </tr>
+             <tr>
+                <th>Fecha de Contratción</th>
+                <td><input type="date" name="fecha_Contratacion" value="${colaborador.fecha_Contratacion}" required></td>
+            </tr>
+            <tr>
+                <th>Salario Base</th>
+                <td><input type="number" name="salario_Base" step="0.01" value="${colaborador.salario_Base}" required></td>
+            </tr>
             <tr>
                 <th>Estado</th>
                 <td><input type="text" name="estado" value="${colaborador.usuario.estado ? 'activo' : 'inactivo'}" required></td>
             </tr>
+           
             <tr>
                 <th>Modificar Estado Cargo</th>
                 <td>

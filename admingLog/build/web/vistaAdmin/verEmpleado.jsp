@@ -32,22 +32,28 @@
         <h2>Información del Colaborador</h2>
         <table>
             <tr>
+                <th>Numero Empleado</th>
                 <th>Número de Documento</th>
                 <th>Nombre</th>
                 <th>Primer Apellido</th>
                 <th>Segundo Apellido</th>
                 <th>Teléfono</th>
                 <th>Dirección</th>
-                <th>Numero Empleado</th>
+                <th>Fecha de Contratación</th>
+                <th>Salario Base</th>
+                
             </tr>
             <tr>
-                <td>${colaborador.num_documento}</td>
+                <td>${colaborador.id_Empleado}</td>
+                <td>${colaborador.num_Documento}</td>
                 <td>${colaborador.nombre}</td>
                 <td>${colaborador.apellido_1}</td>
                 <td>${colaborador.apellido_2}</td>
                 <td>${colaborador.telefono}</td>
                 <td>${colaborador.direccion}</td>
-                <td>${colaborador.usuario.id_usuario}</td>
+                <td>${colaborador.fecha_Contratacion}</td>
+                <td>${colaborador.salario_Base}</td>
+               
             </tr>
         </table>
 

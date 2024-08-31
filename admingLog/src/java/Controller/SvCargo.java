@@ -45,9 +45,6 @@ public class SvCargo extends HttpServlet {
         }else if ("Ver_Cargo".equals(accion)) {
             ver_Cargo(request, response);
             return;
-        }else if ("eliminar_Cargo".equals(accion)){
-            eliminar_Cargo(request, response);
-            return;
         }else {
             // Si la acción no coincide con ninguna de las anteriores, redirige a una página de error
             response.sendRedirect("/WEB-INF/error.jsp");
@@ -66,8 +63,6 @@ public class SvCargo extends HttpServlet {
              insertarCargo(request, response);
         } else if ("Ver_Cargo".equals(accion)) {
             ver_Cargo(request, response);
-        } else if ("eliminar_Cargo".equals(accion)) {
-            eliminar_Cargo(request, response);
         } else if ("modificar_Cargo".equals(accion)) {
              modificar_Cargo(request, response);         
         } else if ("actualizar_Cargo".equals(accion)) {
@@ -119,29 +114,6 @@ public class SvCargo extends HttpServlet {
             response.sendRedirect("/WEB-INF/error.jsp");      
         }
     
-    }
-    
-    private void eliminar_Cargo(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        try {
-            int idCargo = Integer.parseInt(request.getParameter("id"));
-
-            // Llamar al método para eliminar el cargo
-            cargosDAO.eliminar_Cargos(idCargo);
-
-            // Actualizar la lista de cargos
-            List<Cargo> listaCargos = cargosDAO.listarCargos();
-            request.setAttribute("listaCargos", listaCargos);
-
-            // Redirigir al usuario a la página principal de cargos
-            request.getRequestDispatcher("/vistaCargos/indexCargo.jsp").forward(request, response);
-
-        } catch (NumberFormatException e) {
-            // Manejar el error de formato de número
-            request.setAttribute("error", "ID de Usuario inválido.");
-            request.getRequestDispatcher("/WEB-INF/error.jsp").forward(request, response);
-        }
     }
     
     private void modificar_Cargo(HttpServletRequest request, HttpServletResponse response)

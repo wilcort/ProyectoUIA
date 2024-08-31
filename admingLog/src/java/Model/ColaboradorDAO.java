@@ -1,6 +1,7 @@
 package Model;
 
 import Configur.Conexion;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,6 +9,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.CallableStatement;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,14 +25,33 @@ public class ColaboradorDAO {
 //------------------------------ LISTAR -----------------------------------------//   
 
     public List<Colaborador> listarColaboradores() {
-        CallableStatement cs = null;
+       
         ResultSet rs = null;
+        PreparedStatement ps = null;
         List<Colaborador> lista = new ArrayList<>();
 
         try {
-            // Llamar al procedimiento almacenado
-            cs = conexion.prepareCall("{call ObtenerDatosUsuarios()}");
-            rs = cs.executeQuery();
+            
+            ps = conexion.prepareStatement(" SELECT \n"
+                    + "e.num_documento,\n"
+                    + "e.nombre,\n"
+                    + "e.apellido_1,\n"
+                    + "e.apellido_2,\n"
+                    + "e.telefono,\n"
+                    + "e.direccion,\n"
+                    + "e.fecha_contratacion,\n"
+                    + "e.salario_base,\n"
+                    + "u.id_usuario,\n"
+                    + "u.estado,\n"
+                    + "c.nombre_cargo\n"
+                    + "FROM \n"
+                    + "empleado e\n"
+                    + "    INNER JOIN \n"
+                    + "        usuario u ON e.usuario_id_usuario = u.id_usuario\n"
+                    + "    INNER JOIN \n"
+                    + "        cargo c ON u.id_cargo = c.id_cargo;");
+           
+            rs = ps.executeQuery();
 
             while (rs.next()) {
                 // Obtener los datos del colaborador
@@ -40,6 +61,8 @@ public class ColaboradorDAO {
                 String apellido_2 = rs.getString("apellido_2");
                 int telefono = rs.getInt("telefono");
                 String direccion = rs.getString("direccion");
+                Date fecha_contratacion = rs.getDate("fecha_contratacion");
+                BigDecimal salario_base = rs.getBigDecimal("salario_base");
                 int id_usuario = rs.getInt("id_usuario");
 
                 // Obtener el usuario
@@ -47,8 +70,10 @@ public class ColaboradorDAO {
                 usuario.setId_usuario(id_usuario);
 
                 // Crear objeto Colaborador y agregarlo a la lista
-                Colaborador colaborador = new Colaborador(num_documento, nombre,
-                        apellido_1, apellido_2, telefono, direccion, usuario);
+                
+                Colaborador colaborador = new Colaborador(id_usuario, num_documento, 
+                        nombre, apellido_1, apellido_2, telefono, direccion,
+                        fecha_contratacion, salario_base, usuario);
 
                 lista.add(colaborador);
             }
@@ -60,8 +85,8 @@ public class ColaboradorDAO {
                 if (rs != null) {
                     rs.close();
                 }
-                if (cs != null) {
-                    cs.close();
+                if (ps != null) {
+                    ps.close();
                 }
             } catch (SQLException ex) {
                 System.out.println("Error al cerrar CallableStatement o ResultSet: " + ex.getMessage());
@@ -159,7 +184,25 @@ public class ColaboradorDAO {
     }
 
     //-------------------------------------------------------------------------------------//
-//------------------------------ INSERTAR -----------------------------------------//  
+//------------------------------ INSERTAR -----------------------------------------// 
+    
+//--------------------VALIDAR SI EXISTE EMPLEADO-----------------------------------------//
+    
+    public boolean empleadoExiste(int numDocumento) throws SQLException {
+        String query = "SELECT COUNT(*) FROM empleado WHERE num_Documento = ?";
+        try (PreparedStatement ps = conexion.prepareStatement(query)) {
+            ps.setInt(1, numDocumento);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
+    }
+    
+    
+ //------------------------------------------------------------------------------------//   
     public boolean insertarColaboradores(Usuario usuario, Colaborador colaborador) {
         PreparedStatement psUsuario = null;
         PreparedStatement psEmpleado = null;
@@ -175,6 +218,11 @@ public class ColaboradorDAO {
             psUsuario.setString(2, usuario.getClave());
             psUsuario.setBoolean(3, usuario.isEstado());
             psUsuario.setInt(4, usuario.getCargo().getIdCargo());
+            
+            
+            System.out.println(" cargo insertar " + usuario.getNombreUsuario());
+            System.out.println(" cargo insertar " + usuario.getCargo().getNombreCargo());
+            System.out.println(" cargo insertar " + usuario.getCargo().isEstado());
 
             int filasAfectadasUsuario = psUsuario.executeUpdate();
 
@@ -191,18 +239,21 @@ public class ColaboradorDAO {
             }
 
             // Insertar empleado
-            psEmpleado = conexion.prepareStatement("INSERT INTO empleado(num_documento, nombre, "
-                    + "apellido_1, apellido_2, telefono, direccion, id_usuario) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?)");
+            psEmpleado = conexion.prepareStatement("INSERT INTO empleado(num_Documento, nombre, "
+                    + "apellido_1, apellido_2, telefono, direccion, fecha_contratacion, "
+                    + "salario_base, usuario_id_usuario, liquidaciones_id_liquidacion,horarios_id_horario) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL)");
 
-            psEmpleado.setInt(1, colaborador.getNum_documento());
+            psEmpleado.setInt(1, colaborador.getNum_Documento());
             psEmpleado.setString(2, colaborador.getNombre());
             psEmpleado.setString(3, colaborador.getApellido_1());
             psEmpleado.setString(4, colaborador.getApellido_2());
             psEmpleado.setInt(5, colaborador.getTelefono());
-            psEmpleado.setString(6, colaborador.getDireccion());
-            psEmpleado.setInt(7, idUsuarioGenerado);
-
+            psEmpleado.setString(6, colaborador.getDireccion());;
+            psEmpleado.setDate(7, new java.sql.Date(colaborador.getFecha_Contratacion().getTime())); // Convertir Date a java.sql.Date
+            psEmpleado.setBigDecimal(8, colaborador.getSalario_Base());
+            psEmpleado.setInt(9, idUsuarioGenerado);
+            
             int filasAfectadasEmpleado = psEmpleado.executeUpdate();
 
             if (filasAfectadasEmpleado == 1) {
@@ -237,13 +288,13 @@ public class ColaboradorDAO {
         Colaborador colaborador = null;
 
         try {
-            ps = conexion.prepareStatement("SELECT e.num_documento, e.nombre, e.apellido_1, "
-                    + "e.apellido_2, e.telefono, e.direccion,\n"
-                    + "u.id_usuario, u.nombreUsuario, u.estado,\n"
-                    + "c.nombre_cargo FROM empleado as e\n"
-                    + "INNER JOIN usuario as u ON e.id_usuario = u.id_usuario\n"
-                    + "INNER JOIN cargo as c ON u.id_cargo = c.id_cargo\n"
-                    + "WHERE e.id_usuario = ?");
+            ps = conexion.prepareStatement("SELECT e.id_empleado,e.num_documento, e.nombre, e.apellido_1, "
+                    + "e.apellido_2, e.telefono, e.direccion, e.fecha_contratacion, e.salario_Base,"
+                    + "u.id_usuario, u.nombreUsuario, u.estado, "
+                    + "c.nombre_cargo FROM empleado as e "
+                    + "INNER JOIN usuario as u ON e.usuario_id_usuario = u.id_usuario "
+                    + "INNER JOIN cargo as c ON u.id_cargo = c.id_cargo "
+                    + "WHERE e.usuario_id_usuario = ?");
 
             ps.setInt(1, idUsuario);
             rs = ps.executeQuery();
@@ -251,12 +302,15 @@ public class ColaboradorDAO {
             while (rs.next()) {
 
                 // Obtener los datos del colaborador
-                int num_documento = rs.getInt("num_documento");
+                int id_empleado = rs.getInt("id_Empleado");
+                int num_documento = rs.getInt("num_Documento");
                 String nombre = rs.getString("nombre");
                 String apellido_1 = rs.getString("apellido_1");
                 String apellido_2 = rs.getString("apellido_2");
                 int telefono = rs.getInt("telefono");
                 String direccion = rs.getString("direccion");
+                java.sql.Date fecha_Contratacion = rs.getDate("fecha_Contratacion");
+                BigDecimal salario_Base = rs.getBigDecimal("salario_Base");
                 int id_usuario = rs.getInt("id_usuario");
                 String nombreUsuario = rs.getString("u.nombreUsuario"); ///***
                 boolean estado = rs.getBoolean("estado");
@@ -273,9 +327,17 @@ public class ColaboradorDAO {
                 cargo.setNombreCargo(nombre_cargo);
 
                 usuario.setCargo(cargo);
+                
+                
+                colaborador = new Colaborador(id_usuario, num_documento,
+                        nombre, apellido_1, apellido_2, telefono, direccion, 
+                        fecha_Contratacion, salario_Base, usuario);
+                
+                System.out.println("cargo " + colaborador.getUsuario().getNombreUsuario());
+                System.out.println("cargo " + colaborador.getUsuario().isEstado());
+                System.out.println("cargo " + colaborador.getUsuario().getCargo().getNombreCargo());
+                System.out.println("cargo " + colaborador.getUsuario().getCargo().isEstado());
 
-           
-                colaborador = new Colaborador(num_documento, nombre, apellido_1, apellido_2, telefono, direccion, usuario);
             }
         } catch (SQLException ex) {
             Logger.getLogger(ColaboradorDAO.class.getName()).log(Level.SEVERE, null, ex);
@@ -315,9 +377,14 @@ public class ColaboradorDAO {
                 String apellido_2 = rs.getString("apellido_2");
                 int telefono = rs.getInt("telefono");
                 String direccion = rs.getString("direccion");
+                java.sql.Date fechaContratacion = rs.getDate("fechaContratacion");
+                BigDecimal salarioBase = rs.getBigDecimal("salarioBase");
                 int id_usuario = rs.getInt("id_usuario");
-
-                colaborador = new Colaborador(num_documento, nombre, apellido_1, apellido_2, telefono, direccion, null);
+                
+     
+                colaborador = new Colaborador(id_usuario, num_documento,
+                        nombre, apellido_1, apellido_2, telefono, direccion, 
+                        fechaContratacion, salarioBase, null);
             }
         } catch (Exception e) {
             e.printStackTrace(); // Agregar manejo de errores
@@ -388,10 +455,10 @@ public class ColaboradorDAO {
 
         try {
             ps = conexion.prepareStatement("DELETE  empleado, usuario\n"
-                    + "FROM empleado\n"
-                    + "JOIN usuario \n"
-                    + "ON empleado.id_usuario = usuario.id_usuario\n"
-                    + "WHERE empleado.id_usuario = ?");
+                    + "FROM empleado \n"
+                    + "JOIN usuario  \n"
+                    + "ON empleado.usuario_id_usuario = usuario.id_usuario\n"
+                    + "WHERE empleado.usuario_id_usuario = ?");
 
             ps.setInt(1, id_usuario);
             ps.execute();
@@ -410,18 +477,24 @@ public class ColaboradorDAO {
 
         try {
             String sql = "UPDATE empleado SET num_documento=?, nombre=?, "
-                    + "apellido_1=?, apellido_2=?, telefono=?, direccion=? "
+                    + "apellido_1=?, apellido_2=?, telefono=?, direccion=?, fecha_contratacion=?"
+                    + "fecha_salida=?, salario_base=?"
                     + "WHERE id_usuario=?";
 
             psEmpleado = conexion.prepareStatement(sql);
-            psEmpleado.setInt(1, colaborador.getNum_documento());
+             psEmpleado.setInt(1, colaborador.getNum_Documento());
             psEmpleado.setString(2, colaborador.getNombre());
             psEmpleado.setString(3, colaborador.getApellido_1());
             psEmpleado.setString(4, colaborador.getApellido_2());
             psEmpleado.setInt(5, colaborador.getTelefono());
-            psEmpleado.setString(6, colaborador.getDireccion());
-            psEmpleado.setInt(7, colaborador.getUsuario().getId_usuario());
-
+            psEmpleado.setString(6, colaborador.getDireccion());;
+            psEmpleado.setDate(7, new java.sql.Date(colaborador.getFecha_Contratacion().getTime())); // Convertir Date a java.sql.Date
+            psEmpleado.setBigDecimal(8, colaborador.getSalario_Base());
+            psEmpleado.setInt(9, colaborador.getUsuario().getId_usuario());
+            
+            // psEmpleado.setInt(7, colaborador.getUsuario().getId_usuario());
+            
+           
             int filasAfectadas = psEmpleado.executeUpdate();
             return filasAfectadas > 0;
         } catch (SQLException e) {

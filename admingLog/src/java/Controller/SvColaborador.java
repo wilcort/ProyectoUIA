@@ -5,6 +5,8 @@ import Model.Colaborador;
 import Model.ColaboradorDAO;
 import Model.Usuario;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -12,6 +14,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.sql.SQLException;
 
 @WebServlet(name = "SvColaborador", urlPatterns = {"/SvColaborador"})
 public class SvColaborador extends HttpServlet {
@@ -78,47 +81,72 @@ public class SvColaborador extends HttpServlet {
 //------------------------------ INSERTAR -----------------------------------------//
 
     private void insertarColaborador(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-    // Solicitar datos cargo desde formulario nuevo html
-    
-    int idCargo = Integer.parseInt(request.getParameter("cargo_Usuario"));
-    Cargo cargo = colaboradorDAO.obtenerCargoPorId(idCargo);
+            throws ServletException, IOException {
+        // Solicitar datos cargo desde formulario nuevo html
 
-    // Obtener datos Usuario desde formulario nuevo html
-    Usuario usuario = new Usuario();
-    usuario.setNombreUsuario(request.getParameter("nombreUsuario"));
-    usuario.setClave(request.getParameter("claveUsuario"));
-    usuario.setEstado(Integer.parseInt(request.getParameter("estado_cargoUsuario")) == 1);
+        int idCargo = Integer.parseInt(request.getParameter("cargo_Usuario"));
+        Cargo cargo = colaboradorDAO.obtenerCargoPorId(idCargo);
 
-    // Asociar el cargo al usuario
-    usuario.setCargo(cargo);
+        // Obtener datos Usuario desde formulario nuevo html
+        Usuario usuario = new Usuario();
+        usuario.setNombreUsuario(request.getParameter("nombreUsuario"));
+        usuario.setClave(request.getParameter("claveUsuario"));
+        usuario.setEstado(Integer.parseInt(request.getParameter("estado_cargoUsuario")) == 1);
 
-    // Crear un nuevo colaborador
-    int num_documento = Integer.parseInt(request.getParameter("num_documento"));
-    String nombre = request.getParameter("nombre");
-    String apellido_1 = request.getParameter("apellido_1");
-    String apellido_2 = request.getParameter("apellido_2");
-    int telefono = Integer.parseInt(request.getParameter("telefono"));
-    String direccion = request.getParameter("direccion");
+        // Asociar el cargo al usuario
+        usuario.setCargo(cargo);
 
-    Colaborador colaborador = new Colaborador(num_documento, nombre, apellido_1, apellido_2,
-            telefono, direccion, usuario);
+        // Crear un nuevo colaborador
+        int num_documento = Integer.parseInt(request.getParameter("num_documento"));
+        String nombre = request.getParameter("nombre");
+        String apellido_1 = request.getParameter("apellido_1");
+        String apellido_2 = request.getParameter("apellido_2");
+        int telefono = Integer.parseInt(request.getParameter("telefono"));
+        String direccion = request.getParameter("direccion");
+        String fechaContratacionStr = request.getParameter("fecha_contratacion");
+        java.sql.Date fecha_contratacion = null;
+        if (fechaContratacionStr != null && !fechaContratacionStr.isEmpty()) {
+            fecha_contratacion = java.sql.Date.valueOf(fechaContratacionStr);
+        }
 
-    // Insertar los datos en la base de datos
-    boolean insercionExitosa = colaboradorDAO.insertarColaboradores(usuario, colaborador);
+        // Convertir el salario base a BigDecimal
+        BigDecimal salario_base = BigDecimal.ZERO; // Valor predeterminado
+        String salarioBaseStr = request.getParameter("salario_base");
+        if (salarioBaseStr != null && !salarioBaseStr.isEmpty()) {
+            salario_base = new BigDecimal(salarioBaseStr);
+        }
 
-    // Si la inserción fue exitosa, redirigir al usuario a la página principal
-    if (insercionExitosa) {
-        // Obtener la lista actualizada de colaboradores
-        List<Colaborador> listaColaboradores = colaboradorDAO.listarColaboradores();
-        // Establecer la lista como atributo de solicitud
-        request.setAttribute("lista", listaColaboradores);
-        // Redirigir al usuario a la página principal
-        request.getRequestDispatcher("/vistaAdmin/indexAdmin.jsp").forward(request, response);
-    } else {
-        response.sendRedirect("/WEB-INF/error.jsp");
+        // Crear el objeto Colaborador con los datos corregidos
+        Colaborador colaborador = new Colaborador(telefono, num_documento,
+                nombre, apellido_1, apellido_2, telefono, direccion,
+                fecha_contratacion, salario_base, usuario);
+
+        // Validar si el empleado ya existe
+        // Validar si el empleado ya existe
+        try {
+            if (colaboradorDAO.empleadoExiste(num_documento)) {
+                request.setAttribute("mensaje", "El empleado con el número de documento proporcionado ya existe.");
+                request.getRequestDispatcher("pages/error_cedula.jsp").forward(request, response);
+                return;
+            }
+
+            // Insertar los datos en la base de datos
+            boolean insercionExitosa = colaboradorDAO.insertarColaboradores(usuario, colaborador);
+
+            // Si la inserción fue exitosa, redirigir al usuario a la página principal
+            if (insercionExitosa) {
+                response.sendRedirect("pages/pagina_exito.jsp");
+            } else {
+                response.sendRedirect("pages/errores.jsp");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            request.setAttribute("mensaje", "Error al verificar la existencia del empleado.");
+            request.getRequestDispatcher("/WEB-INF/error.jsp").forward(request, response);
+        }
     }
-}
+
+
 
 //-------------------------------------------------------------------------------------//
 //------------------------------ VER EMPLEADO -----------------------------------------//    
@@ -179,7 +207,7 @@ public class SvColaborador extends HttpServlet {
         
          List<Cargo> listaCargos = colaboradorDAO.listarCargos(); // Obtener lista de cargos
        
-              System.out.println("cargo " + colaborador.getUsuario().getCargo());   
+          
         if (colaborador != null) {
             // Si se encuentra el colaborador, establecerlo como atributo de solicitud
             request.setAttribute("colaborador", colaborador);
@@ -206,13 +234,29 @@ private void actualizar_Empleado(HttpServletRequest request, HttpServletResponse
             String apellido_2 = request.getParameter("apellido_2");
             int telefono = Integer.parseInt(request.getParameter("telefono"));
             String direccion = request.getParameter("direccion");
+            
+            String fechaContratacionStr = request.getParameter("fecha_contratacion");
+            java.sql.Date fecha_contratacion = null;
+            if (fechaContratacionStr != null && !fechaContratacionStr.isEmpty()) {
+                fecha_contratacion = java.sql.Date.valueOf(fechaContratacionStr);
+            }
+
+            // Convertir el salario base a BigDecimal
+            BigDecimal salario_base = BigDecimal.ZERO; // Valor predeterminado
+            String salarioBaseStr = request.getParameter("salario_base");
+            if (salarioBaseStr != null && !salarioBaseStr.isEmpty()) {
+                salario_base = new BigDecimal(salarioBaseStr);
+            }
 
             // Crear un nuevo usuario y colaborador
             Usuario usuario = new Usuario();
             usuario.setId_usuario(idUsuario);
 
-            Colaborador colaborador = new Colaborador(num_documento, nombre, apellido_1, apellido_2, telefono, direccion, usuario);
-
+            
+            Colaborador colaborador = new Colaborador(telefono, num_documento,
+                    nombre, apellido_1, apellido_2, telefono, direccion, 
+                    fecha_contratacion, salario_base, usuario);
+        
             // Manejo del estado del usuario
             boolean modificarEstado = "si".equals(request.getParameter("modificar_estado_usuario"));
             if (modificarEstado) {
@@ -232,8 +276,8 @@ private void actualizar_Empleado(HttpServletRequest request, HttpServletResponse
             usuario.setEstado(Integer.parseInt(request.getParameter("estado_actual")) == 1);
         }
 
-            System.out.println("estado usuario " + colaborador.getUsuario().isEstado());
-            System.out.println("cargo " + colaborador.getUsuario().getCargo());
+           // System.out.println("estado usuario " + colaborador.getUsuario().isEstado());
+          //  System.out.println("cargo " + colaborador.getUsuario().getCargo());
             // Llamar al método de modificación en DAO
             boolean exito = colaboradorDAO.modificarEmpleado(usuario, colaborador);
 

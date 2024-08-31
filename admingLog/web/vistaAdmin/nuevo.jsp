@@ -34,7 +34,7 @@
             <select id="estado_cargoUsuario" name="estado_cargoUsuario">
                 <option value="" disabled selected>Escoja opción</option>
                 <option value="1">Activo</option>
-                <option value="0">Desactivado</option>
+                <option value="0">Inactivo</option>
             </select><br><br>
 
             <label for="nombreUsuario">Nombre de Usuario:</label>
@@ -60,6 +60,15 @@
 
             <label for="direccion">Dirección:</label>
             <input id="direccion" name="direccion" type="text" required/><br><br>
+            
+            <label for="fecha_contratacion">Fecha de Contratación:</label>
+            <input type="date" id="fecha_contratacion" name="fecha_contratacion" required>
+            <br/><br/>
+
+            <!-- Campo para el salario base -->
+            <label for="salario_base">Salario Base:</label>
+            <input type="number" id="salario_base" name="salario_base" step="0.01" required>
+            <br/><br/>
 
             <input type="hidden" name="accion" value="insertar">
 
