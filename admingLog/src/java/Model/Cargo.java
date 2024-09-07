@@ -2,6 +2,7 @@
 package Model;
 
 public class Cargo {
+
     private int idCargo;
     private String nombreCargo;
     private boolean estado;
@@ -11,11 +12,15 @@ public class Cargo {
     }
 
     // Constructor con parámetros
+
     public Cargo(int idCargo, String nombreCargo, boolean estado) {
         this.idCargo = idCargo;
         this.nombreCargo = nombreCargo;
         this.estado = estado;
     }
+    
+
+    
 
     // Métodos getter y setter para idCargo
     public int getIdCargo() {
@@ -43,6 +48,5 @@ public class Cargo {
     public void setEstado(boolean estado) {
         this.estado = estado;
     }
-    
-    
+
 }

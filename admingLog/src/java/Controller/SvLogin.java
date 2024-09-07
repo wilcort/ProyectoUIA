@@ -1,6 +1,7 @@
 
 package Controller;
 
+import Model.Cargo;
 import Model.Usuario;
 import Model.UsuarioDAO;
 import java.io.IOException;
@@ -28,7 +29,7 @@ public class SvLogin extends HttpServlet {
         } else {
             // Verificar si el usuario ya está autenticado
             HttpSession sesion = request.getSession(false);
-            
+
             if (sesion != null && sesion.getAttribute("usuario") != null) {
                 // Si el usuario ya está autenticado, redirige a la página de inicio
                 response.sendRedirect("vistasLog/inicio.jsp");
@@ -44,7 +45,7 @@ public class SvLogin extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         String accion = request.getParameter("accion");
         if ("verificar".equals(accion)) {
             try {
@@ -62,26 +63,48 @@ public class SvLogin extends HttpServlet {
     }// </editor-fold>
 
     private void verificar(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        UsuarioDAO dao = new UsuarioDAO();
-        Usuario usuario = obtenerUsuario(request);
-        usuario = dao.identificar(usuario);
+        
+        String username = request.getParameter("txtUsu");
+        String password = request.getParameter("txtPass");
 
-        if (usuario != null && usuario.getCargo().getNombreCargo().equalsIgnoreCase("administrador")) {
+        // Verificar si el usuario es el admin por defecto
+        if ("admin".equals(username) && "123456".equals(password)) {
+            // Crear un usuario simulado
+            Usuario adminUser = new Usuario();
+            adminUser.setNombreUsuario("admin");
+            adminUser.setClave("123456");
+            adminUser.setEstadoUsuario(true);
+
+            Cargo adminCargo = new Cargo();
+            adminCargo.setNombreCargo("administrador");
+            adminUser.setCargo(adminCargo);
+
             HttpSession sesion = request.getSession();
-            sesion.setAttribute("usuario", usuario);
+            sesion.setAttribute("usuario", adminUser);
             response.sendRedirect("vistasLog/administrador.jsp");
-            
-        } else if (usuario != null && usuario.getCargo().getNombreCargo().equalsIgnoreCase("vendedor")) {
-            HttpSession sesion = request.getSession();
-            sesion.setAttribute("usuario", usuario);
-            response.sendRedirect("vistasLog/vendedor.jsp");
-            
-        } else {
-            // Añadir una declaración de impresión para depurar
-            System.out.println("Error al verificar credenciales: Usuario o cargo incorrecto.");
 
-            request.setAttribute("msj", "ERROR CREDENCIALES");
-            request.getRequestDispatcher("identificar.jsp").forward(request, response);
+        } else {
+            // Proceso normal de verificación con la base de datos
+            UsuarioDAO dao = new UsuarioDAO();
+            Usuario usuario = obtenerUsuario(request);
+            usuario = dao.identificar(usuario);
+
+            if (usuario != null && usuario.getCargo().getNombreCargo().equalsIgnoreCase("administrador")) {
+                HttpSession sesion = request.getSession();
+                sesion.setAttribute("usuario", usuario);
+                response.sendRedirect("vistasLog/administrador.jsp");
+
+            } else if (usuario != null ) {
+                HttpSession sesion = request.getSession();
+                sesion.setAttribute("usuario", usuario);
+                response.sendRedirect("vistasLog/vendedor.jsp");
+
+            } else {
+                // Añadir una declaración de impresión para depurar
+                System.out.println("Error al verificar credenciales: Usuario o cargo incorrecto.");
+                request.setAttribute("msj", "ERROR CREDENCIALES");
+                request.getRequestDispatcher("identificar.jsp").forward(request, response);
+            }
         }
     }
 

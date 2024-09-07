@@ -30,8 +30,8 @@
                 <option value="IT">IT</option>
             </select><br><br>
  --%>
-            <label for="estado_cargoUsuario">Estado Cargo:</label>
-            <select id="estado_cargoUsuario" name="estado_cargoUsuario">
+            <label for="estado_Usuario">Estado Usuario:</label>
+            <select id="estado_Usuario" name="estado_Usuario">
                 <option value="" disabled selected>Escoja opción</option>
                 <option value="1">Activo</option>
                 <option value="0">Inactivo</option>

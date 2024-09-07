@@ -19,11 +19,11 @@ public class UsuarioDAO {
         PreparedStatement pst = null;
         ResultSet rs = null;
         
-        String sql = "SELECT U.ID_USUARIO, C.NOMBRE_CARGO FROM USUARIO U "
-                   + "INNER JOIN CARGO C "
-                   + "ON U.ID_CARGO = C.ID_CARGO "
-                   + "WHERE U.ESTADO = 1 AND "
-                   + "U.nombreUsuario = ? AND U.CLAVE = ?";
+        String sql = "SELECT u.id_usuario, c.nombre_cargo FROM usuario u "
+                   + "INNER JOIN cargo c "
+                   + "ON u.id_cargo = c.id_cargo "
+                   + "WHERE u.estadoUsuario = 1 AND "
+                   + "U.nombreUsuario = ? AND u.clave = ?";
                    
         
         try {
@@ -37,11 +37,11 @@ public class UsuarioDAO {
             if(rs.next() == true){
                 
                 usu = new Usuario();
-                usu.setId_usuario(rs.getInt("ID_USUARIO"));
+                usu.setId_usuario(rs.getInt("id_usuario"));
                 usu.setNombreUsuario(user.getNombreUsuario());
                 usu.setCargo(new Cargo());
-                usu.getCargo().setNombreCargo(rs.getString("NOMBRE_CARGO"));
-                usu.setEstado(true);
+                usu.getCargo().setNombreCargo(rs.getString("nombre_cargo"));
+                usu.setEstadoUsuario(true);
                 
             }
         } catch (Exception e) {

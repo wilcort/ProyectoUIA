@@ -43,6 +43,7 @@
                         <td><c:out value="${colaborador.fecha_Contratacion}" /></td>
                         <td><c:out value="${colaborador.salario_Base}" /></td>
                         <td><c:out value="${colaborador.usuario.id_usuario}" /></td> 
+                       
                         <td><a href="SvColaborador?accion=Ver_Empleado&id=<c:out value="${colaborador.usuario.id_usuario}" />">Ver Empleado</a></td>
                     </tr>
                 </c:forEach>

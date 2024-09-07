@@ -21,11 +21,12 @@ public class Colaborador {
     private int telefono;
     private String direccion;
     private Date fecha_Contratacion;
+    private Date fecha_Salida;
     private BigDecimal salario_Base;
     private Usuario usuario;
 
-    // Constructor
-    public Colaborador(int id_Empleado, int num_Documento, String nombre, String apellido_1, String apellido_2, int telefono, String direccion, Date fecha_Contratacion, BigDecimal salario_Base, Usuario usuario) {
+    //constructor
+    public Colaborador(int id_Empleado, int num_Documento, String nombre, String apellido_1, String apellido_2, int telefono, String direccion, Date fecha_Contratacion, Date fecha_Salida, BigDecimal salario_Base, Usuario usuario) {
         this.id_Empleado = id_Empleado;
         this.num_Documento = num_Documento;
         this.nombre = nombre;
@@ -34,6 +35,7 @@ public class Colaborador {
         this.telefono = telefono;
         this.direccion = direccion;
         this.fecha_Contratacion = fecha_Contratacion;
+        this.fecha_Salida = fecha_Salida;
         this.salario_Base = salario_Base;
         this.usuario = usuario;
     }
@@ -98,8 +100,16 @@ public class Colaborador {
         return fecha_Contratacion;
     }
 
-    public void setFecha_Contratacion(Date fechaContratacion) {
-        this.fecha_Contratacion = fechaContratacion;
+    public void setFecha_Contratacion(Date fecha_Contratacion) {
+        this.fecha_Contratacion = fecha_Contratacion;
+    }
+
+    public Date getFecha_Salida() {
+        return fecha_Salida;
+    }
+
+    public void setFecha_Salida(Date fecha_Salida) {
+        this.fecha_Salida = fecha_Salida;
     }
 
     public BigDecimal getSalario_Base() {
@@ -119,3 +129,4 @@ public class Colaborador {
     }
 
 }
+ 

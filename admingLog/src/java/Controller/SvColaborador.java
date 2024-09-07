@@ -91,7 +91,7 @@ public class SvColaborador extends HttpServlet {
         Usuario usuario = new Usuario();
         usuario.setNombreUsuario(request.getParameter("nombreUsuario"));
         usuario.setClave(request.getParameter("claveUsuario"));
-        usuario.setEstado(Integer.parseInt(request.getParameter("estado_cargoUsuario")) == 1);
+        usuario.setEstadoUsuario(Integer.parseInt(request.getParameter("estado_Usuario")) == 1);
 
         // Asociar el cargo al usuario
         usuario.setCargo(cargo);
@@ -108,6 +108,7 @@ public class SvColaborador extends HttpServlet {
         if (fechaContratacionStr != null && !fechaContratacionStr.isEmpty()) {
             fecha_contratacion = java.sql.Date.valueOf(fechaContratacionStr);
         }
+        String fecha_salidaStr = request.getParameter("fecha_salida");
 
         // Convertir el salario base a BigDecimal
         BigDecimal salario_base = BigDecimal.ZERO; // Valor predeterminado
@@ -119,9 +120,9 @@ public class SvColaborador extends HttpServlet {
         // Crear el objeto Colaborador con los datos corregidos
         Colaborador colaborador = new Colaborador(telefono, num_documento,
                 nombre, apellido_1, apellido_2, telefono, direccion,
-                fecha_contratacion, salario_base, usuario);
+                fecha_contratacion,null, salario_base, usuario);
 
-        // Validar si el empleado ya existe
+    
         // Validar si el empleado ya existe
         try {
             if (colaboradorDAO.empleadoExiste(num_documento)) {
@@ -154,10 +155,10 @@ public class SvColaborador extends HttpServlet {
     private void ver_Empleado(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        int idUsuario = Integer.parseInt(request.getParameter("id"));
+        int idEmpleado = Integer.parseInt(request.getParameter("id"));
         
-        Colaborador colaborador = colaboradorDAO.mostrarEmpleado(idUsuario);
-        
+        Colaborador colaborador = colaboradorDAO.mostrarEmpleado(idEmpleado);
+              
        /* Usuario usuario = colaboradorDAO.mostrarUsuario(idUsuario);*/
           
          if (colaborador != null ){
@@ -207,6 +208,11 @@ public class SvColaborador extends HttpServlet {
         
          List<Cargo> listaCargos = colaboradorDAO.listarCargos(); // Obtener lista de cargos
        
+            System.out.println("id empleado 1: " + colaborador.getId_Empleado());
+            System.out.println("id usuario 1: " + colaborador.getUsuario().getId_usuario());
+            System.out.println(" fecha contra 1: " + colaborador.getFecha_Contratacion());
+            System.out.println(" fecha cargo nuevo 1: " + colaborador.getUsuario().getCargo().getNombreCargo());
+            System.out.println(" fecha cargo nuevo 1: " + colaborador.getUsuario().getCargo().getIdCargo());
           
         if (colaborador != null) {
             // Si se encuentra el colaborador, establecerlo como atributo de solicitud
@@ -221,11 +227,24 @@ public class SvColaborador extends HttpServlet {
     }
  //-------------------------------------------------------------------------------------//
 //------------------------------ VER ACTUALIZA -----------------------------------------//    
-//-------------------------------------------------------------------------------------//   
+//-------------------------------------------------------------------------------------//  
+    
 private void actualizar_Empleado(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            int idUsuario = Integer.parseInt(request.getParameter("id"));
+            // Obtener el ID del empleado
+            String idEmpleadoStr = request.getParameter("id_empleado");
+            if (idEmpleadoStr == null || idEmpleadoStr.isEmpty()) {
+                throw new IllegalArgumentException("ID del empleado no proporcionado.");
+            }
+            int idEmpleado = Integer.parseInt(idEmpleadoStr);
+
+            // Obtener el ID del usuario
+            String idUsuarioStr = request.getParameter("idUsuario");
+            if (idUsuarioStr == null || idUsuarioStr.isEmpty()) {
+                throw new IllegalArgumentException("ID del usuario no proporcionado.");
+            }
+            int idUsuario = Integer.parseInt(idUsuarioStr);
 
             // Obtener datos desde el formulario empleado
             int num_documento = Integer.parseInt(request.getParameter("num_documento"));
@@ -234,7 +253,7 @@ private void actualizar_Empleado(HttpServletRequest request, HttpServletResponse
             String apellido_2 = request.getParameter("apellido_2");
             int telefono = Integer.parseInt(request.getParameter("telefono"));
             String direccion = request.getParameter("direccion");
-            
+
             String fechaContratacionStr = request.getParameter("fecha_contratacion");
             java.sql.Date fecha_contratacion = null;
             if (fechaContratacionStr != null && !fechaContratacionStr.isEmpty()) {
@@ -247,57 +266,73 @@ private void actualizar_Empleado(HttpServletRequest request, HttpServletResponse
             if (salarioBaseStr != null && !salarioBaseStr.isEmpty()) {
                 salario_base = new BigDecimal(salarioBaseStr);
             }
+            
+            
 
             // Crear un nuevo usuario y colaborador
             Usuario usuario = new Usuario();
-            usuario.setId_usuario(idUsuario);
+            usuario.setId_usuario(idUsuario); // Asigna el id_usuario al usuario
 
-            
-            Colaborador colaborador = new Colaborador(telefono, num_documento,
-                    nombre, apellido_1, apellido_2, telefono, direccion, 
-                    fecha_contratacion, salario_base, usuario);
-        
+            Colaborador colaborador = new Colaborador(idEmpleado, num_documento,
+                    nombre, apellido_1, apellido_2, telefono, direccion,
+                    fecha_contratacion, null, salario_base, usuario);
+
             // Manejo del estado del usuario
             boolean modificarEstado = "si".equals(request.getParameter("modificar_estado_usuario"));
             if (modificarEstado) {
-                int estadoCargo = Integer.parseInt(request.getParameter("estado_Usuario"));
-                usuario.setEstado(estadoCargo == 1);
+                int estadoUsuario = Integer.parseInt(request.getParameter("estado_Usuario"));
+                usuario.setEstadoUsuario(estadoUsuario == 1);
+                 System.out.println("Estado del usuario después de la modificación: " + usuario.isEstadoUsuario());
             } else {
                 // Utilizar el valor del input hidden
                 boolean estadoAnterior = "1".equals(request.getParameter("estado_actual"));
-                usuario.setEstado(estadoAnterior);
+                usuario.setEstadoUsuario(estadoAnterior);
+                 System.out.println("Estado del usuario manteniendo el anterior: " + usuario.isEstadoUsuario());
             }
-     
-              // Obtener datos desde el formulario usuario
-        String modificarEstadoCargo = request.getParameter("modificar_estado_cargo");
-        if ("si".equals(modificarEstadoCargo)) {
-            usuario.setEstado(Integer.parseInt(request.getParameter("estado_cargoUsuario")) == 1);
-        } else {
-            usuario.setEstado(Integer.parseInt(request.getParameter("estado_actual")) == 1);
-        }
 
-           // System.out.println("estado usuario " + colaborador.getUsuario().isEstado());
-          //  System.out.println("cargo " + colaborador.getUsuario().getCargo());
+            // Manejo del cargo del usuario
+            String modificarCargoActual = request.getParameter("modificar_cargo_actual");
+            if ("si".equals(modificarCargoActual)) {
+                int idCargo = Integer.parseInt(request.getParameter("cargo_Usuario"));
+                Cargo cargo = colaboradorDAO.obtenerCargoPorId(idCargo);
+                usuario.setCargo(cargo);
+                System.out.println("Cargo del usuario después de la modificación: " + usuario.getCargo().getNombreCargo());
+                
+            } else {
+                int idCargo = Integer.parseInt(request.getParameter("cargo_actual"));
+                Cargo cargo = colaboradorDAO.obtenerCargoPorId(idCargo);
+                usuario.setCargo(cargo);
+                System.out.println("Cargo del usuario sin modificar: " + usuario.getCargo().getNombreCargo());
+            }
+            
+            System.out.println("cargo "+ colaborador.getUsuario().getCargo().getNombreCargo());
+            System.out.println("id usuario: " + idUsuario);
+            System.out.println("id empleados: " + idEmpleado);
+            System.out.println("id nombre: " + nombre);
+            System.out.println("id fecha_contratacion: " + fecha_contratacion);
+            System.out.println("id salario_base: " + salario_base);
+            System.out.println("Cargo modificar: " + usuario.getCargo().getNombreCargo());
+        
+            
             // Llamar al método de modificación en DAO
-            boolean exito = colaboradorDAO.modificarEmpleado(usuario, colaborador);
+            boolean exito = colaboradorDAO.modificarEmpleado(colaborador);
 
             if (exito) {
-                response.sendRedirect("SvColaborador?accion=Ver_Empleado&id=" + idUsuario);
+                 response.sendRedirect("SvColaborador?accion=Ver_Empleado&id=" + idUsuario);
+                System.out.println("si");
+              
             } else {
                 request.getRequestDispatcher("/WEB-INF/error.jsp").forward(request, response);
             }
 
         } catch (Exception e) {
-   
-         e.printStackTrace();
+            e.printStackTrace();
             request.getRequestDispatcher("/WEB-INF/error.jsp").forward(request, response);
         }
     }
 
 //------------------------------------------------------------------------------------//
-     
     // request.getRequestDispatcher("vistaAdmin/actualizar.jsp").forward(request, response);
-    
     @Override
     public String getServletInfo() {
         return "Short description";

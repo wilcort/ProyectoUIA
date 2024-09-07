@@ -7,12 +7,10 @@ public class Usuario {
     private int id_usuario;
     private String nombreUsuario;
     private String clave;
-    private boolean estado;
+    private boolean estadoUsuario;
+    private int id_cargo;
     Cargo cargo;
 
-    
-    
-   
     public int getId_usuario() {
         return id_usuario;
     }
@@ -37,12 +35,20 @@ public class Usuario {
         this.clave = clave;
     }
 
-    public boolean isEstado() {
-        return estado;
+    public boolean isEstadoUsuario() {
+        return estadoUsuario;
     }
 
-    public void setEstado(boolean estado) {
-        this.estado = estado;
+    public void setEstadoUsuario(boolean estadoUsuario) {
+        this.estadoUsuario = estadoUsuario;
+    }
+
+    public int getId_cargo() {
+        return id_cargo;
+    }
+
+    public void setId_cargo(int id_cargo) {
+        this.id_cargo = id_cargo;
     }
 
     public Cargo getCargo() {
@@ -54,5 +60,6 @@ public class Usuario {
     }
     
     
-    
+
 }
+    

@@ -42,7 +42,7 @@ public class ColaboradorDAO {
                     + "e.fecha_contratacion,\n"
                     + "e.salario_base,\n"
                     + "u.id_usuario,\n"
-                    + "u.estado,\n"
+                    + "u.estadoUsuario,\n"
                     + "c.nombre_cargo\n"
                     + "FROM \n"
                     + "empleado e\n"
@@ -71,8 +71,9 @@ public class ColaboradorDAO {
 
                 // Crear objeto Colaborador y agregarlo a la lista
                 
-                Colaborador colaborador = new Colaborador(id_usuario, num_documento, 
-                        nombre, apellido_1, apellido_2, telefono, direccion,
+                Colaborador colaborador = new Colaborador(id_usuario, 
+                        num_documento, nombre, apellido_1, apellido_2,
+                        telefono, direccion, fecha_contratacion, 
                         fecha_contratacion, salario_base, usuario);
 
                 lista.add(colaborador);
@@ -186,7 +187,7 @@ public class ColaboradorDAO {
     //-------------------------------------------------------------------------------------//
 //------------------------------ INSERTAR -----------------------------------------// 
     
-//--------------------VALIDAR SI EXISTE EMPLEADO-----------------------------------------//
+//--------------------VALIDAR SI EXISTE EMPLEADO  -----------------------------------------//
     
     public boolean empleadoExiste(int numDocumento) throws SQLException {
         String query = "SELECT COUNT(*) FROM empleado WHERE num_Documento = ?";
@@ -211,18 +212,14 @@ public class ColaboradorDAO {
         try {
             // Insertar usuario
             psUsuario = conexion.prepareStatement("INSERT INTO usuario(nombreUsuario, "
-                    + "clave, estado, id_cargo) VALUES (?, ?, ?, ?)",
+                    + "clave, estadoUsuario, id_cargo) VALUES (?, ?, ?, ?)",
                     PreparedStatement.RETURN_GENERATED_KEYS);
 
             psUsuario.setString(1, usuario.getNombreUsuario());
             psUsuario.setString(2, usuario.getClave());
-            psUsuario.setBoolean(3, usuario.isEstado());
+            psUsuario.setBoolean(3, usuario.isEstadoUsuario());
             psUsuario.setInt(4, usuario.getCargo().getIdCargo());
-            
-            
-            System.out.println(" cargo insertar " + usuario.getNombreUsuario());
-            System.out.println(" cargo insertar " + usuario.getCargo().getNombreCargo());
-            System.out.println(" cargo insertar " + usuario.getCargo().isEstado());
+                    
 
             int filasAfectadasUsuario = psUsuario.executeUpdate();
 
@@ -290,8 +287,8 @@ public class ColaboradorDAO {
         try {
             ps = conexion.prepareStatement("SELECT e.id_empleado,e.num_documento, e.nombre, e.apellido_1, "
                     + "e.apellido_2, e.telefono, e.direccion, e.fecha_contratacion, e.salario_Base,"
-                    + "u.id_usuario, u.nombreUsuario, u.estado, "
-                    + "c.nombre_cargo FROM empleado as e "
+                    + "u.id_usuario, u.nombreUsuario, u.estadoUsuario,u.id_cargo, "
+                    + "c.nombre_cargo, c.estado FROM empleado as e "
                     + "INNER JOIN usuario as u ON e.usuario_id_usuario = u.id_usuario "
                     + "INNER JOIN cargo as c ON u.id_cargo = c.id_cargo "
                     + "WHERE e.usuario_id_usuario = ?");
@@ -309,35 +306,40 @@ public class ColaboradorDAO {
                 String apellido_2 = rs.getString("apellido_2");
                 int telefono = rs.getInt("telefono");
                 String direccion = rs.getString("direccion");
-                java.sql.Date fecha_Contratacion = rs.getDate("fecha_Contratacion");
+                java.sql.Date fecha_Contratacion = rs.getDate("fecha_Contratacion");            
                 BigDecimal salario_Base = rs.getBigDecimal("salario_Base");
+                
                 int id_usuario = rs.getInt("id_usuario");
                 String nombreUsuario = rs.getString("u.nombreUsuario"); ///***
-                boolean estado = rs.getBoolean("estado");
+                boolean estadoUsuario = rs.getBoolean("estadoUsuario");
+                
                 String nombre_cargo = rs.getString("nombre_cargo"); // Obtener el nombre del cargo
-
+                boolean estado = rs.getBoolean("estado");
+                
+                int id_cargo = rs.getInt("id_cargo");
+                
+                                
                 // Obtener el usuario
                 Usuario usuario = new Usuario();
                 usuario.setId_usuario(id_usuario);
                 usuario.setNombreUsuario(nombreUsuario); //******
-                usuario.setEstado(estado);
+                usuario.setEstadoUsuario(estadoUsuario);
+                usuario.setId_cargo(id_cargo);
 
                 // Obtener el cargo
                 Cargo cargo = new Cargo();
                 cargo.setNombreCargo(nombre_cargo);
+                cargo.setEstado(estado);
+                
 
                 usuario.setCargo(cargo);
                 
                 
-                colaborador = new Colaborador(id_usuario, num_documento,
-                        nombre, apellido_1, apellido_2, telefono, direccion, 
-                        fecha_Contratacion, salario_Base, usuario);
-                
-                System.out.println("cargo " + colaborador.getUsuario().getNombreUsuario());
-                System.out.println("cargo " + colaborador.getUsuario().isEstado());
-                System.out.println("cargo " + colaborador.getUsuario().getCargo().getNombreCargo());
-                System.out.println("cargo " + colaborador.getUsuario().getCargo().isEstado());
-
+                colaborador = new Colaborador(id_empleado, 
+                        num_documento, nombre, apellido_1, apellido_2, 
+                        telefono, direccion, fecha_Contratacion, null,
+                        salario_Base, usuario);
+            
             }
         } catch (SQLException ex) {
             Logger.getLogger(ColaboradorDAO.class.getName()).log(Level.SEVERE, null, ex);
@@ -359,14 +361,14 @@ public class ColaboradorDAO {
 
 //-------------------------------------------------------------------------------------//
     
-    public Colaborador mostrarDatosEmpleado(int idUsuario) {
+    public Colaborador mostrarDatosEmpleado(int idEmpleado) {
         PreparedStatement ps = null;
         ResultSet rs = null;
         Colaborador colaborador = null;
 
         try {
-            ps = conexion.prepareStatement("SELECT * FROM empleado WHERE id_usuario = ?");
-            ps.setInt(1, idUsuario);
+            ps = conexion.prepareStatement("SELECT * FROM empleado WHERE id_empleado = ?");
+            ps.setInt(1, idEmpleado);
             rs = ps.executeQuery();
 
             while (rs.next()) {
@@ -377,14 +379,15 @@ public class ColaboradorDAO {
                 String apellido_2 = rs.getString("apellido_2");
                 int telefono = rs.getInt("telefono");
                 String direccion = rs.getString("direccion");
-                java.sql.Date fechaContratacion = rs.getDate("fechaContratacion");
+                java.sql.Date fecha_Contratacion = rs.getDate("fecha_Contratacion");
+                java.sql.Date fecha_Salida = rs.getDate("fecha_Salida");
                 BigDecimal salarioBase = rs.getBigDecimal("salarioBase");
-                int id_usuario = rs.getInt("id_usuario");
-                
+                int id_empleado = rs.getInt("id_empleado");
+                               
      
-                colaborador = new Colaborador(id_usuario, num_documento,
+                colaborador = new Colaborador(id_empleado, num_documento,
                         nombre, apellido_1, apellido_2, telefono, direccion, 
-                        fechaContratacion, salarioBase, null);
+                        fecha_Contratacion, null, salarioBase, null);
             }
         } catch (Exception e) {
             e.printStackTrace(); // Agregar manejo de errores
@@ -420,7 +423,7 @@ public class ColaboradorDAO {
                 int id_usuario = rs.getInt("id_usuario");
                 String nombreUsuario = rs.getString("nombreUsuario");
                 String clave = rs.getString("clave");
-                boolean estado = rs.getBoolean("estado");
+                boolean estadoUsuario = rs.getBoolean("estadoUsuario");
                 int id_cargo = rs.getInt("id_cargo");
 
                 // Crear y configurar el objeto Usuario
@@ -428,7 +431,7 @@ public class ColaboradorDAO {
                 usuario.setId_usuario(id_usuario);
                 usuario.setNombreUsuario(nombreUsuario);
                 usuario.setClave(clave); // Asegúrate de tener un setter para 'clave'
-                usuario.setEstado(estado);
+                usuario.setEstadoUsuario(estadoUsuario);
             }
         } catch (SQLException e) {
             e.printStackTrace(); // Registrar el error
@@ -475,52 +478,56 @@ public class ColaboradorDAO {
     public boolean actualizarEmpleado(Colaborador colaborador) {
         PreparedStatement psEmpleado = null;
 
-        try {
-            String sql = "UPDATE empleado SET num_documento=?, nombre=?, "
-                    + "apellido_1=?, apellido_2=?, telefono=?, direccion=?, fecha_contratacion=?"
-                    + "fecha_salida=?, salario_base=?"
-                    + "WHERE id_usuario=?";
+      try {
+        String sql = "UPDATE empleado SET num_documento=?, nombre=?, "
+                + "apellido_1=?, apellido_2=?, telefono=?, direccion=?, fecha_contratacion=?, "
+                + "salario_base=? WHERE id_empleado=?";
+        
+        
+        psEmpleado = conexion.prepareStatement(sql);
+        psEmpleado.setInt(1, colaborador.getNum_Documento());
+        psEmpleado.setString(2, colaborador.getNombre());
+        psEmpleado.setString(3, colaborador.getApellido_1());
+        psEmpleado.setString(4, colaborador.getApellido_2());
+        psEmpleado.setInt(5, colaborador.getTelefono());
+        psEmpleado.setString(6, colaborador.getDireccion());
+        
+        // Verifica si la fecha es nula antes de convertirla
+        if (colaborador.getFecha_Contratacion() != null) {
+            psEmpleado.setDate(7, new java.sql.Date(colaborador.getFecha_Contratacion().getTime()));
+        } else {
+            psEmpleado.setNull(7, java.sql.Types.DATE);
+        }
+        
+        psEmpleado.setBigDecimal(8, colaborador.getSalario_Base());
+        psEmpleado.setInt(9, colaborador.getId_Empleado());
 
-            psEmpleado = conexion.prepareStatement(sql);
-             psEmpleado.setInt(1, colaborador.getNum_Documento());
-            psEmpleado.setString(2, colaborador.getNombre());
-            psEmpleado.setString(3, colaborador.getApellido_1());
-            psEmpleado.setString(4, colaborador.getApellido_2());
-            psEmpleado.setInt(5, colaborador.getTelefono());
-            psEmpleado.setString(6, colaborador.getDireccion());;
-            psEmpleado.setDate(7, new java.sql.Date(colaborador.getFecha_Contratacion().getTime())); // Convertir Date a java.sql.Date
-            psEmpleado.setBigDecimal(8, colaborador.getSalario_Base());
-            psEmpleado.setInt(9, colaborador.getUsuario().getId_usuario());
-            
-            // psEmpleado.setInt(7, colaborador.getUsuario().getId_usuario());
-            
-           
-            int filasAfectadas = psEmpleado.executeUpdate();
-            return filasAfectadas > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();  // Imprimir el stack trace para más detalles del error
-            return false;
-        } finally {
-            try {
-                if (psEmpleado != null) {
-                    psEmpleado.close();
-                }
-            } catch (SQLException ex) {
-                ex.printStackTrace();  // Imprimir el stack trace para más detalles del error
+        int filasAfectadas = psEmpleado.executeUpdate();
+        return filasAfectadas > 0;
+    } catch (SQLException e) {
+        e.printStackTrace();  // Imprimir el stack trace para más detalles del error
+        return false;
+    } finally {
+        try {
+            if (psEmpleado != null) {
+                psEmpleado.close();
             }
+        } catch (SQLException ex) {
+            ex.printStackTrace();  // Imprimir el stack trace para más detalles del error
         }
     }
+    }
 
-    // Método para actualizar el estado del usuario
+     // Método para actualizar el estado del usuario
     public boolean actualizarUsuario(Usuario usuario) {
         PreparedStatement psActUsuario = null;
 
         try {
-            String sql = "UPDATE usuario SET estado = ?"
+            String sql = "UPDATE usuario SET estadoUsuario = ?"
                     + " WHERE id_usuario = ?";
 
             psActUsuario = conexion.prepareStatement(sql);
-            psActUsuario.setBoolean(1, usuario.isEstado());
+            psActUsuario.setBoolean(1, usuario.isEstadoUsuario());
             psActUsuario.setInt(2, usuario.getId_usuario());
 
             int filasAfectadas = psActUsuario.executeUpdate();
@@ -556,7 +563,7 @@ public class ColaboradorDAO {
             psActualizarCargo.setInt(1, usuario.getCargo().getIdCargo()); // Asignar el nuevo id_cargo
             psActualizarCargo.setInt(2, usuario.getId_usuario());
             
-            System.out.println(" cargo update " + usuario.getCargo());
+            System.out.println(" cargo update " + usuario.getId_cargo());
             
             int filasAfectadas = psActualizarCargo.executeUpdate();
             return filasAfectadas > 0;
@@ -575,14 +582,13 @@ public class ColaboradorDAO {
     }
 
     // Método para modificar empleado y usuario
-    public boolean modificarEmpleado(Usuario usuario, Colaborador colaborador) {
+    public boolean modificarEmpleado(Colaborador colaborador) {
         boolean empleadoActualizado = actualizarEmpleado(colaborador);
-        boolean usuarioActualizado = actualizarUsuario(usuario);
+        boolean usuarioActualizado = actualizarUsuario(colaborador.getUsuario());
+        boolean cargoActualizado = actualizarCargo(colaborador.getUsuario());
 
-
-         return empleadoActualizado && usuarioActualizado;
+         return empleadoActualizado && usuarioActualizado && cargoActualizado;
     }
-
 //-------------------------------------------------------------------------------------//
    
 }

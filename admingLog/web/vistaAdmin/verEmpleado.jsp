@@ -67,7 +67,7 @@
             <tr>
                 <td>${colaborador.usuario.id_usuario}</td>
                 <td>${colaborador.usuario.nombreUsuario}</td>
-                <td>${colaborador.usuario.estado ? 'activo' : 'inactivo'}</td>
+                <td>${colaborador.usuario.estadoUsuario ? 'activo' : 'inactivo'}</td>
             </tr>
         </table>
 
@@ -75,11 +75,13 @@
         <table>
             <tr>         
                 <th>Nombre de Cargo</th>
-                <th>Estado</th>
+                <th>Estado de Cargo</th>
+                <th>id de Cargo</th>
             </tr>
             <tr>
                 <td>${colaborador.usuario.cargo.nombreCargo}</td>
                 <td>${colaborador.usuario.cargo.estado ? 'activo' : 'inactivo'}</td>
+                <td>${colaborador.usuario.id_cargo}</td>
             </tr>
         </table>
         <!-- Botones -->
