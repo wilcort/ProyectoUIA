@@ -38,27 +38,23 @@ public class SvColaborador extends HttpServlet {
             List<Colaborador> listaColaboradores = colaboradorDAO.listarColaboradores();
             request.setAttribute("lista", listaColaboradores);
         } else if ("nuevo".equals(accion)) {
-            List<Cargo> listaCargos = colaboradorDAO.listarCargos();
-            request.setAttribute("cargos", listaCargos);
             vista = "vistaAdmin/nuevo.jsp";
         } else if ("Ver_Empleado".equals(accion)) {
             ver_Empleado(request, response);
             return;
         } else if ("eliminar_Empleado".equals(accion)) {
-            eliminar_Empleado(request, response); 
+            eliminar_Empleado(request, response);
             return;
         }else {
             // Si la acción no coincide con ninguna de las anteriores, redirige a una página de error
             response.sendRedirect("/WEB-INF/error.jsp");
-            return; 
+            return;
         }
 
         request.getRequestDispatcher(vista).forward(request, response);
     }
 
 //-------------------------------------------------------------------------------------//    
-    
-    
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -71,21 +67,18 @@ public class SvColaborador extends HttpServlet {
         } else if ("eliminar_Empleado".equals(accion)) {
             eliminar_Empleado(request, response);
         } else if ("modificar_Empleado".equals(accion)) {
-             modificar_Empleado(request, response);         
+            modificar_Empleado(request, response);
         } else if ("actualizar_Empleado".equals(accion)) {
-             actualizar_Empleado(request, response);
-
-    }
+            actualizar_Empleado(request, response);
+        }
     }
 //-------------------------------------------------------------------------------------//
 //------------------------------ INSERTAR -----------------------------------------//
 
-    private void insertarColaborador(HttpServletRequest request, HttpServletResponse response)
+     private void insertarColaborador(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         // Solicitar datos cargo desde formulario nuevo html
 
-        int idCargo = Integer.parseInt(request.getParameter("cargo_Usuario"));
-        Cargo cargo = colaboradorDAO.obtenerCargoPorId(idCargo);
 
         // Obtener datos Usuario desde formulario nuevo html
         Usuario usuario = new Usuario();
@@ -93,8 +86,6 @@ public class SvColaborador extends HttpServlet {
         usuario.setClave(request.getParameter("claveUsuario"));
         usuario.setEstadoUsuario(Integer.parseInt(request.getParameter("estado_Usuario")) == 1);
 
-        // Asociar el cargo al usuario
-        usuario.setCargo(cargo);
 
         // Crear un nuevo colaborador
         int num_documento = Integer.parseInt(request.getParameter("num_documento"));
@@ -108,7 +99,6 @@ public class SvColaborador extends HttpServlet {
         if (fechaContratacionStr != null && !fechaContratacionStr.isEmpty()) {
             fecha_contratacion = java.sql.Date.valueOf(fechaContratacionStr);
         }
-        String fecha_salidaStr = request.getParameter("fecha_salida");
 
         // Convertir el salario base a BigDecimal
         BigDecimal salario_base = BigDecimal.ZERO; // Valor predeterminado
@@ -118,11 +108,12 @@ public class SvColaborador extends HttpServlet {
         }
 
         // Crear el objeto Colaborador con los datos corregidos
-        Colaborador colaborador = new Colaborador(telefono, num_documento,
-                nombre, apellido_1, apellido_2, telefono, direccion,
-                fecha_contratacion,null, salario_base, usuario);
-
-    
+              
+        Colaborador colaborador = new Colaborador(0,
+                        num_documento, nombre, apellido_1, apellido_2, telefono,
+                        direccion, fecha_contratacion, null,
+                        salario_base, usuario, null,null);
+                
         // Validar si el empleado ya existe
         try {
             if (colaboradorDAO.empleadoExiste(num_documento)) {
@@ -147,23 +138,20 @@ public class SvColaborador extends HttpServlet {
         }
     }
 
-
-
 //-------------------------------------------------------------------------------------//
 //------------------------------ VER EMPLEADO -----------------------------------------//    
-    
     private void ver_Empleado(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        int idEmpleado = Integer.parseInt(request.getParameter("id"));
         
-        Colaborador colaborador = colaboradorDAO.mostrarEmpleado(idEmpleado);
-              
-       /* Usuario usuario = colaboradorDAO.mostrarUsuario(idUsuario);*/
-          
-         if (colaborador != null ){
+        int idUsuario = Integer.parseInt(request.getParameter("id"));
+
+        Colaborador colaborador = colaboradorDAO.mostrarEmpleado(idUsuario);
+
+        /* Usuario usuario = colaboradorDAO.mostrarUsuario(idUsuario);*/
+        if (colaborador != null) {
             // Si se encuentra el colaborador, establecerlo como atributo de solicitud
             request.setAttribute("colaborador", colaborador);
+            
             // Llamar a la página JSP para mostrar los detalles del empleado
             request.getRequestDispatcher("vistaAdmin/verEmpleado.jsp").forward(request, response);
         } else {
@@ -171,53 +159,44 @@ public class SvColaborador extends HttpServlet {
             response.sendRedirect("/WEB-INF/error.jsp");
         }
     }
-    
-    
+
 //-------------------------------------------------------------------------------------//
 //------------------------------ ELIMINAR -----------------------------------------//  
     private void eliminar_Empleado(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         try {
             int idUsuario = Integer.parseInt(request.getParameter("id"));
 
             colaboradorDAO.eliminarEmpleado(idUsuario);
-            
+
             // Obtener la lista actualizada de colaboradores
             List<Colaborador> listaColaboradores = colaboradorDAO.listarColaboradores();
             // Establecer la lista como atributo de solicitud
             request.setAttribute("lista", listaColaboradores);
             // Redirigir al usuario a la página principal
             request.getRequestDispatcher("/vistaAdmin/indexAdmin.jsp").forward(request, response);
-            
+
         } catch (NumberFormatException e) {
             // Manejar el error de formato de número
             request.setAttribute("error", "ID de Usuario inválido.");
             request.getRequestDispatcher("/WEB-INF/error.jsp").forward(request, response);
         }
     }
- //-------------------------------------------------------------------------------------//
+
+//------------------------------------------------------------------------------------//
 //-------------------------------------------------------------------------------------//
+    //------------------------------ MODIFICAR  -----------------------------------------//
     private void modificar_Empleado(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        int idUsuario = Integer.parseInt(request.getParameter("id"));
+        int idEmpleado = Integer.parseInt(request.getParameter("id"));
 
-       Colaborador colaborador = colaboradorDAO.mostrarEmpleado(idUsuario);             
-        /* Usuario usuario = colaboradorDAO.mostrarUsuario(idUsuario);*/
         
-         List<Cargo> listaCargos = colaboradorDAO.listarCargos(); // Obtener lista de cargos
-       
-            System.out.println("id empleado 1: " + colaborador.getId_Empleado());
-            System.out.println("id usuario 1: " + colaborador.getUsuario().getId_usuario());
-            System.out.println(" fecha contra 1: " + colaborador.getFecha_Contratacion());
-            System.out.println(" fecha cargo nuevo 1: " + colaborador.getUsuario().getCargo().getNombreCargo());
-            System.out.println(" fecha cargo nuevo 1: " + colaborador.getUsuario().getCargo().getIdCargo());
-          
+        Colaborador colaborador = colaboradorDAO.mostrarEmpleado(idEmpleado);    
+        
         if (colaborador != null) {
             // Si se encuentra el colaborador, establecerlo como atributo de solicitud
             request.setAttribute("colaborador", colaborador);
-            request.setAttribute("cargos", listaCargos);
             // Llamar a la página JSP para mostrar los detalles del empleado
             request.getRequestDispatcher("vistaAdmin/modificar.jsp").forward(request, response);
         } else {
@@ -225,13 +204,20 @@ public class SvColaborador extends HttpServlet {
             response.sendRedirect("/WEB-INF/error.jsp");
         }
     }
- //-------------------------------------------------------------------------------------//
-//------------------------------ VER ACTUALIZA -----------------------------------------//    
-//-------------------------------------------------------------------------------------//  
-    
-private void actualizar_Empleado(HttpServletRequest request, HttpServletResponse response)
+
+    //-------------------------------------------------------------------------------------//
+    //------------------------------ ACTUALIZAR  -----------------------------------------//
+    private void actualizar_Empleado(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
+           
+            // Obtener el ID del usuario
+            String idUsuarioStr = request.getParameter("idUsuario");
+            if (idUsuarioStr == null || idUsuarioStr.isEmpty()) {
+                throw new IllegalArgumentException("ID del usuario no proporcionado.");
+            }
+            int idUsuario = Integer.parseInt(idUsuarioStr);
+            
             // Obtener el ID del empleado
             String idEmpleadoStr = request.getParameter("id_empleado");
             if (idEmpleadoStr == null || idEmpleadoStr.isEmpty()) {
@@ -239,14 +225,7 @@ private void actualizar_Empleado(HttpServletRequest request, HttpServletResponse
             }
             int idEmpleado = Integer.parseInt(idEmpleadoStr);
 
-            // Obtener el ID del usuario
-            String idUsuarioStr = request.getParameter("idUsuario");
-            if (idUsuarioStr == null || idUsuarioStr.isEmpty()) {
-                throw new IllegalArgumentException("ID del usuario no proporcionado.");
-            }
-            int idUsuario = Integer.parseInt(idUsuarioStr);
-
-            // Obtener datos desde el formulario empleado
+            // Obtener datos desde el formulario empleado            
             int num_documento = Integer.parseInt(request.getParameter("num_documento"));
             String nombre = request.getParameter("nombre");
             String apellido_1 = request.getParameter("apellido_1");
@@ -266,61 +245,35 @@ private void actualizar_Empleado(HttpServletRequest request, HttpServletResponse
             if (salarioBaseStr != null && !salarioBaseStr.isEmpty()) {
                 salario_base = new BigDecimal(salarioBaseStr);
             }
-            
-            
 
             // Crear un nuevo usuario y colaborador
             Usuario usuario = new Usuario();
             usuario.setId_usuario(idUsuario); // Asigna el id_usuario al usuario
 
-            Colaborador colaborador = new Colaborador(idEmpleado, num_documento,
-                    nombre, apellido_1, apellido_2, telefono, direccion,
-                    fecha_contratacion, null, salario_base, usuario);
+            Colaborador colaborador = new Colaborador(idEmpleado, num_documento, 
+                nombre, apellido_1, apellido_2, telefono, direccion, 
+                fecha_contratacion, null, 
+                salario_base, usuario, null, null);
 
             // Manejo del estado del usuario
             boolean modificarEstado = "si".equals(request.getParameter("modificar_estado_usuario"));
+           
             if (modificarEstado) {
                 int estadoUsuario = Integer.parseInt(request.getParameter("estado_Usuario"));
                 usuario.setEstadoUsuario(estadoUsuario == 1);
-                 System.out.println("Estado del usuario después de la modificación: " + usuario.isEstadoUsuario());
-            } else {
+                } else {
                 // Utilizar el valor del input hidden
                 boolean estadoAnterior = "1".equals(request.getParameter("estado_actual"));
                 usuario.setEstadoUsuario(estadoAnterior);
-                 System.out.println("Estado del usuario manteniendo el anterior: " + usuario.isEstadoUsuario());
-            }
-
-            // Manejo del cargo del usuario
-            String modificarCargoActual = request.getParameter("modificar_cargo_actual");
-            if ("si".equals(modificarCargoActual)) {
-                int idCargo = Integer.parseInt(request.getParameter("cargo_Usuario"));
-                Cargo cargo = colaboradorDAO.obtenerCargoPorId(idCargo);
-                usuario.setCargo(cargo);
-                System.out.println("Cargo del usuario después de la modificación: " + usuario.getCargo().getNombreCargo());
-                
-            } else {
-                int idCargo = Integer.parseInt(request.getParameter("cargo_actual"));
-                Cargo cargo = colaboradorDAO.obtenerCargoPorId(idCargo);
-                usuario.setCargo(cargo);
-                System.out.println("Cargo del usuario sin modificar: " + usuario.getCargo().getNombreCargo());
-            }
-            
-            System.out.println("cargo "+ colaborador.getUsuario().getCargo().getNombreCargo());
-            System.out.println("id usuario: " + idUsuario);
-            System.out.println("id empleados: " + idEmpleado);
-            System.out.println("id nombre: " + nombre);
-            System.out.println("id fecha_contratacion: " + fecha_contratacion);
-            System.out.println("id salario_base: " + salario_base);
-            System.out.println("Cargo modificar: " + usuario.getCargo().getNombreCargo());
-        
-            
+              }
+              
             // Llamar al método de modificación en DAO
             boolean exito = colaboradorDAO.modificarEmpleado(colaborador);
 
             if (exito) {
-                 response.sendRedirect("SvColaborador?accion=Ver_Empleado&id=" + idUsuario);
+                response.sendRedirect("SvColaborador?accion=Ver_Empleado&id=" + idEmpleado);
                 System.out.println("si");
-              
+
             } else {
                 request.getRequestDispatcher("/WEB-INF/error.jsp").forward(request, response);
             }
@@ -330,11 +283,14 @@ private void actualizar_Empleado(HttpServletRequest request, HttpServletResponse
             request.getRequestDispatcher("/WEB-INF/error.jsp").forward(request, response);
         }
     }
-
-//------------------------------------------------------------------------------------//
-    // request.getRequestDispatcher("vistaAdmin/actualizar.jsp").forward(request, response);
+   
+    //---------------------------------------------------------------------------------------  
     @Override
     public String getServletInfo() {
         return "Short description";
+    }
+
+    private void asignar_Cargo(HttpServletRequest request, HttpServletResponse response) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.sql.CallableStatement;
 
 public class CargosDAO {
 
@@ -55,7 +56,7 @@ public class CargosDAO {
         }
         return lista;
     }
-// --------------------------- buscar cargo ------------------------
+// --------------------------- MOSTRAR CARGOS ------------------------
     
     public Cargo mostrar_Cargos(int idCargo) {
 
@@ -104,7 +105,7 @@ public class CargosDAO {
          
         try {
             
-            // Generate a new ID if needed
+            // obtener el próximo valor disponible para la columna id_cargo en la tabla cargo
         String sqlSelectMax = "SELECT MAX(id_cargo) FROM cargo";
         ps = conexion.prepareStatement(sqlSelectMax);
         ResultSet rs = ps.executeQuery();
@@ -176,7 +177,25 @@ public class CargosDAO {
         }
     }
 
+//---------------------------------------------------
+    
+    public boolean eliminarCargo(int idCargo) {
+        PreparedStatement ps;
 
-     
+        try {
+            ps = conexion.prepareStatement("DELETE FROM cargo WHERE id_cargo = ?");
+
+            ps.setInt(1, idCargo);
+            ps.execute();
+            return true;
+            
+        } catch (SQLException e) {
+            System.out.println(e.toString());
+            return false;
+        }
+    }
+   // -------------------------------------------------- //
+   
+ 
 }
 

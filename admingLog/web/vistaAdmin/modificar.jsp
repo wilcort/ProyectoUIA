@@ -30,10 +30,7 @@
             document.addEventListener('DOMContentLoaded', (event) => {
                 document.getElementById('modificar_estado_usuario').addEventListener('change', () => {
                     toggleModification('modificar_estado_usuario', 'estado_Usuario');
-                });
-                 document.getElementById('modificar_cargo_actual').addEventListener('change', () => {
-                        toggleModification('modificar_cargo_actual', 'cargo_Usuario');
-                    });
+                  });                 
                 });
         </script>
     </head>
@@ -45,7 +42,7 @@
             
             <input type="hidden" name="idUsuario" value="${colaborador.usuario.id_usuario}">
             <input type="hidden" name="estado_actual" value="${colaborador.usuario.estadoUsuario ? '1' : '0'}">
-            <input type="hidden" name="cargo_actual" value="${colaborador.usuario.id_cargo}">
+            
 
             <table>
                 <tr>
@@ -54,7 +51,7 @@
                 </tr>
                 <tr>
                     <th>Número de Documento</th>
-                    <td><input type="text" name="num_documento" value="${colaborador.num_Documento}" required></td>
+                    <td><input type="text" name="num_documento" value="${colaborador.num_documento}" required></td>
                 </tr>
                 <tr>
                     <th>Nombre</th>
@@ -78,11 +75,11 @@
                 </tr>
                 <tr>
                     <th>Fecha de Contratción</th>
-                    <td><input type="date" name="fecha_contratacion" value="${colaborador.fecha_Contratacion}" required></td>
+                    <td><input type="date" name="fecha_contratacion" value="${colaborador.fecha_contratacion}" required></td>
                 </tr>
                 <tr>
                     <th>Salario Base</th>
-                    <td><input type="number" name="salario_base" step="0.01" value="${colaborador.salario_Base}" required></td>
+                    <td><input type="number" name="salario_base" step="0.01" value="${colaborador.salario_base}" required></td>
                 </tr>
                 <tr>
                     <th>Estado Usuario</th>
@@ -109,33 +106,7 @@
                         </select>
                     </td>
                 </tr>
-                <tr>
-                    <th>Cargo Actual</th>
-                    <td>${colaborador.usuario.cargo.nombreCargo}</td>
-                    <td>${colaborador.usuario.id_cargo}</td>
-                </tr>  
-                <tr>
-                    <th>Modificar Cargo Actual</th>
-                    <td>
-                        <select id="modificar_cargo_actual" name="modificar_cargo_actual">
-                            <option value="" disabled selected>Seleccione</option>
-                            <option value="si">Sí</option>
-                            <option value="no">No</option>
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <th>Cargo:</th>
-                    <td>
-                        <select id="cargo_Usuario" name="cargo_Usuario" disabled>
-                            <option value="" disabled selected>Escoja opción</option>
-                            <c:forEach var="cargo" items="${cargos}">
-                                <option value="${cargo.idCargo}">${cargo.nombreCargo}</option>
-                            </c:forEach>
-                        </select>
-                    </td>
-                </tr>
- 
+                
             </table>
             <input type="hidden" name="accion" value="actualizar_Empleado">
             <button id="guardar" type="submit">Guardar</button>

@@ -27,7 +27,7 @@ public class SvCargo extends HttpServlet {
         super.init();
         cargosDAO = new CargosDAO();
     }
-
+//------------------------------------------------------------------
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -45,6 +45,9 @@ public class SvCargo extends HttpServlet {
         }else if ("Ver_Cargo".equals(accion)) {
             ver_Cargo(request, response);
             return;
+        }else if ("eliminar_Cargo".equals(accion)) {
+            eliminar_Cargo(request, response); 
+            return;
         }else {
             // Si la acción no coincide con ninguna de las anteriores, redirige a una página de error
             response.sendRedirect("/WEB-INF/error.jsp");
@@ -53,25 +56,32 @@ public class SvCargo extends HttpServlet {
         
         request.getRequestDispatcher(vista).forward(request, response);
     }
-
+//------------------------------------------------------------------
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         String accion = request.getParameter("accion");
-        if ("insertarCargo".equals(accion)) {
-             insertarCargo(request, response);
-        } else if ("Ver_Cargo".equals(accion)) {
-            ver_Cargo(request, response);
-        } else if ("modificar_Cargo".equals(accion)) {
-             modificar_Cargo(request, response);         
-        } else if ("actualizar_Cargo".equals(accion)) {
-             actualizar_Cargo(request, response);
-             }
-    
+        try {
+            if ("insertarCargo".equals(accion)) {
+                insertarCargo(request, response);
+            } else if ("Ver_Cargo".equals(accion)) {
+                ver_Cargo(request, response);
+            } else if ("modificar_Cargo".equals(accion)) {
+                modificar_Cargo(request, response);
+            } else if ("actualizar_Cargo".equals(accion)) {
+                actualizar_Cargo(request, response);
+            } else if ("eliminar_Cargo".equals(accion)) {
+                eliminar_Cargo(request, response);
+            } else {
+                response.sendRedirect("/WEB-INF/error.jsp");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();  // Imprime el stack trace en los logs
+            response.sendRedirect("/WEB-INF/error.jsp");
+        }
     }
-
-
+//------------------------------------------------------------------
     private void insertarCargo(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -85,17 +95,12 @@ public class SvCargo extends HttpServlet {
         boolean insercionExitosa = cargosDAO.crear_Cargos(nuevoCargo);
 
         if (insercionExitosa) {
-            // Obtener la lista actualizada de colaboradores
-            List<Cargo> listaCargos = cargosDAO.listarCargos();      
-            // Establecer la lista como atributo de solicitud
-            request.setAttribute("listaCargos", listaCargos);
-            // Redirigir al usuario a la página principal
-            request.getRequestDispatcher("/vistaCargos/indexCargo.jsp").forward(request, response);
+            response.sendRedirect("pages/paginaExitoCargos.jsp");
         } else {
             response.sendRedirect("/WEB-INF/error.jsp");
         }
     }
-    
+//------------------------------------------------------------------    
     private void ver_Cargo (HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException{
     
@@ -115,7 +120,7 @@ public class SvCargo extends HttpServlet {
         }
     
     }
-    
+//------------------------------------------------------------------    
     private void modificar_Cargo(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
@@ -137,7 +142,7 @@ public class SvCargo extends HttpServlet {
             response.sendRedirect("/WEB-INF/error.jsp");
         } 
     } 
-    
+//------------------------------------------------------------------    
     private void actualizar_Cargo(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
@@ -160,9 +165,32 @@ public class SvCargo extends HttpServlet {
             request.getRequestDispatcher("/WEB-INF/error.jsp").forward(request, response);
         }
     }
+//------------------------------------------------------------------
+    private void eliminar_Cargo(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
+        try {
+            int idCargo = Integer.parseInt(request.getParameter("id"));
+            cargosDAO.eliminarCargo(idCargo);
+
+            // Obtener la lista actualizada de cargos
+            List<Cargo> listaCargos = cargosDAO.listarCargos();
+            request.setAttribute("listaCargos", listaCargos);
+
+            // Redirigir a la lista actualizada
+            request.getRequestDispatcher("/vistaCargos/indexCargo.jsp").forward(request, response);
+
+        } catch (NumberFormatException e) {
+            request.setAttribute("error", "ID de Cargo inválido.");
+            request.getRequestDispatcher("/WEB-INF/error.jsp").forward(request, response);
+        }
+    }
+
+    
+//------------------------------------------------------------------
     @Override
     public String getServletInfo() {
         return "Short description";
     }
+ 
 }

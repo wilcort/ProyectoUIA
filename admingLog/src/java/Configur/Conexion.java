@@ -17,7 +17,7 @@ public class Conexion {
         Connection conectar = null;
 
         try {
-            //Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("com.mysql.jdbc.Driver");
             Class.forName("com.mysql.cj.jdbc.Driver");
             conectar = DriverManager.getConnection(servidor, usuario, password);
             System.out.println("CONEXION");

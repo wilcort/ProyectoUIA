@@ -28,5 +28,8 @@
             <input type="hidden" name="accion" value="insertarCargo">
             <button id="guardar" name="guardar" type="submit">Guardar</button>
         </form>
+        <form action="http://localhost:8080/admingLog/SvCargo" style="display: inline; margin-left: 10px;">
+                <button type="submit">Regresar</button>
+        </form>        
     </body>
 </html>

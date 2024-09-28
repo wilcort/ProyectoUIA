@@ -45,14 +45,14 @@
             </tr>
             <tr>
                 <td>${colaborador.id_Empleado}</td>
-                <td>${colaborador.num_Documento}</td>
+                <td>${colaborador.num_documento}</td>
                 <td>${colaborador.nombre}</td>
                 <td>${colaborador.apellido_1}</td>
                 <td>${colaborador.apellido_2}</td>
                 <td>${colaborador.telefono}</td>
                 <td>${colaborador.direccion}</td>
-                <td>${colaborador.fecha_Contratacion}</td>
-                <td>${colaborador.salario_Base}</td>
+                <td>${colaborador.fecha_contratacion}</td>
+                <td>${colaborador.salario_base}</td>
                
             </tr>
         </table>
@@ -70,33 +70,66 @@
                 <td>${colaborador.usuario.estadoUsuario ? 'activo' : 'inactivo'}</td>
             </tr>
         </table>
-
-        <h2>Información del Cargo</h2>
+                           
+        <h2>Cargo del Empleado</h2>
         <table>
-            <tr>         
-                <th>Nombre de Cargo</th>
-                <th>Estado de Cargo</th>
-                <th>id de Cargo</th>
+            <tr>
+                <th> ID Cargo del Empleado</th>
+                <th> Nombre Cargo del Empleado</th>
+                <th> Estado Cargo del Empleado</th>
             </tr>
             <tr>
-                <td>${colaborador.usuario.cargo.nombreCargo}</td>
-                <td>${colaborador.usuario.cargo.estado ? 'activo' : 'inactivo'}</td>
-                <td>${colaborador.usuario.id_cargo}</td>
-            </tr>
+                <td>${colaborador.cargo.idCargo}</td>
+                <td>${colaborador.cargo.nombreCargo}</td>
+                <td>${colaborador.cargo.estado ? "Activo" : " Inactivo"}</td>
+            </tr> 
         </table>
+            
+            <h2>Horario del Empleado</h2>
+        <table>
+             <tr>
+                <th> Hora de Entrada </th>
+                <th> Hora Salida</th>
+                <th> Total Horas Normales </th>
+                <th> Días laborales </th>
+            </tr>
+            <tr>
+                
+                <td>${colaborador.horarios != null ? colaborador.horarios.horaEntrada : 'No asignado'}</td>
+                <td>${colaborador.horarios != null ? colaborador.horarios.horaSalida : 'No asignado'}</td>
+                <td>${colaborador.horarios != null ? colaborador.horarios.horasLaborales : 'No asignado'}</td>
+                <td>${colaborador.horarios != null ? colaborador.horarios.diasLaborales : 'No asignado'}</td>
+            </tr>
+                
+        </table>
+        
         <!-- Botones -->
         <div style="text-align: center; margin-top: 20px;">
 
             <form action="SvColaborador?accion=eliminar_Empleado" method="post" style="display: inline;">
-                <input type="hidden" name="id" value="${colaborador.usuario.id_usuario}">
+                <input type="hidden" name="id" value="${colaborador.id_Empleado}">
                 <button type="submit" name="eliminar" value="eliminar">Eliminar</button>
+            </form>
+
+           
+            <form action="SvAsignar" method="get" style="display: inline;">
+                <input type="hidden" name="accion" value="asignar_Cargo">
+                <input type="hidden" name="id_empleado" value="${colaborador.id_Empleado}">
+                <button type="submit">Asignar Cargo</button>
+            </form>
+                
+            <form action="SvAsignar" method="get" style="display: inline;">
+                <input type="hidden" name="accion" value="asignar_Horario">
+                <input type="hidden" name="id_empleado" value="${colaborador.id_Empleado}">
+                <button type="submit">Asignar Horario</button>
             </form>
 
             <form action="SvColaborador?accion=modificar_Empleado" method="post"
                   style="display: inline; margin-left: 10px;">
-                <input type="hidden" name="id" value="${colaborador.usuario.id_usuario}">
+                <input type="hidden" name="id" value="${colaborador.id_Empleado}">
                 <button type="submit" name="actualizar" value="actualizar">Actualizar</button>
             </form>
+                
             <form action="http://localhost:8080/admingLog/SvColaborador" style="display: inline; margin-left: 10px;">
                 <button type="submit">Regresar</button>
             </form>

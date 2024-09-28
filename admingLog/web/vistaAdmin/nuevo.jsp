@@ -1,4 +1,4 @@
-<<%-- 
+<%-- 
     Document   : nuevo
     Created on : Apr 8, 2024, 6:02:16 PM
     Author     : Dell
@@ -14,14 +14,15 @@
     <body>
         <h2>Nuevo Registro</h2>
         <form action="SvColaborador" method="POST" autocomplete="off">
-          
+    
+    <%-- 
             <label for="cargo_Usuario">Cargo:</label>
             <select id="cargo_Usuario" name="cargo_Usuario">
                 <c:forEach var="cargo" items="${cargos}">
                     <option value="${cargo.idCargo}">${cargo.nombreCargo}</option>
                 </c:forEach>
             </select><br><br>
-   <%--          
+            
             
             <label for="cargo_Usuarioo">Cargo:</label>
             <select id="cargo_Usuario" name="cargo_Usuario">

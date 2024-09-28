@@ -59,6 +59,11 @@
                 <input type="hidden" name="id" value="${cargo.idCargo}">
                 <button type="submit" name="actualizar" value="actualizar">Actualizar</button>
             </form>
+                
+                <form action="SvCargo?accion=eliminar_Cargo" method="post" style="display: inline;">
+                    <input type="hidden" name="id" value="${cargo.idCargo}">
+                    <button type="submit" name="eliminar" value="eliminar">Eliminar</button>
+                </form>
 
             <form action="http://localhost:8080/admingLog/SvCargo" style="display: inline; margin-left: 10px;">
                 <button type="submit">Regresar</button>

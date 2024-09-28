@@ -25,11 +25,14 @@
                 border-radius: 5px;
                 font-weight: bold;
             }
-            .btn-primary {
+            .btn-one {
                 background-color: #007bff;
             }
-            .btn-secondary {
+            .btn-second {
                 background-color: #6c757d;
+            }
+            .btn-third{              
+                background-color: lawngreen;          
             }
         </style>
     </head>
@@ -39,8 +42,9 @@
         <div class="container">
             <h1>Bienvenido a mi Aplicación</h1>
             <p>Bienvenido al sistema de RRHH</p>
-            <a href="/admingLog/SvColaborador" class="btn btn-primary">Manejo de Empleados</a>
-            <a href="/admingLog/SvCargo" class="btn btn-secondary" class="btn btn-secondary">Manejo Cargos</a>
+            <a href="/admingLog/SvColaborador" class="btn btn-one">Manejo de Empleados</a>
+            <a href="/admingLog/SvCargo" class="btn btn-second" >Manejo Cargos</a>
+            <a href="/admingLog/SvHorarios" class="btn btn-third" >Manejo Horarios</a>
         </div>
 
     </body>

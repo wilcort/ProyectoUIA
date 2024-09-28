@@ -48,5 +48,6 @@
     <form action="vistasLog/administrador.jsp" style="display: inline; margin-left: 10px;">
         <button type="submit">Regresar</button>
     </form>
+    
 </body>
 </html>

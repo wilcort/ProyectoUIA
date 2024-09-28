@@ -62,7 +62,8 @@ public class SvLogin extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private void verificar(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    private void verificar(HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
         
         String username = request.getParameter("txtUsu");
         String password = request.getParameter("txtPass");

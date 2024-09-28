@@ -14,30 +14,40 @@ import java.util.Date;
 public class Colaborador {
 
     private int id_Empleado;
-    private int num_Documento;
+    private int num_documento;
     private String nombre;
     private String apellido_1;
     private String apellido_2;
     private int telefono;
     private String direccion;
-    private Date fecha_Contratacion;
-    private Date fecha_Salida;
-    private BigDecimal salario_Base;
+    private Date fecha_contratacion;
+    private Date fecha_salida;
+    private BigDecimal salario_base;
     private Usuario usuario;
+    private Cargo cargo; // Nuevo campo para el id_cargo
+    private Horarios horarios;
 
     //constructor
-    public Colaborador(int id_Empleado, int num_Documento, String nombre, String apellido_1, String apellido_2, int telefono, String direccion, Date fecha_Contratacion, Date fecha_Salida, BigDecimal salario_Base, Usuario usuario) {
+    public Colaborador(int id_Empleado, int num_documento,
+            String nombre, String apellido_1, String apellido_2,
+            int telefono, String direccion, Date fecha_contratacion,
+            Date fecha_salida, BigDecimal salario_base, Usuario usuario,
+            Cargo cargo, Horarios horarios) {
+
         this.id_Empleado = id_Empleado;
-        this.num_Documento = num_Documento;
+        this.num_documento = num_documento;
         this.nombre = nombre;
         this.apellido_1 = apellido_1;
         this.apellido_2 = apellido_2;
         this.telefono = telefono;
         this.direccion = direccion;
-        this.fecha_Contratacion = fecha_Contratacion;
-        this.fecha_Salida = fecha_Salida;
-        this.salario_Base = salario_Base;
+        this.fecha_contratacion = fecha_contratacion;
+        this.fecha_salida = fecha_salida;
+        this.salario_base = salario_base;
         this.usuario = usuario;
+        this.cargo = cargo;
+        this.horarios = horarios;
+
     }
 
     public int getId_Empleado() {
@@ -48,12 +58,12 @@ public class Colaborador {
         this.id_Empleado = id_Empleado;
     }
 
-    public int getNum_Documento() {
-        return num_Documento;
+    public int getNum_documento() {
+        return num_documento;
     }
 
-    public void setNum_Documento(int num_Documento) {
-        this.num_Documento = num_Documento;
+    public void setNum_documento(int num_documento) {
+        this.num_documento = num_documento;
     }
 
     public String getNombre() {
@@ -96,28 +106,28 @@ public class Colaborador {
         this.direccion = direccion;
     }
 
-    public Date getFecha_Contratacion() {
-        return fecha_Contratacion;
+    public Date getFecha_contratacion() {
+        return fecha_contratacion;
     }
 
-    public void setFecha_Contratacion(Date fecha_Contratacion) {
-        this.fecha_Contratacion = fecha_Contratacion;
+    public void setFecha_contratacion(Date fecha_contratacion) {
+        this.fecha_contratacion = fecha_contratacion;
     }
 
-    public Date getFecha_Salida() {
-        return fecha_Salida;
+    public Date getFecha_salida() {
+        return fecha_salida;
     }
 
-    public void setFecha_Salida(Date fecha_Salida) {
-        this.fecha_Salida = fecha_Salida;
+    public void setFecha_salida(Date fecha_salida) {
+        this.fecha_salida = fecha_salida;
     }
 
-    public BigDecimal getSalario_Base() {
-        return salario_Base;
+    public BigDecimal getSalario_base() {
+        return salario_base;
     }
 
-    public void setSalario_Base(BigDecimal salario_Base) {
-        this.salario_Base = salario_Base;
+    public void setSalario_base(BigDecimal salario_base) {
+        this.salario_base = salario_base;
     }
 
     public Usuario getUsuario() {
@@ -128,5 +138,22 @@ public class Colaborador {
         this.usuario = usuario;
     }
 
+    public Cargo getCargo() {
+        return cargo;
+    }
+
+    public void setCargo(Cargo cargo) {
+        this.cargo = cargo;
+    }
+
+    public Horarios getHorarios() {
+        return horarios;
+    }
+
+    public void setHorarios(Horarios horarios) {
+        this.horarios = horarios;
+    }
+
 }
- 
+
+   
