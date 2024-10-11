@@ -1,5 +1,6 @@
 package Model;
 
+import ModelEmpleado.Horarios;
 import Configur.Conexion;
 import java.math.BigDecimal;
 import java.sql.Connection;

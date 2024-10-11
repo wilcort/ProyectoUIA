@@ -4,6 +4,7 @@
  */
 package Model;
 
+import ModelEmpleado.Horarios;
 import Configur.Conexion;
 import java.sql.Connection;
 import java.sql.PreparedStatement;

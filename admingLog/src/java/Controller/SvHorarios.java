@@ -4,7 +4,7 @@
  */
 package Controller;
 
-import Model.Horarios;
+import ModelEmpleado.Horarios;
 import Model.HorariosDAO;
 import java.io.IOException;
 import java.io.PrintWriter;

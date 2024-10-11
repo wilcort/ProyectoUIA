@@ -1,4 +1,3 @@
-
 package Controller;
 
 import Model.Cargo;
@@ -64,12 +63,13 @@ public class SvLogin extends HttpServlet {
 
     private void verificar(HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-        
+
         String username = request.getParameter("txtUsu");
         String password = request.getParameter("txtPass");
 
         // Verificar si el usuario es el admin por defecto
         if ("admin".equals(username) && "123456".equals(password)) {
+            
             // Crear un usuario simulado
             Usuario adminUser = new Usuario();
             adminUser.setNombreUsuario("admin");
@@ -90,18 +90,19 @@ public class SvLogin extends HttpServlet {
             Usuario usuario = obtenerUsuario(request);
             usuario = dao.identificar(usuario);
 
-            if (usuario != null && usuario.getCargo().getNombreCargo().equalsIgnoreCase("administrador")) {
+            if (usuario != null) {
                 HttpSession sesion = request.getSession();
                 sesion.setAttribute("usuario", usuario);
-                response.sendRedirect("vistasLog/administrador.jsp");
-
-            } else if (usuario != null ) {
-                HttpSession sesion = request.getSession();
-                sesion.setAttribute("usuario", usuario);
-                response.sendRedirect("vistasLog/vendedor.jsp");
-
+                // Almacena el id_usuario en la sesión
+                sesion.setAttribute("id_usuario", usuario.getId_usuario());
+                
+                if (usuario.getCargo().getNombreCargo().equalsIgnoreCase("administrador")) {
+                    response.sendRedirect("vistasLog/administrador.jsp");
+                } else {
+                    response.sendRedirect("vistasLog/empleado.jsp");
+                }
             } else {
-                // Añadir una declaración de impresión para depurar
+                // Mensaje de error
                 System.out.println("Error al verificar credenciales: Usuario o cargo incorrecto.");
                 request.setAttribute("msj", "ERROR CREDENCIALES");
                 request.getRequestDispatcher("identificar.jsp").forward(request, response);
@@ -120,6 +121,7 @@ public class SvLogin extends HttpServlet {
         Usuario usuario = new Usuario();
         usuario.setNombreUsuario(request.getParameter("txtUsu"));
         usuario.setClave(request.getParameter("txtPass"));
+
         return usuario;
     }
 }

@@ -20,10 +20,9 @@ public class UsuarioDAO {
         ResultSet rs = null;
         
         String sql = "SELECT u.id_usuario, c.nombre_cargo FROM usuario u "
-                   + "INNER JOIN cargo c "
-                   + "ON u.id_cargo = c.id_cargo "
-                   + "WHERE u.estadoUsuario = 1 AND "
-                   + "U.nombreUsuario = ? AND u.clave = ?";
+           + "INNER JOIN empleado e ON u.id_usuario = e.usuario_id_usuario "
+           + "INNER JOIN cargo c ON e.id_cargo = c.id_cargo "
+           + "WHERE u.estadoUsuario = 1 AND u.nombreUsuario = ? AND u.clave = ?";
                    
         
         try {
@@ -57,5 +56,6 @@ public class UsuarioDAO {
          }       
         return usu;    
     }
-   
+//-------------------------------------------------------
+ 
 }

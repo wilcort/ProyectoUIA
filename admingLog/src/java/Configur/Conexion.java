@@ -8,7 +8,7 @@ import java.sql.SQLException;
 public class Conexion {
 
     private final String basedeDatos = "tienda3";
-    private final String servidor = "jdbc:mysql://localhost/" + basedeDatos;
+    private final String servidor = "jdbc:mysql://localhost/" + basedeDatos + "?useUnicode=true&characterEncoding=UTF-8";
     private final String usuario = "root";
     private final String password = "123456";
 

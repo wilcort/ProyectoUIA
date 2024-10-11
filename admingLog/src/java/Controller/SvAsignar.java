@@ -7,7 +7,7 @@ package Controller;
 import Model.AsignarDAO;
 import Model.Cargo;
 import Model.Colaborador;
-import Model.Horarios;
+import ModelEmpleado.Horarios;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;

@@ -45,6 +45,9 @@
             <a href="/admingLog/SvColaborador" class="btn btn-one">Manejo de Empleados</a>
             <a href="/admingLog/SvCargo" class="btn btn-second" >Manejo Cargos</a>
             <a href="/admingLog/SvHorarios" class="btn btn-third" >Manejo Horarios</a>
+            <form action="/admingLog/SvLogin?accion=verificar" method="POST">
+                <button type="submit" class="btn btn-danger">Salir</button>
+            </form>
         </div>
 
     </body>
