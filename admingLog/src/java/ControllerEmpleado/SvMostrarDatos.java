@@ -29,26 +29,27 @@ public class SvMostrarDatos extends HttpServlet {
         empleadoDAO = new EmpleadoDAO();
         vista = "vistaEmpleado/datosEmpleado.jsp"; // Inicializar la variable vista
     }
-   
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         String accion = request.getParameter("accion");
 
         if ("Ver_Empleado".equals(accion)) {
             ver_Empleado(request, response);
             return;
-        } else if("realizar_Marca".equals(accion)){
-             request.getRequestDispatcher("vistaEmpleado/marcasEmpleado.jsp").forward(request, response); 
-             
-        }else {
+        } else if ("realizar_Marca".equals(accion)) {
+            request.getRequestDispatcher("vistaEmpleado/marcasEmpleado.jsp").forward(request, response);
+
+        } else {
             // Si la acción no coincide con ninguna de las anteriores, redirige a una página de error
             response.sendRedirect("/WEB-INF/error.jsp");
             return;
         }
     }
 //----------------------------------------------------------------
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -56,7 +57,7 @@ public class SvMostrarDatos extends HttpServlet {
         try {
             if ("realizar_Marca".equals(accion)) {
                 realizar_Marca(request, response);
-           
+
             } else {
                 response.sendRedirect("/WEB-INF/error.jsp");
             }
@@ -65,7 +66,8 @@ public class SvMostrarDatos extends HttpServlet {
             response.sendRedirect("/WEB-INF/error.jsp");
         }
     }
-    
+   
+//--------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
     
     private void ver_Empleado(HttpServletRequest request, HttpServletResponse response) 

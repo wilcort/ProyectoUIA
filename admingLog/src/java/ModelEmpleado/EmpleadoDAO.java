@@ -240,39 +240,64 @@ public class EmpleadoDAO {
         }
 
         return idEmpleado;
+    } 
+//----------------------------------------------------------------------------
+// --------------------- OBTENER MARCAS EMPLEADO -----------------------------------
+      //----------------------------------------------------------------------------
+// --------------------- OBTENER MARCAS EMPLEADO POR DIA -----------------------------------
+public List<Marcas> obtenerMarcasPorDia(int idEmpleado, Date fechaMarca) {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        List<Marcas> marcasList = new ArrayList<>();
+
+        try {
+            ps = conexion.prepareStatement("SELECT m.id_marca, m.fecha_marca, m.hora_entrada, "
+                    + "m.hora_salida, m.hora_entrada_almuerzo, m.hora_salida_almuerzo "
+                    + "FROM marcas m "
+                    + "WHERE m.id_empleado = ? "
+                    + "AND m.fecha_marca = ?");
+
+            // Setear los parámetros
+            ps.setInt(1, idEmpleado);
+            ps.setDate(2, new java.sql.Date(fechaMarca.getTime()));
+
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                // Obtener los valores de las columnas
+                int idMarca = rs.getInt("id_marca");
+                Date fechaMarcaResult = rs.getDate("fecha_marca");
+                Time horaEntrada = rs.getTime("hora_entrada");
+                Time horaSalida = rs.getTime("hora_salida");
+                Time horaEntradaAlmuerzo = rs.getTime("hora_entrada_almuerzo");
+                Time horaSalidaAlmuerzo = rs.getTime("hora_salida_almuerzo");
+
+                // Crear objeto Marcas
+                Marcas marca = new Marcas(idMarca, fechaMarcaResult, horaEntrada, horaSalida,
+                        horaSalidaAlmuerzo, horaEntradaAlmuerzo, idEmpleado);
+
+                // Añadir el objeto a la lista
+                marcasList.add(marca);
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(EmpleadoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(EmpleadoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        return marcasList;
     }
 
-//----------------------------------------------------------------------------
-  
-    public Marcas obtenerMarcaPorFecha(int idEmpleado, LocalDate fecha) {
-    Marcas marca = null;
-    PreparedStatement ps = null;
-    ResultSet rs = null;
-   
-    try {
-        ps = conexion.prepareStatement("SELECT * FROM marcas "
-                + "WHERE id_empleado = ? AND fecha_marca = ?");
-        
-        ps.setInt(1, idEmpleado);
-        ps.setDate(2, java.sql.Date.valueOf(fecha));
-        
-        rs = ps.executeQuery();
-        
-        if (rs.next()) {
-            marca = new Marcas();
-            marca.setFechaMarca(rs.getDate("fecha_marca"));
-            marca.setMarcaEntrada(rs.getTime("hora_entrada"));
-            marca.setMarcaSalida(rs.getTime("hora_salida"));
-            marca.setMarcaSalidaAlmuerzo(rs.getTime("hora_salida_almuerzo"));
-            marca.setMarcaEntradaAlmuerzo(rs.getTime("hora_entrada_almuerzo"));
-        }
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
-    return marca;
-}
-  
-   
 //--------------------------------------------
     
     

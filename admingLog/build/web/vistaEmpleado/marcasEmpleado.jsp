@@ -1,3 +1,8 @@
+@Override
+    public String getServletInfo() {
+        return "Servlet para mostrar los datos del empleado.";
+    }
+}
 <!DOCTYPE html>
 <html lang="es">
     <head>
@@ -194,3 +199,4 @@
         </script>
     </body>
 </html>
+
