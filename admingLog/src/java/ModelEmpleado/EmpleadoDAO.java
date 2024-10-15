@@ -31,17 +31,17 @@ import java.util.Set;
  * @author Dell
  */
 public class EmpleadoDAO {
-    
-     Connection conexion;
+
+    Connection conexion;
 
     public EmpleadoDAO() {
         Conexion conex = new Conexion();
         conexion = conex.getConectar();
     }
-    
+
 //----------------------------------------------------------------------  
 // ----------------------- MOSTRAR DATOS DEL EMPLEADO ------------------------
-   public Colaborador mostrarEmpleado(int idUsuario) {
+    public Colaborador mostrarEmpleado(int idUsuario) {
         PreparedStatement ps = null;
         ResultSet rs = null;
         Colaborador colaborador = null;
@@ -60,7 +60,6 @@ public class EmpleadoDAO {
             // Establecer el parámetro
             ps.setInt(1, idUsuario);
             rs = ps.executeQuery();
-            
 
             if (rs.next()) {  // Cambiar while por if
                 // Obtener los datos del colaborador
@@ -120,7 +119,6 @@ public class EmpleadoDAO {
                         fecha_Contratacion, fecha_Contratacion, // ¿esto debería ser fechaSalida?
                         salario_Base, usuario, cargo, horarios);
 
-                
             } else {
                 System.out.println("No se encontró el colaborador con empleado: " + idUsuario);
             }
@@ -144,7 +142,7 @@ public class EmpleadoDAO {
 
 //-----------------------------------------------------------------------------
 // --------------------- MARCAS EMPLEADO -----------------------------------
-   public boolean realizarMarca(Marcas marca) {
+    public boolean realizarMarca(Marcas marca) {
 
         PreparedStatement ps = null;
 
@@ -202,10 +200,8 @@ public class EmpleadoDAO {
         }
     }
 
-
 //---------------------------------------------------------------------
 // --------------------- OBTENER EL ID EMPLEADO -----------------------------------
-    
     public Integer obtenerIdEmpleado(int idUsuario) {
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -218,11 +214,10 @@ public class EmpleadoDAO {
 
             ps.setInt(1, idUsuario);
             rs = ps.executeQuery();
-            
-             
+
             if (rs.next()) {
                 idEmpleado = rs.getInt("id_empleado");
-                
+
             }
         } catch (SQLException ex) {
             Logger.getLogger(EmpleadoDAO.class.getName()).log(Level.SEVERE, null, ex);
@@ -243,37 +238,88 @@ public class EmpleadoDAO {
     }
 
 //----------------------------------------------------------------------------
-  
-    public Marcas obtenerMarcaPorFecha(int idEmpleado, LocalDate fecha) {
-    Marcas marca = null;
-    PreparedStatement ps = null;
-    ResultSet rs = null;
-   
-    try {
-        ps = conexion.prepareStatement("SELECT * FROM marcas "
-                + "WHERE id_empleado = ? AND fecha_marca = ?");
-        
-        ps.setInt(1, idEmpleado);
-        ps.setDate(2, java.sql.Date.valueOf(fecha));
-        
-        rs = ps.executeQuery();
-        
-        if (rs.next()) {
-            marca = new Marcas();
-            marca.setFechaMarca(rs.getDate("fecha_marca"));
-            marca.setMarcaEntrada(rs.getTime("hora_entrada"));
-            marca.setMarcaSalida(rs.getTime("hora_salida"));
-            marca.setMarcaSalidaAlmuerzo(rs.getTime("hora_salida_almuerzo"));
-            marca.setMarcaEntradaAlmuerzo(rs.getTime("hora_entrada_almuerzo"));
+    public Marcas obtenerMarcaPorFecha(int idEmpleado, Date fecha) {
+        Marcas marca = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            ps = conexion.prepareStatement("SELECT * FROM marcas "
+                    + "WHERE id_empleado = ? AND fecha_marca = ?");
+
+            ps.setInt(1, idEmpleado);
+            ps.setDate(2, new java.sql.Date(fecha.getTime()));
+
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                marca = new Marcas();
+                marca.setFechaMarca(rs.getDate("fecha_marca"));
+                marca.setMarcaEntrada(rs.getTime("hora_entrada"));
+                marca.setMarcaSalida(rs.getTime("hora_salida"));
+                marca.setMarcaSalidaAlmuerzo(rs.getTime("hora_salida_almuerzo"));
+                marca.setMarcaEntradaAlmuerzo(rs.getTime("hora_entrada_almuerzo"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return marca;
     }
-    return marca;
-}
-  
-   
+    //----------------------------------------------------------------------------
+// --------------------- OBTENER MARCAS EMPLEADO POR DIA -----------------------------------
+
+    public List<Marcas> obtenerMarcasPorDia(int idEmpleado, Date fechaMarca) {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        List<Marcas> marcasList = new ArrayList<>();
+
+        try {
+            ps = conexion.prepareStatement("SELECT m.id_marca, m.fecha_marca, m.hora_entrada, "
+                    + "m.hora_salida, m.hora_entrada_almuerzo, m.hora_salida_almuerzo "
+                    + "FROM marcas m "
+                    + "WHERE m.id_empleado = ? "
+                    + "AND m.fecha_marca = ?");
+
+            // Setear los parámetros
+            ps.setInt(1, idEmpleado);
+            ps.setDate(2, new java.sql.Date(fechaMarca.getTime()));
+
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                // Obtener los valores de las columnas
+                int idMarca = rs.getInt("id_marca");
+                Date fechaMarcaResult = rs.getDate("fecha_marca");
+                Time horaEntrada = rs.getTime("hora_entrada");
+                Time horaSalida = rs.getTime("hora_salida");
+                Time horaEntradaAlmuerzo = rs.getTime("hora_entrada_almuerzo");
+                Time horaSalidaAlmuerzo = rs.getTime("hora_salida_almuerzo");
+
+                // Crear objeto Marcas
+                Marcas marca = new Marcas(idMarca, fechaMarcaResult, horaEntrada, horaSalida,
+                        horaSalidaAlmuerzo, horaEntradaAlmuerzo, idEmpleado);
+
+                // Añadir el objeto a la lista
+                marcasList.add(marca);
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(EmpleadoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(EmpleadoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        return marcasList;
+    }
+
 //--------------------------------------------
-    
-    
 }

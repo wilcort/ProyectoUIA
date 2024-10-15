@@ -15,7 +15,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.sql.Time;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.List;
 
 @WebServlet(name = "SvMostrarDatos", urlPatterns = {"/SvMostrarDatos"})
 public class SvMostrarDatos extends HttpServlet {
@@ -100,77 +104,107 @@ public class SvMostrarDatos extends HttpServlet {
     
 //--------------------------------------------------------       
     //----
-   private void realizar_Marca(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    private void realizar_Marca(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
 
-        // Obtener el ID de usuario de la sesión
-        Integer idUsuario = (Integer) request.getSession().getAttribute("id_usuario");
-        System.out.println("hola 2 " + idUsuario);
+    // Obtener el ID de usuario de la sesión
+    Integer idUsuario = (Integer) request.getSession().getAttribute("id_usuario");
+    System.out.println("ID Usuario: " + idUsuario);
 
-        Integer idEmpleado = empleadoDAO.obtenerIdEmpleado(idUsuario);
+    // Obtener el ID del empleado basado en el ID del usuario
+    Integer idEmpleado = empleadoDAO.obtenerIdEmpleado(idUsuario);
+    System.out.println("ID Empleado: " + idEmpleado);
 
-        System.out.println("ID Usuario: " + idUsuario);
+    // Verificar si se encontró el empleado
+    if (idEmpleado != null) {
+        request.setAttribute("idEmpleado", idEmpleado);
+        request.getSession().setAttribute("idEmpleado", idEmpleado);
+    }
 
-        // Obtener el ID del empleado basado en el ID del usuario
-        System.out.println("ID Empleado: " + idEmpleado);
+    // Obtener la fecha ingresada por el usuario en el formulario
+    String fechaMarcaStr = request.getParameter("fecha_marca");
+    System.out.println("Fecha seleccionada: " + fechaMarcaStr);
 
-        // Verificar si se encontró el empleado
-        if (idEmpleado != null) {
-            // Obtener y convertir los datos de la marca (ejemplo: fecha y horas de entrada/salida)
-            String fechaMarcaStr = request.getParameter("fecha_marca");
-            java.sql.Date fechaMarca = null;
+    // Pasar la fecha seleccionada a la JSP
+    request.setAttribute("fechaSeleccionada", fechaMarcaStr);
 
-            if (fechaMarcaStr != null && !fechaMarcaStr.isEmpty()) {
-                fechaMarca = java.sql.Date.valueOf(fechaMarcaStr);
+    try {
+        // Convertir el String a Date
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date fechaMarca = dateFormat.parse(fechaMarcaStr); // Convierte el String a Date
+        System.out.println("Fecha convertida: " + fechaMarca);
+
+        // Llamar al método para obtener las marcas por fecha
+        List<Marcas> marcas = empleadoDAO.obtenerMarcasPorDia(idEmpleado, fechaMarca);
+
+        if (!marcas.isEmpty()) {
+            // Si existen marcas para la fecha seleccionada
+            System.out.println("Se encontraron marcas para la fecha seleccionada.");
+
+            // Mostrar las marcas encontradas
+            request.setAttribute("marcas", marcas);
+
+            // Verificar si alguna de las marcas tiene fecha de entrada que coincide
+            boolean fechaEntradaCoincide = false;
+            for (Marcas marca : marcas) {
+                if (dateFormat.format(marca.getFechaMarca()).equals(fechaMarcaStr)) {
+                    fechaEntradaCoincide = true;
+                    break;
+                }
             }
-            //---------------------       
-            // Verificar si ya existe una marca para esa fecha
-           
-            //-----------------
-            String marcaEntradaStr = request.getParameter("hora_entrada");
-            String marcaSalidaStr = request.getParameter("hora_salida");
-            String marcaSalidaAlmuerzoStr = request.getParameter("hora_salida_almuerzo");
-            String marcaEntradaAlmuerzoStr = request.getParameter("hora_entrada_almuerzo");
 
-            Time hora_entrada = parseTime(marcaEntradaStr);
-            Time hora_salida = parseTime(marcaSalidaStr);
-            Time hora_salida_almuerzo = parseTime(marcaSalidaAlmuerzoStr);
-            Time hora_entrada_almuerzo = parseTime(marcaEntradaAlmuerzoStr);
+            if (fechaEntradaCoincide) {
+                // La fecha coincide, mostrar los datos almacenados
+                System.out.println("La hora de entrada coincide.");
+                // Aquí podrías redirigir a otra página o mostrar los datos
+            } else {
+                // La fecha no coincide, permitir realizar una nueva marca
+                System.out.println("La fecha no coincide. Se permite realizar la marca.");
 
+                // Crear y configurar la nueva marca
+                Marcas nuevaMarca = new Marcas();
+                nuevaMarca.setFechaMarca(fechaMarca);
+                nuevaMarca.setMarcaEntrada(parseTime(request.getParameter("hora_entrada"))); // Obtén la hora de entrada desde el formulario
+                // Si es necesario, también puedes establecer otras propiedades como hora de salida, etc.
+                nuevaMarca.setIdEmpleado(idEmpleado);
+
+                // Almacenar la nueva marca en la base de datos
+                boolean resultado = empleadoDAO.realizarMarca(nuevaMarca);
+                if (resultado) {
+                    System.out.println("Marca registrada correctamente.");
+                    request.setAttribute("mensaje", "Marca registrada correctamente.");
+                } else {
+                    System.out.println("Error al registrar la marca.");
+                    request.setAttribute("mensaje", "Error al registrar la marca.");
+                }
+            }
+        } else {
+            // No hay marcas para la fecha, permite registrar una nueva
+            System.out.println("No se encontraron marcas para la fecha seleccionada. Se permite registrar una nueva marca.");
             Marcas nuevaMarca = new Marcas();
             nuevaMarca.setFechaMarca(fechaMarca);
-            nuevaMarca.setMarcaEntrada(hora_entrada); // Asegúrate de incluir esto si es necesario
-            nuevaMarca.setMarcaSalida(hora_salida);
-            nuevaMarca.setMarcaSalidaAlmuerzo(hora_salida_almuerzo);
-            nuevaMarca.setMarcaEntradaAlmuerzo(hora_entrada_almuerzo);
-            nuevaMarca.setIdEmpleado(idEmpleado); // Asegúrate de asignar el idEmpleado
+            nuevaMarca.setMarcaEntrada(parseTime(request.getParameter("hora_entrada"))); // Obtén la hora de entrada desde el formulario
+            nuevaMarca.setIdEmpleado(idEmpleado);
 
-            boolean insercionExitosa = empleadoDAO.realizarMarca(nuevaMarca);
-            System.out.println("entrada : " + marcaEntradaStr);
-            System.out.println("entrada : " + fechaMarca);
-            System.out.println("empleado " + idEmpleado);
-
-            if (insercionExitosa) {
-                // Redirigir a la página de éxito si la inserción fue exitosa
-                response.sendRedirect("pages/exitoRegistro.jsp");
-                return; // Asegúrate de salir del método después de redirigir
-
+            boolean resultado = empleadoDAO.realizarMarca(nuevaMarca);
+            if (resultado) {
+                System.out.println("Marca registrada correctamente.");
+                request.setAttribute("mensaje", "Marca registrada correctamente.");
             } else {
-                request.setAttribute("error", "Error al registrar la marca.");
+                System.out.println("Error al registrar la marca.");
+                request.setAttribute("mensaje", "Error al registrar la marca.");
             }
-
-            // Añadir más atributos al request, como el idEmpleado o el nombre del empleado si es necesario
-            request.setAttribute("idEmpleado", idEmpleado);
-
-        } else {
-            request.setAttribute("error", "No se encontró el empleado correspondiente.");
         }
 
-        // Redirigir a la vista correspondiente
-        request.getRequestDispatcher("vistaEmpleado/marcasEmpleado.jsp").forward(request, response);
+    } catch (Exception e) {
+        e.printStackTrace(); // Imprime el error si ocurre algún problema
     }
+
+    // Redirigir a la vista correspondiente
+    request.getRequestDispatcher("vistaEmpleado/marcasEmpleado.jsp").forward(request, response);
+}
+
 //--------------------------------------------------------------------------
-    
     private Time parseTime(String timeStr) {
         if (timeStr != null && !timeStr.isEmpty()) {
             // Asegúrate de que el formato de hora tenga segundos
