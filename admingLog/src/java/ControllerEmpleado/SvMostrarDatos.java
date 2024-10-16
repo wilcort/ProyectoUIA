@@ -57,6 +57,9 @@ public class SvMostrarDatos extends HttpServlet {
             throws ServletException, IOException {
 
         String accion = request.getParameter("accion");
+        String fechaMarca = request.getParameter("fecha_marca"); // Obtener la fecha de la marca
+        boolean marcaRegistrada = false;
+        
         try {
             if ("realizar_Marca".equals(accion)) {
                 realizar_Marca(request, response);
@@ -134,7 +137,7 @@ public class SvMostrarDatos extends HttpServlet {
         Date fechaMarca = dateFormat.parse(fechaMarcaStr); // Convierte el String a Date
         System.out.println("Fecha convertida: " + fechaMarca);
 
-        // Llamar al método para obtener las marcas por fecha
+        // Llamar al método para obtener las marcas
         List<Marcas> marcas = empleadoDAO.obtenerMarcasPorDia(idEmpleado, fechaMarca);
 
         if (!marcas.isEmpty()) {
@@ -165,13 +168,16 @@ public class SvMostrarDatos extends HttpServlet {
                 Marcas nuevaMarca = new Marcas();
                 nuevaMarca.setFechaMarca(fechaMarca);
                 nuevaMarca.setMarcaEntrada(parseTime(request.getParameter("hora_entrada"))); // Obtén la hora de entrada desde el formulario
-                // Si es necesario, también puedes establecer otras propiedades como hora de salida, etc.
+                nuevaMarca.setMarcaSalida(parseTime(request.getParameter("hora_salida"))); // 
+                nuevaMarca.setMarcaSalidaAlmuerzo(parseTime(request.getParameter("hora_entrada_almuerzo")));
+                nuevaMarca.setMarcaEntradaAlmuerzo(parseTime(request.getParameter("hora_salida_almuerzo")));
                 nuevaMarca.setIdEmpleado(idEmpleado);
 
                 // Almacenar la nueva marca en la base de datos
                 boolean resultado = empleadoDAO.realizarMarca(nuevaMarca);
                 if (resultado) {
                     System.out.println("Marca registrada correctamente.");
+                    System.out.println("marca ");
                     request.setAttribute("mensaje", "Marca registrada correctamente.");
                 } else {
                     System.out.println("Error al registrar la marca.");

@@ -322,4 +322,54 @@ public class EmpleadoDAO {
     }
 
 //--------------------------------------------
+    
+public List<Marcas> obtenerTodasLasMarcas(int idEmpleado) {
+    List<Marcas> marcas = new ArrayList<>();
+    
+    String sql = "SELECT id_marca, fecha_marca, hora_entrada, hora_salida, "
+                 + "hora_entrada_almuerzo, hora_salida_almuerzo "
+                 + "FROM marcas WHERE id_empleado = ?";
+    
+    try (PreparedStatement ps = conexion.prepareStatement(sql)) {
+        ps.setInt(1, idEmpleado); // Setear el ID del empleado
+        ResultSet rs = ps.executeQuery();
+        
+        while (rs.next()) {
+            Marcas marca = new Marcas();
+            marca.setIdMarca(rs.getInt("id_marca"));
+            marca.setFechaMarca(rs.getDate("fecha_marca"));
+            marca.setMarcaEntrada(rs.getTime("hora_entrada"));
+            marca.setMarcaSalida(rs.getTime("hora_salida"));
+            marca.setMarcaEntradaAlmuerzo(rs.getTime("hora_entrada_almuerzo"));
+            marca.setMarcaSalidaAlmuerzo(rs.getTime("hora_salida_almuerzo"));
+
+            marcas.add(marca);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    
+    return marcas;
 }
+
+//---
+public boolean verificarMarca(String fecha) {
+    boolean existeMarca = false;
+    String query = "SELECT COUNT(*) FROM marcas WHERE fecha_marca = ?";
+
+    try (PreparedStatement ps = conexion.prepareStatement(query)){
+        ps.setString(1, fecha);
+        ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+            existeMarca = rs.getInt(1) > 0; // Si el conteo es mayor que 0, existe una marca
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return existeMarca;
+}
+
+//-------------------------------------------------
+}
+
