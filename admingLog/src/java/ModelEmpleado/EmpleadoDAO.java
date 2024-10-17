@@ -142,65 +142,83 @@ public class EmpleadoDAO {
 
 //-----------------------------------------------------------------------------
 // --------------------- MARCAS EMPLEADO -----------------------------------
-    public boolean realizarMarca(Marcas marca) {
+ public boolean marcarEntrada(Marcas marca) {
+    return realizarMarca(marca, true, false, false, false);
+}
 
-        PreparedStatement ps = null;
+public boolean marcarSalida(Marcas marca) {
+    return realizarMarca(marca, false, true, false, false);
+}
 
+public boolean marcarEntradaAlmuerzo(Marcas marca) {
+    return realizarMarca(marca, false, false, true, false);
+}
+
+public boolean marcarSalidaAlmuerzo(Marcas marca) {
+    return realizarMarca(marca, false, false, false, true);
+}
+
+private boolean realizarMarca(Marcas marca, boolean esEntrada, boolean esSalida, boolean esEntradaAlmuerzo, boolean esSalidaAlmuerzo) {
+    PreparedStatement ps = null;
+
+    try {
+        
+
+        ps = conexion.prepareStatement("INSERT INTO marcas ("
+                + " fecha_marca, hora_entrada, hora_salida, "
+                + "hora_entrada_almuerzo, hora_salida_almuerzo, id_empleado) "
+                + "VALUES (?, ?, ?, ?, ?, ?)",
+                PreparedStatement.RETURN_GENERATED_KEYS);
+
+        // Obtener la fecha de marca
+        java.util.Date fechaUtil = marca.getFechaMarca();
+
+        // Verificar si fechaUtil es null
+        if (fechaUtil == null) {
+            throw new IllegalArgumentException("La fecha de marca no puede ser null");
+        }
+
+        // Convertir java.util.Date a java.sql.Date
+        java.sql.Date fechaSQL = new java.sql.Date(fechaUtil.getTime());
+
+        // Usar el objeto java.sql.Date en el PreparedStatement
+        ps.setDate(1, fechaSQL);
+        ps.setTime(2, esEntrada ? marca.getMarcaEntrada() : null);
+        ps.setTime(3, esSalida ? marca.getMarcaSalida() : null);
+        ps.setTime(4, esEntradaAlmuerzo ? marca.getMarcaEntradaAlmuerzo() : null);
+        ps.setTime(5, esSalidaAlmuerzo ? marca.getMarcaSalidaAlmuerzo() : null);
+        ps.setInt(6, marca.getIdEmpleado());
+
+        int filasAfectadas = ps.executeUpdate();
+
+        if (filasAfectadas == 1) {
+            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    int nuevoId = generatedKeys.getInt(1);
+                    marca.setIdMarca(nuevoId);
+                }
+            }
+            return true;
+        } else {
+            throw new SQLException("No se pudo insertar la marca");
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace(); // Cambiado para un mejor diagnóstico
+        return false;
+    } finally {
         try {
-            ps = conexion.prepareStatement("INSERT INTO marcas ( "
-                    + " fecha_marca, hora_entrada, hora_salida, "
-                    + "hora_entrada_almuerzo, hora_salida_almuerzo, id_empleado) "
-                    + "VALUES (?, ?, ?, ?, ?, ?)",
-                    PreparedStatement.RETURN_GENERATED_KEYS);
-
-            // Obtener la fecha de marca
-            java.util.Date fechaUtil = marca.getFechaMarca();
-
-            // Verificar si fechaUtil es null
-            if (fechaUtil == null) {
-                throw new IllegalArgumentException("La fecha de marca no puede ser null");
+            if (ps != null) {
+                ps.close();
             }
-
-            // Convertir java.util.Date a java.sql.Date
-            java.sql.Date fechaSQL = new java.sql.Date(fechaUtil.getTime());
-
-            // Usar el objeto java.sql.Date en el PreparedStatement
-            ps.setDate(1, fechaSQL);
-            ps.setTime(2, marca.getMarcaEntrada());
-            ps.setTime(3, marca.getMarcaSalida());
-            ps.setTime(4, marca.getMarcaEntradaAlmuerzo());
-            ps.setTime(5, marca.getMarcaSalidaAlmuerzo());
-            ps.setInt(6, marca.getIdEmpleado());
-
-            int filasAfectadas = ps.executeUpdate();
-
-            if (filasAfectadas == 1) {
-                try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
-                    if (generatedKeys.next()) { // Asegúrate de que hay un resultado
-                        int nuevoId = generatedKeys.getInt(1);
-                        marca.setIdMarca(nuevoId);
-                    }
-                }
-                return true;
-            } else {
-                throw new SQLException("No se pudo insertar la marca");
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace(); // Cambiado para un mejor diagnóstico
-            return false;
-        } finally {
-            try {
-                if (ps != null) {
-                    ps.close();
-                }
-            } catch (SQLException ex) {
-                System.out.println("Error al cerrar PreparedStatements: " + ex.getMessage());
-            }
+        } catch (SQLException ex) {
+            System.out.println("Error al cerrar PreparedStatements: " + ex.getMessage());
         }
     }
+}
 
 //---------------------------------------------------------------------
+   
 // --------------------- OBTENER EL ID EMPLEADO -----------------------------------
     public Integer obtenerIdEmpleado(int idUsuario) {
         PreparedStatement ps = null;

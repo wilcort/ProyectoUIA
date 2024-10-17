@@ -107,7 +107,7 @@ public class SvMostrarDatos extends HttpServlet {
     
 //--------------------------------------------------------       
     //----
-    private void realizar_Marca(HttpServletRequest request, HttpServletResponse response)
+private void realizar_Marca(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
 
     // Obtener el ID de usuario de la sesión
@@ -137,73 +137,41 @@ public class SvMostrarDatos extends HttpServlet {
         Date fechaMarca = dateFormat.parse(fechaMarcaStr); // Convierte el String a Date
         System.out.println("Fecha convertida: " + fechaMarca);
 
-        // Llamar al método para obtener las marcas
-        List<Marcas> marcas = empleadoDAO.obtenerMarcasPorDia(idEmpleado, fechaMarca);
+        // Crear y configurar la nueva marca
+        Marcas nuevaMarca = new Marcas();
+        nuevaMarca.setFechaMarca(fechaMarca);
+        nuevaMarca.setMarcaEntrada(parseTime(request.getParameter("hora_entrada"))); // Obtén la hora de entrada desde el formulario
+        nuevaMarca.setMarcaSalida(parseTime(request.getParameter("hora_salida"))); // 
+        nuevaMarca.setMarcaSalidaAlmuerzo(parseTime(request.getParameter("hora_entrada_almuerzo")));
+        nuevaMarca.setMarcaEntradaAlmuerzo(parseTime(request.getParameter("hora_salida_almuerzo")));
+        nuevaMarca.setIdEmpleado(idEmpleado);
+        
+        // Comprobar si hay al menos una marca
+        if (nuevaMarca.getMarcaEntrada() == null && nuevaMarca.getMarcaSalida() == null &&
+            nuevaMarca.getMarcaSalidaAlmuerzo() == null && nuevaMarca.getMarcaEntradaAlmuerzo() == null) {
+            throw new IllegalArgumentException("Debes ingresar al menos una marca (entrada o salida).");
+        }
 
-        if (!marcas.isEmpty()) {
-            // Si existen marcas para la fecha seleccionada
-            System.out.println("Se encontraron marcas para la fecha seleccionada.");
-
-            // Mostrar las marcas encontradas
-            request.setAttribute("marcas", marcas);
-
-            // Verificar si alguna de las marcas tiene fecha de entrada que coincide
-            boolean fechaEntradaCoincide = false;
-            for (Marcas marca : marcas) {
-                if (dateFormat.format(marca.getFechaMarca()).equals(fechaMarcaStr)) {
-                    fechaEntradaCoincide = true;
-                    break;
-                }
-            }
-
-            if (fechaEntradaCoincide) {
-                // La fecha coincide, mostrar los datos almacenados
-                System.out.println("La hora de entrada coincide.");
-                // Aquí podrías redirigir a otra página o mostrar los datos
-            } else {
-                // La fecha no coincide, permitir realizar una nueva marca
-                System.out.println("La fecha no coincide. Se permite realizar la marca.");
-
-                // Crear y configurar la nueva marca
-                Marcas nuevaMarca = new Marcas();
-                nuevaMarca.setFechaMarca(fechaMarca);
-                nuevaMarca.setMarcaEntrada(parseTime(request.getParameter("hora_entrada"))); // Obtén la hora de entrada desde el formulario
-                nuevaMarca.setMarcaSalida(parseTime(request.getParameter("hora_salida"))); // 
-                nuevaMarca.setMarcaSalidaAlmuerzo(parseTime(request.getParameter("hora_entrada_almuerzo")));
-                nuevaMarca.setMarcaEntradaAlmuerzo(parseTime(request.getParameter("hora_salida_almuerzo")));
-                nuevaMarca.setIdEmpleado(idEmpleado);
-
-                // Almacenar la nueva marca en la base de datos
-                boolean resultado = empleadoDAO.realizarMarca(nuevaMarca);
-                if (resultado) {
-                    System.out.println("Marca registrada correctamente.");
-                    System.out.println("marca ");
-                    request.setAttribute("mensaje", "Marca registrada correctamente.");
-                } else {
-                    System.out.println("Error al registrar la marca.");
-                    request.setAttribute("mensaje", "Error al registrar la marca.");
-                }
-            }
-        } else {
-            // No hay marcas para la fecha, permite registrar una nueva
-            System.out.println("No se encontraron marcas para la fecha seleccionada. Se permite registrar una nueva marca.");
-            Marcas nuevaMarca = new Marcas();
+        boolean registradaEntrada = empleadoDAO.marcarEntrada(nuevaMarca);
+        if (registradaEntrada) {
             nuevaMarca.setFechaMarca(fechaMarca);
             nuevaMarca.setMarcaEntrada(parseTime(request.getParameter("hora_entrada"))); // Obtén la hora de entrada desde el formulario
             nuevaMarca.setIdEmpleado(idEmpleado);
-
-            boolean resultado = empleadoDAO.realizarMarca(nuevaMarca);
-            if (resultado) {
-                System.out.println("Marca registrada correctamente.");
-                request.setAttribute("mensaje", "Marca registrada correctamente.");
-            } else {
-                System.out.println("Error al registrar la marca.");
-                request.setAttribute("mensaje", "Error al registrar la marca.");
-            }
-        }
+        } 
+         // Asegúrate de que la marca de entrada esté registrada
+            boolean registradaSalida = empleadoDAO.marcarSalida(nuevaMarca);
+            if (registradaSalida) {
+                System.out.println("Marca de salida registrada exitosamente.");
+               
+                nuevaMarca.setMarcaSalida(parseTime(request.getParameter("hora_salida"))); // Obtén la hora de entrada desde el formulario
+                nuevaMarca.setIdEmpleado(idEmpleado);
+            
+        } 
+        
 
     } catch (Exception e) {
         e.printStackTrace(); // Imprime el error si ocurre algún problema
+        request.setAttribute("mensaje", "Error al registrar la marca: " + e.getMessage());
     }
 
     // Redirigir a la vista correspondiente
@@ -227,7 +195,21 @@ public class SvMostrarDatos extends HttpServlet {
         return null; // O manejar el caso de hora nula según sea necesario
     }
 //----------------------------------------------------------------------------
+// Método para verificar si hay una marca de entrada registrada
+public boolean verificarMarcaEntrada(int idEmpleado, Date fechaMarca) {
+    // Obtener la lista de marcas para el día específico
+    List<Marcas> marcas = empleadoDAO.obtenerMarcasPorDia(idEmpleado, fechaMarca);
 
+    // Verificar si hay alguna marca de entrada registrada
+    for (Marcas marca : marcas) {
+        if (marca.getMarcaEntrada() != null) {
+            // Si hay marca de entrada, devolver verdadero
+            return true;
+        }
+    }
+    // Si no hay marca de entrada, devolver falso
+    return false;
+}
 //--------------------------------------------------------------------------
     @Override
     public String getServletInfo() {
