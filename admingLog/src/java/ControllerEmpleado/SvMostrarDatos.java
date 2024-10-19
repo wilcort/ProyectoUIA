@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.sql.Time;
 import java.time.LocalDate;
+import java.util.List;
 
 @WebServlet(name = "SvMostrarDatos", urlPatterns = {"/SvMostrarDatos"})
 public class SvMostrarDatos extends HttpServlet {
@@ -42,6 +43,9 @@ public class SvMostrarDatos extends HttpServlet {
         } else if("realizar_Marca".equals(accion)){
              request.getRequestDispatcher("vistaEmpleado/marcasEmpleado.jsp").forward(request, response); 
              
+        } else if("ver_Marcas".equals(accion)){
+            request.getRequestDispatcher("vistaEmpleado/verMarcas.jsp").forward(request, response); 
+             
         }else {
             // Si la acción no coincide con ninguna de las anteriores, redirige a una página de error
             response.sendRedirect("/WEB-INF/error.jsp");
@@ -56,7 +60,8 @@ public class SvMostrarDatos extends HttpServlet {
         try {
             if ("realizar_Marca".equals(accion)) {
                 realizar_Marca(request, response);
-           
+            } else if ("ver_Marcas".equals(accion)) {
+                ver_Marcas(request, response);
             } else {
                 response.sendRedirect("/WEB-INF/error.jsp");
             }
@@ -65,7 +70,8 @@ public class SvMostrarDatos extends HttpServlet {
             response.sendRedirect("/WEB-INF/error.jsp");
         }
     }
-    
+
+
 //-------------------------------------------------------------------------------
     
     private void ver_Empleado(HttpServletRequest request, HttpServletResponse response) 
@@ -159,7 +165,7 @@ public class SvMostrarDatos extends HttpServlet {
                 request.setAttribute("error", "Error al registrar la marca.");
             }
 
-            // Añadir más atributos al request, como el idEmpleado o el nombre del empleado si es necesario
+            // Añadir más atributos al request, como el idEmpleado 
             request.setAttribute("idEmpleado", idEmpleado);
 
         } else {
@@ -188,9 +194,43 @@ public class SvMostrarDatos extends HttpServlet {
     }
 //----------------------------------------------------------------------------
 
+    private void ver_Marcas(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+             
+
+        // Obtener el ID de usuario de la sesión
+        Integer idUsuario = (Integer) request.getSession().getAttribute("id_usuario");
+        System.out.println("ID Usuario: " + idUsuario);
+
+        if (idUsuario != null) {
+            Integer idEmpleado = empleadoDAO.obtenerIdEmpleado(idUsuario);
+            System.out.println("ID Empleado: " + idEmpleado);
+
+            if (idEmpleado != null) {
+                List<Marcas> ListaMarcas = empleadoDAO.obtenerTodasLasMarcas(idEmpleado);
+                System.out.println("Total de marcas: " + ListaMarcas.size()); // Para verificar
+
+                // Añadir la lista de marcas al request
+                request.setAttribute("listaMarcas", ListaMarcas);
+            } else {
+                System.out.println("ID de empleado no encontrado.");
+            }
+        } else {
+            System.out.println("ID de usuario no encontrado en la sesión.");
+        }
+
+        // Redirigir a la JSP correspondiente
+        request.getRequestDispatcher("vistaEmpleado/verMarcas.jsp").forward(request, response);
+    }
+
+
 //--------------------------------------------------------------------------
     @Override
     public String getServletInfo() {
         return "Servlet para mostrar los datos del empleado.";
     }
+
+   
+  //---------------------------------------------------------
+
 }

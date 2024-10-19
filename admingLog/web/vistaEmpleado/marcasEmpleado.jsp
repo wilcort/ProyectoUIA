@@ -104,8 +104,8 @@
         <!-- Formulario para regresar a la página principal -->
         <form action="http://localhost:8080/admingLog/vistasLog/empleado.jsp" style="display: inline; margin-left: 10px;">
             <button type="submit">Regresar</button>
-        </form>
-
+        
+        
         <script>
             // Función para completar automáticamente la fecha y bloquear el botón
             function realizarMarcaManual(campo) {

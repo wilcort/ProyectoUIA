@@ -66,6 +66,12 @@
             <a href="" class="btn btn-fourth">Solicitud de Incapacidades</a>
             
              <form action="/admingLog/SvMostrarDatos" method="POST" style="display: inline;">
+                <input type="hidden" name="accion" value="ver_Marcas">
+                <input type="hidden" name="id_usuario" value="<%= session.getAttribute("id_usuario") %>"> <!-- Campo oculto para el ID de usuario -->
+                <button type="submit" class="btn btn-one">Ver Marcas Del Empleado</button>
+            </form>
+                
+             <form action="/admingLog/SvMostrarDatos" method="GET" style="display: inline;">
                 <input type="hidden" name="accion" value="realizar_Marca">
                 <input type="hidden" name="id_usuario" value="<%= session.getAttribute("id_usuario") %>"> <!-- Campo oculto para el ID de usuario -->
                 <button type="submit" class="btn btn-one">Realizar Marcas</button>

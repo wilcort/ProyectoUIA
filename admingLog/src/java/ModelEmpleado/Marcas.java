@@ -20,12 +20,13 @@ public class Marcas {
     private Time marcaSalidaAlmuerzo;
     private Time marcaEntradaAlmuerzo;
     private int idEmpleado;
+    private Double horasDia;
     
     public Marcas() {
     // Constructor vacío
 }
 
-    public Marcas(int idMarca, Date fechaMarca, Time marcaEntrada, Time marcaSalida, Time marcaSalidaAlmuerzo, Time marcaEntradaAlmuerzo, int idEmpleado) {
+    public Marcas(int idMarca, Date fechaMarca, Time marcaEntrada, Time marcaSalida, Time marcaSalidaAlmuerzo, Time marcaEntradaAlmuerzo, int idEmpleado, Double horasDia) {
         this.idMarca = idMarca;
         this.fechaMarca = fechaMarca;
         this.marcaEntrada = marcaEntrada;
@@ -33,6 +34,7 @@ public class Marcas {
         this.marcaSalidaAlmuerzo = marcaSalidaAlmuerzo;
         this.marcaEntradaAlmuerzo = marcaEntradaAlmuerzo;
         this.idEmpleado = idEmpleado;
+        this.horasDia = horasDia;
     }
 
     public int getIdMarca() {
@@ -91,5 +93,12 @@ public class Marcas {
         this.idEmpleado = idEmpleado;
     }
 
-    
+    public Double getHorasDia() {
+        return horasDia;
+    }
+
+    public void setHorasDia(Double horasDia) {
+        this.horasDia = horasDia;
+    }
+
 }

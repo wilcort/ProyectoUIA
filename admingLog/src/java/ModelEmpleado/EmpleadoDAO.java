@@ -31,17 +31,17 @@ import java.util.Set;
  * @author Dell
  */
 public class EmpleadoDAO {
-    
-     Connection conexion;
+
+    Connection conexion;
 
     public EmpleadoDAO() {
         Conexion conex = new Conexion();
         conexion = conex.getConectar();
     }
-    
+
 //----------------------------------------------------------------------  
 // ----------------------- MOSTRAR DATOS DEL EMPLEADO ------------------------
-   public Colaborador mostrarEmpleado(int idUsuario) {
+    public Colaborador mostrarEmpleado(int idUsuario) {
         PreparedStatement ps = null;
         ResultSet rs = null;
         Colaborador colaborador = null;
@@ -60,7 +60,6 @@ public class EmpleadoDAO {
             // Establecer el parámetro
             ps.setInt(1, idUsuario);
             rs = ps.executeQuery();
-            
 
             if (rs.next()) {  // Cambiar while por if
                 // Obtener los datos del colaborador
@@ -120,7 +119,6 @@ public class EmpleadoDAO {
                         fecha_Contratacion, fecha_Contratacion, // ¿esto debería ser fechaSalida?
                         salario_Base, usuario, cargo, horarios);
 
-                
             } else {
                 System.out.println("No se encontró el colaborador con empleado: " + idUsuario);
             }
@@ -144,7 +142,7 @@ public class EmpleadoDAO {
 
 //-----------------------------------------------------------------------------
 // --------------------- MARCAS EMPLEADO -----------------------------------
-   public boolean realizarMarca(Marcas marca) {
+    public boolean realizarMarca(Marcas marca) {
 
         PreparedStatement ps = null;
 
@@ -202,10 +200,8 @@ public class EmpleadoDAO {
         }
     }
 
-
 //---------------------------------------------------------------------
 // --------------------- OBTENER EL ID EMPLEADO -----------------------------------
-    
     public Integer obtenerIdEmpleado(int idUsuario) {
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -218,11 +214,10 @@ public class EmpleadoDAO {
 
             ps.setInt(1, idUsuario);
             rs = ps.executeQuery();
-            
-             
+
             if (rs.next()) {
                 idEmpleado = rs.getInt("id_empleado");
-                
+
             }
         } catch (SQLException ex) {
             Logger.getLogger(EmpleadoDAO.class.getName()).log(Level.SEVERE, null, ex);
@@ -243,37 +238,119 @@ public class EmpleadoDAO {
     }
 
 //----------------------------------------------------------------------------
-  
     public Marcas obtenerMarcaPorFecha(int idEmpleado, LocalDate fecha) {
-    Marcas marca = null;
-    PreparedStatement ps = null;
-    ResultSet rs = null;
-   
-    try {
-        ps = conexion.prepareStatement("SELECT * FROM marcas "
-                + "WHERE id_empleado = ? AND fecha_marca = ?");
-        
-        ps.setInt(1, idEmpleado);
-        ps.setDate(2, java.sql.Date.valueOf(fecha));
-        
-        rs = ps.executeQuery();
-        
-        if (rs.next()) {
-            marca = new Marcas();
-            marca.setFechaMarca(rs.getDate("fecha_marca"));
-            marca.setMarcaEntrada(rs.getTime("hora_entrada"));
-            marca.setMarcaSalida(rs.getTime("hora_salida"));
-            marca.setMarcaSalidaAlmuerzo(rs.getTime("hora_salida_almuerzo"));
-            marca.setMarcaEntradaAlmuerzo(rs.getTime("hora_entrada_almuerzo"));
+        Marcas marca = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            ps = conexion.prepareStatement("SELECT * FROM marcas "
+                    + "WHERE id_empleado = ? AND fecha_marca = ?");
+
+            ps.setInt(1, idEmpleado);
+            ps.setDate(2, java.sql.Date.valueOf(fecha));
+
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                marca = new Marcas();
+                marca.setFechaMarca(rs.getDate("fecha_marca"));
+                marca.setMarcaEntrada(rs.getTime("hora_entrada"));
+                marca.setMarcaSalida(rs.getTime("hora_salida"));
+                marca.setMarcaSalidaAlmuerzo(rs.getTime("hora_salida_almuerzo"));
+                marca.setMarcaEntradaAlmuerzo(rs.getTime("hora_entrada_almuerzo"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return marca;
     }
-    return marca;
-}
-  
-   
+
 //--------------------------------------------
-    
-    
+    public List<Marcas> obtenerTodasLasMarcas(int idEmpleado) {
+        List<Marcas> marcas = new ArrayList<>();
+
+        String sql = "SELECT * "
+                + "FROM marcas WHERE id_empleado = ?";
+
+        try (PreparedStatement ps = conexion.prepareStatement(sql)) {
+            ps.setInt(1, idEmpleado); // Setear el ID del empleado
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Marcas marca = new Marcas();
+                marca.setIdMarca(rs.getInt("id_marca"));
+                marca.setFechaMarca(rs.getDate("fecha_marca"));
+                marca.setMarcaEntrada(rs.getTime("hora_entrada"));
+                marca.setMarcaSalida(rs.getTime("hora_salida"));
+                marca.setMarcaEntradaAlmuerzo(rs.getTime("hora_entrada_almuerzo"));
+                marca.setMarcaSalidaAlmuerzo(rs.getTime("hora_salida_almuerzo"));
+                marca.setHorasDia(rs.getDouble("horas_trabajadas_dia"));
+
+                marcas.add(marca);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return marcas;
+    }
+    //---------------------------------------------------------
+    //-------------- CALCULO TOTAL QUINCENAS ---------------
+
+    public double[] calculoHorasQuincenas(int idEmpleado, int mes) {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        double[] horas = new double[2]; // Índice 0 para la primera quincena, 1 para la segunda
+
+        try {
+            ps = conexion.prepareStatement(
+                    "SELECT \n"
+                    + "    e.nombre,\n"
+                    + "    e.apellido_1,\n"
+                    + "    SUM(CASE WHEN DAY(m.fecha_marca) BETWEEN 1 AND 15 THEN m.horas_trabajadas_dia ELSE 0 END) AS total_horas_primera_quincena,\n"
+                    + "    SUM(CASE WHEN DAY(m.fecha_marca) >= 16 THEN m.horas_trabajadas_dia ELSE 0 END) AS total_horas_segunda_quincena\n"
+                    + "FROM \n"
+                    + "    marcas m\n"
+                    + "JOIN \n"
+                    + "    empleado e ON m.id_empleado = e.id_empleado\n"
+                    + "WHERE \n"
+                    + "    MONTH(m.fecha_marca) = ?\n"
+                    + "AND e.id_empleado = ?\n"
+                    + "GROUP BY \n"
+                    + "    e.id_empleado, e.nombre, e.apellido_1;"
+            );
+
+            ps.setInt(1, mes);  // Establece el mes
+            ps.setInt(2, idEmpleado);  // Establece el id del empleado
+
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                horas[0] = rs.getDouble("total_horas_primera_quincena");
+                horas[1] = rs.getDouble("total_horas_segunda_quincena");
+
+                System.out.println("Primera quincena: " + horas[0]);
+                System.out.println("Segunda quincena: " + horas[1]);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace(); // Imprime el error en caso de que ocurra
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return horas; // Retorna el arreglo con las horas trabajadas
+    }
+
+//-----------------------------------------------
 }
