@@ -130,6 +130,13 @@
                 <button type="submit" name="actualizar" value="actualizar">Actualizar</button>
             </form>
                 
+  
+            <form action="SvMarcas" method="get" style="display: inline;">
+                <input type="hidden" name="accion" value="ver_marcas">
+                <input type="hidden" name="id_empleado" value="${colaborador.id_Empleado}">
+                <button type="submit">Ver Marcas</button>
+            </form>
+                
             <form action="http://localhost:8080/admingLog/SvColaborador" style="display: inline; margin-left: 10px;">
                 <button type="submit">Regresar</button>
             </form>

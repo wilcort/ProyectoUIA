@@ -3,15 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/src/java/Controller/SvColaborador.java</file>
-            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/src/java/ControllerEmpleado/SvMostrarDatos.java</file>
-            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/src/java/ModelEmpleado/EmpleadoDAO.java</file>
-            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/web/vistaEmpleado/marcasEmpleado.jsp</file>
-            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/src/java/Model/ColaboradorDAO.java</file>
-            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/src/java/Model/HorariosDAO.java</file>
+            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/src/java/Model/AdminMarcasDAO.java</file>
+            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/web/vistaAdmin/verMarcasEmpleado.jsp</file>
+            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/web/vistaEmpleado/verMarcas.jsp</file>
+            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/web/vistasLog/administrador.jsp</file>
+            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/src/java/Controller/SvMarcas.java</file>
             <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/web/vistaAdmin/verEmpleado.jsp</file>
-            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/src/java/ModelEmpleado/Marcas.java</file>
-            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/src/java/Controller/SvHorarios.java</file>
+            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/src/java/Controller/SvAsignar.java</file>
         </group>
     </open-files>
 </project-private>

@@ -1,3 +1,8 @@
+<%-- 
+    Document   : verMarcasAnteriores
+    Created on : Oct 21, 2024, 7:34:12 PM
+    Author     : Dell
+--%>
 <%@page import="java.time.Year"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="java.util.List"%>
@@ -37,12 +42,6 @@
             <input type="hidden" name="accion" value="verMarcasAnteriores">
             <input type="hidden" name="id_usuario" value="<%= session.getAttribute("id_usuario")%>">
 
-             <!-- Mostrar ID del empleado -->
-            <label for="id_empleado">ID del Empleado:</label>
-            <input type="text" id="id_empleado" value="${param.id_empleado}" readonly>
-
-            
-            
             <label for="mes">Mes:</label>
             <select name="mes" id="mes">
                 <c:forEach begin="1" end="12" var="m">

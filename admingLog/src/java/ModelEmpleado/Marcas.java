@@ -21,12 +21,13 @@ public class Marcas {
     private Time marcaEntradaAlmuerzo;
     private int idEmpleado;
     private Double horasDia;
+    private Double horasTabajadasDia;
     
     public Marcas() {
     // Constructor vacío
 }
 
-    public Marcas(int idMarca, Date fechaMarca, Time marcaEntrada, Time marcaSalida, Time marcaSalidaAlmuerzo, Time marcaEntradaAlmuerzo, int idEmpleado, Double horasDia) {
+    public Marcas(int idMarca, Date fechaMarca, Time marcaEntrada, Time marcaSalida, Time marcaSalidaAlmuerzo, Time marcaEntradaAlmuerzo, int idEmpleado, Double horasDia, Double horasTabajadasDia) {
         this.idMarca = idMarca;
         this.fechaMarca = fechaMarca;
         this.marcaEntrada = marcaEntrada;
@@ -35,6 +36,7 @@ public class Marcas {
         this.marcaEntradaAlmuerzo = marcaEntradaAlmuerzo;
         this.idEmpleado = idEmpleado;
         this.horasDia = horasDia;
+        this.horasTabajadasDia = horasTabajadasDia;
     }
 
     public int getIdMarca() {
@@ -101,4 +103,26 @@ public class Marcas {
         this.horasDia = horasDia;
     }
 
+    public Double getHorasTabajadasDia() {
+        return horasTabajadasDia;
+    }
+
+    public void setHorasTabajadasDia(Double horasTabajadasDia) {
+        this.horasTabajadasDia = horasTabajadasDia;
+    }
+
+    
+    @Override
+    public String toString() {
+        return "Marcas{"
+                + "idMarca=" + idMarca
+                + ", fechaMarca=" + fechaMarca
+                + ", marcaEntrada=" + marcaEntrada
+                + ", marcaSalida=" + marcaSalida
+                + ", marcaEntradaAlmuerzo=" + marcaEntradaAlmuerzo
+                + ", marcaSalidaAlmuerzo=" + marcaSalidaAlmuerzo
+                + ", horasDia=" + horasDia
+                + ", horasTabajadasDia=" + horasTabajadasDia 
+                + '}';
+    }
 }

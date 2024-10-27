@@ -33,6 +33,9 @@
             }
             .btn-third{              
                 background-color: lawngreen;          
+            }      
+            .btn-danger{
+                background-color: #28a745;    
             }
         </style>
     </head>

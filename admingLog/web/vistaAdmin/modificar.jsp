@@ -38,8 +38,6 @@
         <h1>Modificar Empleado</h1>
 
         <form action="SvColaborador" method="post">  
-                
-            
             <input type="hidden" name="idUsuario" value="${colaborador.usuario.id_usuario}">
             <input type="hidden" name="estado_actual" value="${colaborador.usuario.estadoUsuario ? '1' : '0'}">
             

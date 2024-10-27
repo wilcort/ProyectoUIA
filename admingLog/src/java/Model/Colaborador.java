@@ -51,6 +51,11 @@ public class Colaborador {
 
     }
 
+    public Colaborador() {
+    }
+    
+    
+
     public int getId_Empleado() {
         return id_Empleado;
     }

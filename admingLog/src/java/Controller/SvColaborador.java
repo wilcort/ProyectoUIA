@@ -205,8 +205,8 @@ public class SvColaborador extends HttpServlet {
         }
     }
 
-    //-------------------------------------------------------------------------------------//
-    //------------------------------ ACTUALIZAR  -----------------------------------------//
+//-------------------------------------------------------------------------------------//
+//------------------------------ ACTUALIZAR  -----------------------------------------//
     private void actualizar_Empleado(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {

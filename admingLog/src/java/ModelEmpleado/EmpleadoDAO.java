@@ -298,40 +298,35 @@ public class EmpleadoDAO {
     //---------------------------------------------------------
     //-------------- CALCULO TOTAL QUINCENAS ---------------
 
-    public double[] calculoHorasQuincenas(int idEmpleado, int mes) {
+    public double[] calculoHorasQuincenas(int idEmpleado, int inicio, int fin) {
         PreparedStatement ps = null;
         ResultSet rs = null;
-        double[] horas = new double[2]; // Índice 0 para la primera quincena, 1 para la segunda
+        double[] horas = new double[1]; // Cambiamos a un arreglo de un elemento para almacenar el total
 
         try {
-            ps = conexion.prepareStatement(
-                    "SELECT \n"
-                    + "    e.nombre,\n"
-                    + "    e.apellido_1,\n"
-                    + "    SUM(CASE WHEN DAY(m.fecha_marca) BETWEEN 1 AND 15 THEN m.horas_trabajadas_dia ELSE 0 END) AS total_horas_primera_quincena,\n"
-                    + "    SUM(CASE WHEN DAY(m.fecha_marca) >= 16 THEN m.horas_trabajadas_dia ELSE 0 END) AS total_horas_segunda_quincena\n"
+            ps = conexion.prepareStatement(" SELECT \n"
+                    + "    SUM(CASE WHEN DAY(m.fecha_marca) BETWEEN ? AND ? "
+                    + "THEN m.horas_trabajadas_dia ELSE 0 END) AS total_horas_quincena\n"
                     + "FROM \n"
                     + "    marcas m\n"
                     + "JOIN \n"
                     + "    empleado e ON m.id_empleado = e.id_empleado\n"
                     + "WHERE \n"
-                    + "    MONTH(m.fecha_marca) = ?\n"
-                    + "AND e.id_empleado = ?\n"
+                    + "    MONTH(m.fecha_marca) = MONTH(CURRENT_DATE)\n"
+                    + "AND e.id_empleado = ? "
                     + "GROUP BY \n"
-                    + "    e.id_empleado, e.nombre, e.apellido_1;"
-            );
+                    + "    e.id_empleado;"); // No es necesario agrupar por nombre si solo queremos el total
 
-            ps.setInt(1, mes);  // Establece el mes
-            ps.setInt(2, idEmpleado);  // Establece el id del empleado
+            // Establecemos los parámetros de la consulta
+            ps.setInt(1, inicio);
+            ps.setInt(2, fin); // Día de inicio
+            ps.setInt(3, idEmpleado); // ID del empleado
 
+            // Ejecutamos la consulta
             rs = ps.executeQuery();
 
             if (rs.next()) {
-                horas[0] = rs.getDouble("total_horas_primera_quincena");
-                horas[1] = rs.getDouble("total_horas_segunda_quincena");
-
-                System.out.println("Primera quincena: " + horas[0]);
-                System.out.println("Segunda quincena: " + horas[1]);
+                horas[0] = rs.getDouble("total_horas_quincena"); // Guardamos el total en el arreglo
             }
 
         } catch (Exception e) {
@@ -352,5 +347,249 @@ public class EmpleadoDAO {
         return horas; // Retorna el arreglo con las horas trabajadas
     }
 
-//-----------------------------------------------
+//-------------------------------------------------
+    //-- cambio
+    public List<Marcas> obtenerMarcasQuincena(int idEmpleado, int inicio, int fin) {
+        List<Marcas> marcas = new ArrayList<>();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            // Consulta SQL correctamente estructurada
+            ps = conexion.prepareStatement("SELECT * FROM marcas "
+                    + "WHERE id_empleado = ? "
+                    + "AND DAY(fecha_marca) BETWEEN ? AND ?");
+
+            // Establecemos los parámetros de la consulta
+            ps.setInt(1, idEmpleado);
+            ps.setInt(2, inicio); // Día de inicio
+            ps.setInt(3, fin); // Día de fin
+
+            // Ejecutamos la consulta
+            rs = ps.executeQuery();
+
+            // Procesamos el resultado
+            while (rs.next()) {
+                // Crear un objeto Marcas y agregarlo a la lista
+                Marcas marcaUno = new Marcas();
+                marcaUno.setFechaMarca(rs.getDate("fecha_marca"));
+                marcaUno.setMarcaEntrada(rs.getTime("hora_entrada"));
+                marcaUno.setMarcaSalida(rs.getTime("hora_salida"));
+                marcaUno.setMarcaEntradaAlmuerzo(rs.getTime("hora_entrada_almuerzo"));
+                marcaUno.setMarcaSalidaAlmuerzo(rs.getTime("hora_salida_almuerzo"));
+                marcaUno.setHorasDia(rs.getDouble("horas_trabajadas_dia"));
+
+                // Agregar la marca a la lista
+                marcas.add(marcaUno);
+
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Maneja la excepción adecuadamente
+        } finally {
+            // Cerrar los recursos
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace(); // Maneja la excepción adecuadamente
+            }
+        }
+
+        return marcas;
+    }
+
+//-----------------------------------------------------------------
+    public List<Marcas> obtenerMarcasPorMes(int idEmpleado, int mes, int anio) {
+        List<Marcas> marcas = new ArrayList<>();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            // Consulta SQL que filtra por mes y año
+            ps = conexion.prepareStatement("SELECT * FROM marcas "
+                    + "WHERE id_empleado = ? "
+                    + "AND MONTH(fecha_marca) = ? "
+                    + "AND YEAR(fecha_marca) = ?");
+
+            // Establecemos los parámetros de la consulta
+            ps.setInt(1, idEmpleado);
+            ps.setInt(2, mes);
+            ps.setInt(3, anio);
+
+            // Ejecutamos la consulta
+            rs = ps.executeQuery();
+
+            // Procesamos el resultado
+            while (rs.next()) {
+                // Crear un objeto Marcas y agregarlo a la lista
+                Marcas marcaUno = new Marcas();
+                marcaUno.setIdMarca(rs.getInt("id_Marca"));
+                marcaUno.setFechaMarca(rs.getDate("fecha_marca"));
+                marcaUno.setMarcaEntrada(rs.getTime("hora_entrada"));
+                marcaUno.setMarcaSalida(rs.getTime("hora_salida"));
+                marcaUno.setMarcaEntradaAlmuerzo(rs.getTime("hora_entrada_almuerzo"));
+                marcaUno.setMarcaSalidaAlmuerzo(rs.getTime("hora_salida_almuerzo"));
+                marcaUno.setHorasDia(rs.getDouble("horas_trabajadas_dia"));
+
+                // Agregar la marca a la lista
+                marcas.add(marcaUno);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Maneja la excepción adecuadamente
+        } finally {
+            // Cerrar los recursos
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace(); // Maneja la excepción adecuadamente
+            }
+        }
+
+        return marcas;
+    }
+
+//----------------------------- MENSAJE EMPLEADO -----------------
+    public boolean enviarMensaje(int idEmpleado, String mensaje) {
+        PreparedStatement ps = null;
+
+        try {
+            // Prepara la consulta de inserción
+            ps = conexion.prepareStatement("INSERT INTO mensajes_empleado "
+                    + "(id_empleado, mensaje) VALUES (?, ?)");
+
+            // Asigna los valores a los placeholders de la consulta
+            ps.setInt(1, idEmpleado);
+            ps.setString(2, mensaje);
+
+            // Ejecuta la inserción en la base de datos
+            int rowsAffected = ps.executeUpdate();
+
+            // Verifica si la inserción fue exitosa
+            return rowsAffected > 0; // Si al menos una fila fue afectada, devuelve true
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false; // En caso de error, devuelve false
+        } finally {
+            // Cerrar el PreparedStatement y la conexión
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+//---------------------------------------------------------
+//------- CORRECCION DE MARCAS EMPLEADO --------------------------------------
+
+    public boolean correcionMarcas(Marcas marcas) {
+        PreparedStatement ps = null;
+        boolean isUpdated = false; // Para indicar si la actualización fue exitosa
+        try {
+            // Preparar la sentencia SQL para actualizar los registros
+            ps = conexion.prepareStatement("UPDATE marcas SET fecha_marca = ?, "
+                    + "hora_entrada = ?, "
+                    + "hora_salida = ?, "
+                    + "hora_entrada_almuerzo = ?, "
+                    + "hora_salida_almuerzo = ?, " // Coma añadida aquí
+                    + "horas_trabajadas_dia = ? "
+                    + "WHERE id_marca = ?");
+
+            // Usar el objeto java.sql.Date en el PreparedStatement
+            ps.setDate(1, new java.sql.Date(marcas.getFechaMarca().getTime()));
+            ps.setTime(2, marcas.getMarcaEntrada());
+            ps.setTime(3, marcas.getMarcaSalida());
+            ps.setTime(4, marcas.getMarcaEntradaAlmuerzo());
+            ps.setTime(5, marcas.getMarcaSalidaAlmuerzo());
+            ps.setDouble(6, marcas.getHorasTabajadasDia());
+            ps.setInt(7, marcas.getIdMarca());
+
+            // Ejecutar la actualización
+            int rowsAffected = ps.executeUpdate();
+            isUpdated = (rowsAffected > 0); // Verifica si la actualización fue exitosa
+
+            if (isUpdated) {
+                System.out.println("CAMBIO REALIZADO");
+            } else {
+                System.out.println("NO SE REALIZÓ NINGÚN CAMBIO"); // Mensaje opcional si no se actualizó ninguna fila
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace(); // Imprimir la traza de la excepción para depuración
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close(); // Cerrar el PreparedStatement
+                } catch (SQLException e) {
+                    e.printStackTrace(); // Imprimir la traza de la excepción
+                }
+            }
+        }
+        return isUpdated;
+    }
+
+//--------------------------------------------------------
+//---- MOSTRAR SOLO UNA MARCA -------------------
+    
+    public Marcas verSoloMarca(int idMarca) {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        Marcas marca = null; // Cambiamos a una variable de tipo Marcas
+
+        try {
+            String sql = "SELECT * FROM marcas WHERE id_marca = ?";
+            ps = conexion.prepareStatement(sql);
+            ps.setInt(1, idMarca);
+            rs = ps.executeQuery();
+
+            // Revisar si hay resultados en el ResultSet
+            if (rs.next()) {
+                // Cambiar el tipo de los resultados de Date a Time para las horas
+                java.util.Date fechaMarca = rs.getDate("fecha_marca");
+                java.sql.Time horaEntrada = rs.getTime("hora_entrada"); // Se usa getTime
+                java.sql.Time horaSalida = rs.getTime("hora_salida"); // Se usa getTime
+                java.sql.Time horaEntradaAlmuerzo = rs.getTime("hora_entrada_almuerzo"); // Se usa getTime
+                java.sql.Time horaSalidaAlmuerzo = rs.getTime("hora_salida_almuerzo"); // Se usa getTime
+
+                // Crear la instancia de Marcas con los datos recuperados
+                marca = new Marcas(idMarca, fechaMarca, horaEntrada, horaSalida,
+                        horaEntradaAlmuerzo, horaSalidaAlmuerzo, 0,
+                        null, null);
+            }
+        } catch (Exception e) {
+            e.printStackTrace(); // Mejorar la gestión de excepciones
+        } finally {
+            // Cerrar recursos en el bloque finally para evitar fugas de recursos
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return marca; // Retornar la marca o null si no se encontró
+    }
+
+//-------------------------------------------------------   
 }
+
+ 
+
+
