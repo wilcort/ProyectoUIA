@@ -61,7 +61,7 @@ public class EmpleadoDAO {
             ps.setInt(1, idUsuario);
             rs = ps.executeQuery();
 
-            if (rs.next()) {  // Cambiar while por if
+            if (rs.next()) {  
                 // Obtener los datos del colaborador
                 int idEmpleado = rs.getInt("id_empleado");
                 int num_documento = rs.getInt("num_documento");  // Cambiar a "num_documento"
@@ -457,40 +457,6 @@ public class EmpleadoDAO {
         return marcas;
     }
 
-//----------------------------- MENSAJE EMPLEADO -----------------
-    public boolean enviarMensaje(int idEmpleado, String mensaje) {
-        PreparedStatement ps = null;
-
-        try {
-            // Prepara la consulta de inserción
-            ps = conexion.prepareStatement("INSERT INTO mensajes_empleado "
-                    + "(id_empleado, mensaje) VALUES (?, ?)");
-
-            // Asigna los valores a los placeholders de la consulta
-            ps.setInt(1, idEmpleado);
-            ps.setString(2, mensaje);
-
-            // Ejecuta la inserción en la base de datos
-            int rowsAffected = ps.executeUpdate();
-
-            // Verifica si la inserción fue exitosa
-            return rowsAffected > 0; // Si al menos una fila fue afectada, devuelve true
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false; // En caso de error, devuelve false
-        } finally {
-            // Cerrar el PreparedStatement y la conexión
-            try {
-                if (ps != null) {
-                    ps.close();
-                }
-
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 //---------------------------------------------------------
 //------- CORRECCION DE MARCAS EMPLEADO --------------------------------------
 

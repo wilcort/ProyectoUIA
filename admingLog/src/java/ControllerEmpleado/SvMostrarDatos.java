@@ -67,9 +67,7 @@ public class SvMostrarDatos extends HttpServlet {
                 realizar_Marca(request, response);
             } else if ("ver_Marcas".equals(accion)) {
                 ver_Marcas(request, response);
-            } else if ("enviar_Mensaje".equals(accion)) {
-                enviar_Mensaje(request, response);
-            } else if ("verMarcasAnteriores".equals(accion)) {
+            }  else if ("verMarcasAnteriores".equals(accion)) {
                 verMarcasAnteriores(request, response);
             } else {
                 response.sendRedirect("/WEB-INF/error.jsp");
@@ -312,42 +310,6 @@ private double calcularTotalHoras(List<Marcas> listaMarcas) {
         return new int[]{inicio, fin};
     }
 //-------------------------------------------------------------------
-//-------------- ENVIAR MENSAJE --------------------------
-
-    public boolean enviar_Mensaje(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        // Obtener el ID de usuario de la sesión
-        Integer idUsuario = (Integer) request.getSession().getAttribute("id_usuario");
-        System.out.println("id usuario " + idUsuario);
-     
-        // Obtener el ID del empleado basado en el ID del usuario
-        Integer idEmpleado = empleadoDAO.obtenerIdEmpleado(idUsuario);
-
-        if (idEmpleado != null) {
-            // Obtener el mensaje enviado desde el formulario
-            String mensaje = request.getParameter("mensaje");
-
-            // Llama al método que inserta el mensaje en la base de datos y devuelve un booleano
-            boolean mensajeEnviado = empleadoDAO.enviarMensaje(idEmpleado, mensaje);
-
-            // Verificar si el mensaje fue enviado exitosamente
-            if (mensajeEnviado) {
-                // Redirigir o mostrar un mensaje de éxito
-                response.sendRedirect("pages/paginaConfirmacion.jsp"); // Cambiar a la página de confirmación deseada
-                return true;
-            } else {
-                System.out.println("No se pudo enviar el mensaje.");
-                // Redirigir o mostrar un mensaje de error
-                response.sendRedirect("paginaError.jsp"); // Cambiar a la página de error deseada
-                return false;
-            }
-        } else {
-            System.out.println("No se encontró un empleado para este usuario.");
-            response.sendRedirect("paginaError.jsp"); // Redirigir si no se encuentra un empleado
-            return false;
-        }
-    }
 
 //---------------------------------------------------------------
     @Override

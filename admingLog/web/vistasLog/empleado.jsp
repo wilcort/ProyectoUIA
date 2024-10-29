@@ -68,8 +68,8 @@
 
             <!-- Botones existentes -->
             <a href="/admingLog/SvMostrarDatos?accion=Ver_Empleado&id_usuario=<%= session.getAttribute("id_usuario") %>" class="btn btn-one">Ver Datos del Empleado</a>
-            <a href="" class="btn btn-second">Ver Horas Extra</a>
-            <a href="" class="btn btn-third">Solicitar Vacaciones</a>
+            <a href="" class="btn btn-second">Ver Horas Extra</a>        
+            <a href="/admingLog/SvVacaciones?accion=Calculo_Vacaciones&id_usuario=<%= session.getAttribute("id_usuario") %>" class="btn btn-third">Solicitar Vacaciones</a>
             <a href="" class="btn btn-fourth">Solicitud de Incapacidades</a>
 
             <form action="/admingLog/SvMostrarDatos" method="POST" style="display: inline;">
@@ -84,14 +84,7 @@
                 <button type="submit" class="btn btn-one">Realizar Marcas</button>
             </form>
 
-            <!-- Formulario para enviar mensajes -->
-            <h2>Enviar Mensaje</h2>
-            <form action="/admingLog/SvMostrarDatos" method="POST">
-                <input type="hidden" name="accion" value="enviar_Mensaje">
-                <input type="hidden" name="id_usuario" value="<%= session.getAttribute("id_usuario") %>">
-                <textarea name="mensaje" placeholder="Escribe tu mensaje aquí..."></textarea>
-                <button type="submit" class="btn btn-fifth">Enviar Mensaje</button>
-            </form>
+            
 
             <form action="/admingLog/SvLogin?accion=verificar" method="POST">
                 <button type="submit" class="btn btn-danger">Salir</button>
