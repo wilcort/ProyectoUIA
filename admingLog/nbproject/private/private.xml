@@ -3,13 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/src/java/Model/AdminMarcasDAO.java</file>
-            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/web/vistaAdmin/verMarcasEmpleado.jsp</file>
-            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/web/vistaEmpleado/verMarcas.jsp</file>
-            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/web/vistasLog/administrador.jsp</file>
-            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/src/java/Controller/SvMarcas.java</file>
-            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/web/vistaAdmin/verEmpleado.jsp</file>
-            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/src/java/Controller/SvAsignar.java</file>
+            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/web/vistaVacaciones/adminVacaciones.jsp</file>
+            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/src/java/ControllerEmpleado/SvVacaciones.java</file>
+            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/src/java/ModelEmpleado/VacacionesDAO.java</file>
         </group>
     </open-files>
 </project-private>
