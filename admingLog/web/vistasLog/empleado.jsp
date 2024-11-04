@@ -61,11 +61,17 @@
             <p>ID de Usuario : <%= session.getAttribute("id_usuario") %></p> <!-- Muestra el id_usuario aquí -->
             <a href="/admingLog/SvMostrarDatos?accion=Ver_Empleado&id_usuario=<%= session.getAttribute("id_usuario") %>" class="btn btn-one">Ver Datos del Empleado</a>
    
-            <a href="" class="btn btn-second">Ver Horas Extra</a>
-            <a href="" class="btn btn-third">Solicitar Vacaciones</a>
+            <a href="" class="btn btn-second">Ver Horas Extra</a> 
             <a href="" class="btn btn-fourth">Solicitud de Incapacidades</a>
             
-             <form action="/admingLog/SvMostrarDatos" method="POST" style="display: inline;">
+      
+            <form action="/admingLog/SvVacaciones" method="POST" style="display: inline;">
+                <input type="hidden" name="accion" value="Ver_Datos">
+                <input type="hidden" name="id_usuario" value="<%= session.getAttribute("id_usuario") %>"> <!-- Campo oculto para el ID de usuario -->
+                <button type="submit" class="btn btn-one">Solicitar Vacaciones</button>
+            </form>
+            
+            <form action="/admingLog/SvMostrarDatos" method="POST" style="display: inline;">
                 <input type="hidden" name="accion" value="ver_Marcas">
                 <input type="hidden" name="id_usuario" value="<%= session.getAttribute("id_usuario") %>"> <!-- Campo oculto para el ID de usuario -->
                 <button type="submit" class="btn btn-one">Ver Marcas Del Empleado</button>
