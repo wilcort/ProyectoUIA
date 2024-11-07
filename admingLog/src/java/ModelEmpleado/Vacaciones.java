@@ -16,6 +16,7 @@ public class Vacaciones {
     private Date fechaFin;
     private int diasVacacionesSolicitados;
     private int diasVacacionesTotal;
+    private int diasVacacionesRestantes;
     private Set<String> estadoSolicitud;
     private String comentario;
     private Date fechaAprobacion;
@@ -25,13 +26,14 @@ public class Vacaciones {
     public Vacaciones() {
     }
 
-    public Vacaciones(int idVacacion, Date fechaSolicitud, Date fechaInicio, Date fechaFin, int diasVacacionesSolicitados, int diasVacacionesTotal, Set<String> estadoSolicitud, String comentario, Date fechaAprobacion, int idEmpleado, Colaborador colaborador) {
+    public Vacaciones(int idVacacion, Date fechaSolicitud, Date fechaInicio, Date fechaFin, int diasVacacionesSolicitados, int diasVacacionesTotal, int diasVacacionesRestantes, Set<String> estadoSolicitud, String comentario, Date fechaAprobacion, int idEmpleado, Colaborador colaborador) {
         this.idVacacion = idVacacion;
         this.fechaSolicitud = fechaSolicitud;
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
         this.diasVacacionesSolicitados = diasVacacionesSolicitados;
         this.diasVacacionesTotal = diasVacacionesTotal;
+        this.diasVacacionesRestantes = diasVacacionesRestantes;
         this.estadoSolicitud = estadoSolicitud;
         this.comentario = comentario;
         this.fechaAprobacion = fechaAprobacion;
@@ -87,6 +89,14 @@ public class Vacaciones {
         this.diasVacacionesTotal = diasVacacionesTotal;
     }
 
+    public int getDiasVacacionesRestantes() {
+        return diasVacacionesRestantes;
+    }
+
+    public void setDiasVacacionesRestantes(int diasVacacionesRestantes) {
+        this.diasVacacionesRestantes = diasVacacionesRestantes;
+    }
+
     public Set<String> getEstadoSolicitud() {
         return estadoSolicitud;
     }
@@ -126,7 +136,10 @@ public class Vacaciones {
     public void setColaborador(Colaborador colaborador) {
         this.colaborador = colaborador;
     }
-  
+
+    
+    
+    
     @Override
     public String toString() {
         return "Vacaciones{"

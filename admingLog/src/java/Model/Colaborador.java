@@ -28,6 +28,10 @@ public class Colaborador {
     private Cargo cargo; // Nuevo campo para el id_cargo
     private Horarios horarios;
 
+    public Colaborador() {
+    }
+
+    
     //constructor
     public Colaborador(int id_Empleado, int num_documento,
             String nombre, String apellido_1, String apellido_2,

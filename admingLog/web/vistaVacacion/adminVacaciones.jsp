@@ -129,45 +129,54 @@
         </script>
     </head>
     <body>
-    <div class="container">
-        <h1>Información de Vacaciones</h1>
+        <div class="container">
+            <h1>Información de Vacaciones</h1>
 
-        <!-- Mostrar datos del empleado -->
-        <div class="info-empleado">
-            <p><strong>Nombre del Empleado:</strong> ${nombreEmpleado} ${apellidoEmpleado}</p>
-            <p><strong>Fecha de Contratación:</strong> ${fechaContratacion}</p>
-            <p><strong>Días de Vacaciones Disponibles:</strong> ${diasVacacionesTotal}</p>
+            <!-- Mostrar datos del empleado -->
+            <div class="info-empleado">
+                <p><strong>Nombre del Empleado:</strong> ${nombreEmpleado} ${apellidoEmpleado}</p>
+                <p><strong>Fecha de Contratación:</strong> ${fechaContratacion}</p>
+              <!--  <p><strong>Días de Vacaciones Disponibles:</strong> ${diasVacacionesTotal}</p> -->
+                <p>Días de Vacaciones Disponibles: ${diasVacacionesTotal}</p>
+
+            </div>
         </div>
-    </div>
 
-    <div class="form-container">
-        <h2>Solicitar Vacaciones</h2>
-        <form action="SvVacaciones" method="post">
-            <!-- Mostrar ID de Empleado -->
-            <label>ID del Empleado:</label>
-            <input type="text" name="id_empleado" value="${sessionScope.id_empleado != null ? sessionScope.id_empleado : 'ID no disponible'}" readonly>
+        <div class="form-container">
+            <h2>Solicitar Vacaciones</h2>
+            <form action="SvVacaciones" method="post">
+                <!-- Mostrar ID de Empleado -->
+                <label>ID del Empleado:</label>
+                <input type="text" name="id_empleado" value="${sessionScope.id_empleado != null ? sessionScope.id_empleado : 'ID no disponible'}" readonly>
 
-            <!-- Campos de Solicitud de Vacaciones -->
-            <label for="diasVacaciones">Días de Vacaciones:</label>
-            <input type="number" id="diasVacaciones" name="diasVacaciones" required readonly>
+                <!-- Campos de Solicitud de Vacaciones -->
+                <label for="diasVacaciones">Días de Vacaciones:</label>
+                <input type="number" id="diasVacaciones" name="diasVacaciones" required readonly>
 
-            <label for="fechaInicio">Fecha de Inicio:</label>
-            <input type="date" id="fechaInicio" name="fechaInicio" required oninput="calcularDiasVacaciones()">
+                <label for="fechaInicio">Fecha de Inicio:</label>
+                <input type="date" id="fechaInicio" name="fechaInicio" required oninput="calcularDiasVacaciones()">
 
-            <label for="fechaFin">Fecha de Fin:</label>
-            <input type="date" id="fechaFin" name="fechaFin" required oninput="calcularDiasVacaciones()">
+                <label for="fechaFin">Fecha de Fin:</label>
+                <input type="date" id="fechaFin" name="fechaFin" required oninput="calcularDiasVacaciones()">
 
-            <label for="comentario">Comentario:</label>
-            <textarea id="comentario" name="comentario" rows="3"></textarea>
+                <label for="comentario">Comentario:</label>
+                <textarea id="comentario" name="comentario" rows="3"></textarea>
 
-            <input type="hidden" name="accion" value="Realizar_Solicitud">                           
-            <button type="submit">Enviar Solicitud</button>
-        </form>
+                <input type="hidden" name="accion" value="Realizar_Solicitud">                           
+                <button type="submit">Enviar Solicitud</button>
+            </form>
+            
+                <form action="SvVacaciones" method="POST">
+                    <input type="hidden" name="accion" value="Ver_Solicitudes">                   
+                    <input type="hidden" name="id_empleado" value="${sessionScope.id_empleado != null ? sessionScope.id_empleado : 'ID no disponible'}" readonly>
+                    <button type="submit">Ver Solicitudes</button>
+                </form>
+                  
+            <form action="${pageContext.request.contextPath}/vistasLog/empleado.jsp" style="display: inline; margin-top: 10px;">
+                <button type="submit">Regresar</button>
+            </form>
 
-        <form action="${pageContext.request.contextPath}/vistasLog/empleado.jsp" style="display: inline; margin-top: 10px;">
-            <button type="submit">Regresar</button>
-        </form>
-    </div>    
-</body>
+        </div>    
+    </body>
 
 </html>

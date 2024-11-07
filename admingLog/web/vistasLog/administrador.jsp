@@ -34,6 +34,9 @@
             .btn-third{              
                 background-color: lawngreen;          
             }
+            .btn-fourth{              
+                background-color: blueviolet;          
+            }
         </style>
     </head>
     <body>
@@ -45,6 +48,12 @@
             <a href="/admingLog/SvColaborador" class="btn btn-one">Manejo de Empleados</a>
             <a href="/admingLog/SvCargo" class="btn btn-second" >Manejo Cargos</a>
             <a href="/admingLog/SvHorarios" class="btn btn-third" >Manejo Horarios</a>
+            
+            <form action="/admingLog/SvVacaciones?accion=Ver_Vacaciones_Empleados" method="POST">
+                <input type="hidden" name="id_Empleado" value="${sessionScope.id_empleado}">
+                <button type="submit" class="btn btn-fourth">Manejo Vacaciones</button>
+            </form>
+
             <form action="/admingLog/SvLogin?accion=verificar" method="POST">
                 <button type="submit" class="btn btn-danger">Salir</button>
             </form>
