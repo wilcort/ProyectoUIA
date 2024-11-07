@@ -37,6 +37,7 @@ public class SvVacaciones extends HttpServlet {
     private String vista02;
     private String vista03;
     private String vista04;
+    private String vista05;
 
     @Override
     public void init() throws ServletException {
@@ -48,6 +49,7 @@ public class SvVacaciones extends HttpServlet {
         vista02 = "vistaVacacion/verSolicitudesVacas.jsp";
         vista03 = "/vistaVacacion/indexVacaciones.jsp";
         vista04 = "/vistaVacacion/verSolicitudesAdmin.jsp";
+        vista05 = "/vistaVacacion/vacacionesAprovadas.jsp";
     }
 
     @Override
@@ -92,6 +94,8 @@ public class SvVacaciones extends HttpServlet {
             verVacacionesTodo(request, response);
         }else if ("Aprobar_Vacaciones".equals(accion)) {
             actualizarVacaciones(request, response);
+        } else if ("Denegar_Vacaciones".equals(accion)) {
+            denegarVacaciones(request, response);
         } else {
             response.sendRedirect("/WEB-INF/error.jsp");
         }
@@ -225,7 +229,8 @@ private void realizarSolicitud(HttpServletRequest request, HttpServletResponse r
 
     private void verVacacionesTodo(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        
+        
         // Llamar al método para obtener la lista de vacaciones de todos los empleados
         List<Vacaciones> listarVacacionesEmpleado = vacacionesDAO.listarVacacionesEmpleados();
 
@@ -274,10 +279,13 @@ private void realizarSolicitud(HttpServletRequest request, HttpServletResponse r
     private void actualizarVacaciones(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Verificar si los parámetros existen y no son null
+         // Verificar si los parámetros existen y no son null
         String idEmpleadoParam = request.getParameter("id_empleado");
         String idVacacionStr = request.getParameter("id_Vacacion");
-
+        
+        System.out.println(" empleado consulta id " + idEmpleadoParam);
+        System.out.println(" id vacac consulta id " + idVacacionStr);
+        
         if (idEmpleadoParam == null || idVacacionStr == null) {
             response.sendRedirect("/WEB-INF/error.jsp");
             return;
@@ -287,46 +295,115 @@ private void realizarSolicitud(HttpServletRequest request, HttpServletResponse r
         int idEmpleado = Integer.parseInt(idEmpleadoParam);
         int idVacacion = Integer.parseInt(idVacacionStr);
         System.out.println("ID empleado admin: " + idEmpleado + ", ID vacación: " + idVacacion);
+        
+        try {
+ 
+            // Crear un objeto de Vacaciones con los detalles de aprobación
+            Vacaciones vacacionAprobada = new Vacaciones();
+            vacacionAprobada.setIdEmpleado(idEmpleado);
+            vacacionAprobada.setFechaAprobacion(new java.sql.Date(System.currentTimeMillis()));
+            vacacionAprobada.setDiasVacacionesSolicitados(vacacionAprobada.getDiasVacacionesSolicitados());
+            vacacionAprobada.setDiasVacacionesTotal(vacacionAprobada.getDiasVacacionesTotal());
 
-        // Recuperar otros parámetros del request (como los días solicitados, fecha de aprobación)
-        String diasVacacionesSolicitadosStr = request.getParameter("dias_vacaciones_solicitados");
-        String fechaAprobacionStr = request.getParameter("fecha_aprobacion");
-        String comentario = request.getParameter("comentario");
+       
+           // Llamar al DAO para aprobar y actualizar la vacación
+            boolean isUpdated = vacacionesDAO.actualizaVacacionAprobar(idVacacion, vacacionAprobada);
 
-        if (diasVacacionesSolicitadosStr == null || fechaAprobacionStr == null) {
+    //----------------------- APROBADAS --------------        
+            Vacaciones vacasAproba = vacacionesDAO.mostrarVacacionesAprobado(idVacacion);           
+            int vacacionesAprobadas = vacasAproba.getDiasVacacionesSolicitados(); 
+            System.out.println("aprovaadadDDDDDD " + vacacionesAprobadas);
+            
+    //----------------------------------------------------
+            Vacaciones vacasConsulta = vacacionesDAO.mostrarVacacionesConsulta(idEmpleado);           
+            int vacacionesConsulta = vacasConsulta.getDiasVacacionesTotal();
+            System.out.println("aprovaadadDDDDDD consulta" + vacacionesConsulta);
+            
+    //----- ACTUALIZACION DE VACACIONES ------------------
+    
+        int idConsulta = vacacionesDAO.obtenerIdVacacionEnConsulta(idEmpleado);
+            System.out.println(" ID CONSULTA CONSULTA " + idConsulta);
+            
+            if (vacacionesConsulta >= vacacionesAprobadas) {
+                
+                int vacasActulizadas = vacacionesConsulta - vacacionesAprobadas;
+                Vacaciones consultaActualizada = new Vacaciones();
+                consultaActualizada.setIdVacacion(idConsulta);
+                consultaActualizada.setDiasVacacionesTotal(vacasActulizadas);
+                consultaActualizada.setDiasVacacionesRestantes(vacasActulizadas);
+                consultaActualizada.setFechaAprobacion(new java.sql.Date(System.currentTimeMillis()));
+
+                boolean consultaActualizadaResult = vacacionesDAO.actualizarVacacionesConsulta(consultaActualizada);
+
+            } else{
+            
+                // Si no hay suficientes días disponibles, denegar la vacación
+                boolean actualizaVacacionDenegarResult = vacacionesDAO.actualizaVacacionDenegar(idVacacion, vacacionAprobada);
+                request.setAttribute("mensaje", "Error: No hay suficientes días de vacaciones disponibles.");
+                System.out.println("Error: No se pueden actualizar las vacaciones, días insuficientes.");
+                request.getRequestDispatcher("/vistaVacacion/vacacionesDenegadas.jsp").forward(request, response);                
+            return;
+            }
+
+    //--------------------------------------------------------        
+    
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
             response.sendRedirect("/WEB-INF/error.jsp");
+        }
+        
+        // Redirigir a la vista de vacaciones
+        request.getRequestDispatcher(vista05).forward(request, response);
+    }
+
+//-----------------------------------------------------------------
+  
+ //----------------------------------------------------------------- 
+
+    private void denegarVacaciones(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        // Verificar si los parámetros existen y no son null
+        String idEmpleadoParam = request.getParameter("id_empleado");
+        String idVacacionStr = request.getParameter("id_Vacacion");
+
+        System.out.println("Empleado consulta id: " + idEmpleadoParam);
+        System.out.println("ID vacación consulta id: " + idVacacionStr);
+
+        if (idEmpleadoParam == null || idVacacionStr == null) {
+            response.sendRedirect("");
             return;
         }
- 
 
-        int diasVacacionesSolicitados = Integer.parseInt(diasVacacionesSolicitadosStr);
-        // Suponiendo que fecha_aprobacionStr es una cadena con formato 'yyyy-MM-dd'
-        java.sql.Date fechaAprobacion = java.sql.Date.valueOf(fechaAprobacionStr);
+        try {
+            // Obtener los valores de los parámetros
+            int idEmpleado = Integer.parseInt(idEmpleadoParam);
+            int idVacacion = Integer.parseInt(idVacacionStr);
+            System.out.println("ID empleado admin: " + idEmpleado + ", ID vacación: " + idVacacion);
 
-        // Crear el objeto Vacaciones con los nuevos datos
-        Vacaciones vacacionAprobada = new Vacaciones();
-        vacacionAprobada.setDiasVacacionesSolicitados(diasVacacionesSolicitados);
-        vacacionAprobada.setFechaAprobacion(fechaAprobacion);
-        vacacionAprobada.setComentario(comentario);
-        // Obtener los días totales de vacaciones (esto dependerá de tu lógica o de la base de datos)
-        int diasVacacionesTotales = vacacionAprobada.getDiasVacacionesTotal();
+            // Crear un objeto de Vacaciones para denegar la solicitud
+            Vacaciones vacacionDenegada = new Vacaciones();
+            vacacionDenegada.setIdEmpleado(idEmpleado);
+            vacacionDenegada.setFechaAprobacion(new java.sql.Date(System.currentTimeMillis()));
 
-        vacacionAprobada.setDiasVacacionesTotal(diasVacacionesTotales);
+            // Llamar al DAO para denegar y actualizar la vacación
+            boolean isDenied = vacacionesDAO.actualizaVacacionDenegar(idVacacion, vacacionDenegada);
 
-        System.out.println("Llamando al método de actualización de vacaciones...");
-boolean actualizada = vacacionesDAO.actualizaVacacionAprobar(idVacacion, vacacionAprobada);
+            // Validar si la operación fue exitosa
+            if (isDenied) {
+                request.setAttribute("mensaje", "La solicitud de vacaciones ha sido denegada exitosamente.");
+                request.getRequestDispatcher("/vistaVacacion/vacacionesDenegadas.jsp").forward(request, response);
+            } else {
+                request.setAttribute("mensaje", "Error: No se pudo denegar la solicitud de vacaciones.");
+                request.getRequestDispatcher("/WEB-INF/error.jsp").forward(request, response);
+            }
 
-        // Proveer retroalimentación al usuario
-        if (actualizada) {
-            // Redirigir a la vista de éxito o mostrar un mensaje adecuado
-            System.out.println("accc");
-           // response.sendRedirect("/vacaciones/actualizacion_exitosa.jsp");
-        } else {
-            // Mostrar error si no se actualizó
-          //  response.sendRedirect("/vacaciones/error_actualizacion.jsp");
-          
-          System.out.println("errerere");
+        }  catch (Exception e) {
+            System.err.println("Error al intentar denegar las vacaciones: " + e.getMessage());
+            response.sendRedirect("/WEB-INF/error.jsp");
         }
     }
- //----------------------------------------------------------------- 
+
+    
+  //---------------------------------------------------------------------------------
 }

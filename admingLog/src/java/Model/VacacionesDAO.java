@@ -173,7 +173,27 @@ public class VacacionesDAO {
             }
         }
     }
-    //-------------------------------------
+//-------------------------------------
+    public int obtenerDiasVacacionesSolicitados(int idEmpleado) {
+        String sql = "SELECT dias_vacaciones_solicitados FROM vacaciones WHERE id_empleado = ?";
+        int diasVacacionesSolicitados = 0;
+
+        try (PreparedStatement statement = conexion.prepareStatement(sql)) {
+            statement.setInt(1, idEmpleado);
+
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) {
+                    diasVacacionesSolicitados = rs.getInt("dias_vacaciones_solicitados");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return diasVacacionesSolicitados;
+    }
+    
+//------------------------------------------------
 
     public Date obtenerFechaContratacion(int idEmpleado) {
         Date fechaContratacion = null;
@@ -290,7 +310,7 @@ public class VacacionesDAO {
 //---------------------------------------------------------------
 // --------------- LISTAR VACACIONES EMPLEADO ---------------------------
     
-    public List<Vacaciones> listarVacacionesPendienteEmpeado(int idEmpleado) {
+   public List<Vacaciones> listarVacacionesPendienteEmpeado(int idEmpleado) {
         PreparedStatement ps = null;
         ResultSet rs = null;
         List<Vacaciones> listarVacacionesEmpleado = new ArrayList<>();
@@ -300,7 +320,7 @@ public class VacacionesDAO {
             String sqlVacaciones = "SELECT v.*, e.nombre, e.apellido_1, e.apellido_2, e.fecha_contratacion "
                     + "FROM vacaciones v "
                     + "JOIN empleado e ON v.empleado_id_empleado = e.id_empleado " // Asegúrate de que el JOIN sea correcto
-                    + "WHERE v.estado_solicitud = 'pendiente' AND v.empleado_id_empleado = ?"; // Filtrar por idEmpleado
+                    + "WHERE v.empleado_id_empleado = ?"; // Filtrar por idEmpleado
 
             ps = conexion.prepareStatement(sqlVacaciones);
             ps.setInt(1, idEmpleado);
@@ -364,101 +384,162 @@ public class VacacionesDAO {
             }
         }
         return listarVacacionesEmpleado;
-    }
+    } 
 //------------------------------------------------------------------
 //------------- LISTAR VACACIONES DE TODOS LOS EMPLEADOS -----------------------
-  
-    public List<Vacaciones> listarVacacionesEmpleados() {
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        List<Vacaciones> listarVacacionesEmpleado = new ArrayList<>();
+ //******--------------
+   
+   /*
+   public List<Vacaciones> listarVacacionesEmpleados() {
+    PreparedStatement ps = null;
+    ResultSet rs = null;
+    List<Vacaciones> listarVacacionesEmpleado = new ArrayList<>();
 
-        try {
-            // Primero, obtener todos los empleados
-            String sqlEmpleados = "SELECT id_empleado, fecha_contratacion FROM empleado";
-            ps = conexion.prepareStatement(sqlEmpleados);
-            rs = ps.executeQuery();
+    try {
+        // Consulta con LEFT JOIN para incluir todos los empleados, incluso si no tienen solicitudes de vacaciones
+        String sql = "SELECT e.id_empleado, e.nombre, e.apellido_1, e.apellido_2, e.fecha_contratacion, "
+                   + "v.id_vacacion, v.fecha_solicitud, v.fecha_inicio, v.fecha_fin, "
+                   + "COALESCE(v.dias_vacaciones_total, 0) AS dias_vacaciones_total, "
+                   + "COALESCE(v.dias_vacaciones_solicitados, 0) AS dias_vacaciones_solicitados, "
+                   + "COALESCE(v.dias_vacaciones_restantes, 0) AS dias_vacaciones_restantes, "
+                   + "COALESCE(v.estado_solicitud, 'consulta') AS estado_solicitud, "
+                   + "v.comentario, v.fecha_aprobacion "
+                   + "FROM empleado e "
+                   + "LEFT JOIN vacaciones v ON e.id_empleado = v.empleado_id_empleado "
+                   + "AND (v.estado_solicitud = 'consulta' OR v.estado_solicitud IS NULL)";
+        
+        ps = conexion.prepareStatement(sql);
+        rs = ps.executeQuery();
 
-            while (rs.next()) {
-                int idEmpleado = rs.getInt("id_empleado");
-                Date fechaContratacion = rs.getDate("fecha_contratacion");
+        while (rs.next()) {
+            // Datos del empleado
+            int idEmpleado = rs.getInt("id_empleado");
+            String nombre = rs.getString("nombre");
+            String apellido1 = rs.getString("apellido_1");
+            String apellido2 = rs.getString("apellido_2");
+            Date fechaContratacion = rs.getDate("fecha_contratacion");
 
-                // Revisar si ya existen días de vacaciones calculados
-                Integer diasVacacionesRestantes = obtenerDiasVacacionesRestantes(idEmpleado);
+            // Datos de vacaciones (si existen)
+            int idVacacion = rs.getInt("id_vacacion");
+            Date fechaSolicitud = rs.getDate("fecha_solicitud");
+            Date fechaInicio = rs.getDate("fecha_inicio");
+            Date fechaFin = rs.getDate("fecha_fin");
+            int diasVacacionesTotal = rs.getInt("dias_vacaciones_total");
+            int diasVacacionesSolicitados = rs.getInt("dias_vacaciones_solicitados");
+            int diasVacacionesRestantes = rs.getInt("dias_vacaciones_restantes");
+            String estadoSolicitud = rs.getString("estado_solicitud");
+            String comentario = rs.getString("comentario");
+            Date fechaAprobacion = rs.getDate("fecha_aprobacion");
 
-                // Calcular solo si no se han calculado previamente
-                if (diasVacacionesRestantes == null) {
-                    Vacaciones vacaciones = calcularYGuardarVacaciones(fechaContratacion, idEmpleado);
-                    if (vacaciones != null) {
-                        listarVacacionesEmpleado.add(vacaciones);
-                    }
-                }
-            }
+            // Crear el objeto Colaborador y Vacaciones
+            Colaborador colaborador = new Colaborador();
+            colaborador.setNombre(nombre);
+            colaborador.setApellido_1(apellido1);
+            colaborador.setApellido_2(apellido2);
+            colaborador.setFecha_contratacion(fechaContratacion);
 
-            // Ahora recuperar las solicitudes de vacaciones en estado 'consulta'
-            String sqlVacaciones = "SELECT v.*, e.nombre, e.apellido_1, e.apellido_2, e.fecha_contratacion, v.dias_vacaciones_restantes "
-                    + "FROM vacaciones v "
-                    + "JOIN empleado e ON v.empleado_id_empleado = e.id_empleado "
-                    + "WHERE v.estado_solicitud = 'consulta'";
+            Set<String> estadoSolicitudSet = new HashSet<>(Collections.singleton(estadoSolicitud));
 
-            ps = conexion.prepareStatement(sqlVacaciones);
-            rs = ps.executeQuery();
+            Vacaciones vacaciones = new Vacaciones(idVacacion, fechaSolicitud, fechaInicio, fechaFin,
+                    diasVacacionesSolicitados, diasVacacionesTotal, diasVacacionesRestantes,
+                    estadoSolicitudSet, comentario, fechaAprobacion, idEmpleado, colaborador);
 
-            while (rs.next()) {
-                // Recuperar y procesar los datos de la solicitud de vacaciones
-                int idVacacion = rs.getInt("id_vacacion");
-                Date fechaSolicitud = rs.getDate("fecha_solicitud");
-                Date fechaInicio = rs.getDate("fecha_inicio");
-                Date fechaFin = rs.getDate("fecha_fin");
-                int diasVacacionesTotal = rs.getInt("dias_vacaciones_total");
-                int diasVacacionesSolicitados = rs.getInt("dias_vacaciones_solicitados");
-                int diasVacacionesRestantes = rs.getInt("dias_vacaciones_restantes"); // Saldo restante
-                String estadoSolicitud = rs.getString("estado_solicitud");
-                String comentario = rs.getString("comentario");
-                Date fechaAprobacion = rs.getDate("fecha_aprobacion");
-                int idEmpleado = rs.getInt("empleado_id_empleado");
-
-                // Recuperar datos del colaborador
-                String nombreColaborador = rs.getString("nombre");
-                String apellido1Colaborador = rs.getString("apellido_1");
-                String apellido2Colaborador = rs.getString("apellido_2");
-                Date fechaContratacionColaborador = rs.getDate("fecha_contratacion");
-
-                Colaborador colaborador = new Colaborador();
-                colaborador.setNombre(nombreColaborador);
-                colaborador.setApellido_1(apellido1Colaborador);
-                colaborador.setApellido_2(apellido2Colaborador);
-                colaborador.setFecha_contratacion(fechaContratacionColaborador);
-
-                Set<String> estadoSolicitudSet = new HashSet<>(Collections.singleton(estadoSolicitud));
-
-                Vacaciones vacaciones = new Vacaciones(idVacacion,
-                        fechaSolicitud, fechaInicio, 
-                        fechaFin, diasVacacionesSolicitados,
-                        diasVacacionesTotal, diasVacacionesRestantes,
-                        estadoSolicitudSet, comentario,
-                        fechaAprobacion, idEmpleado, colaborador);
-
-                vacaciones.setDiasVacacionesRestantes(diasVacacionesRestantes); // Asigna saldo restante
-                listarVacacionesEmpleado.add(vacaciones);
-            }
-
-        } catch (Exception e) {
-            System.out.println("Error al listar vacaciones: " + e.getMessage());
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (ps != null) {
-                    ps.close();
-                }
-            } catch (SQLException ex) {
-                System.out.println("Error al cerrar PreparedStatement o ResultSet: " + ex.getMessage());
-            }
+            listarVacacionesEmpleado.add(vacaciones);
         }
-        return listarVacacionesEmpleado;
+    } catch (Exception e) {
+        System.out.println("Error al listar vacaciones: " + e.getMessage());
+    } finally {
+        try {
+            if (rs != null) rs.close();
+            if (ps != null) ps.close();
+        } catch (SQLException ex) {
+            System.out.println("Error al cerrar PreparedStatement o ResultSet: " + ex.getMessage());
+        }
     }
+    return listarVacacionesEmpleado;
+}
+*/
+ 
+ public List<Vacaciones> listarVacacionesEmpleados() {
+    PreparedStatement ps = null;
+    ResultSet rs = null;
+    List<Vacaciones> listarVacacionesEmpleado = new ArrayList<>();
+
+    try {
+        // Consulta con LEFT JOIN para incluir todos los empleados, incluso si no tienen solicitudes de vacaciones
+        String sql = "SELECT e.id_empleado, e.nombre, e.apellido_1, e.apellido_2, e.fecha_contratacion, "
+                   + "v.id_vacacion, v.fecha_solicitud, v.fecha_inicio, v.fecha_fin, "
+                   + "COALESCE(v.dias_vacaciones_total, 0) AS dias_vacaciones_total, "
+                   + "COALESCE(v.dias_vacaciones_solicitados, 0) AS dias_vacaciones_solicitados, "
+                   + "COALESCE(v.dias_vacaciones_restantes, 0) AS dias_vacaciones_restantes, "
+                   + "COALESCE(v.estado_solicitud, 'consulta') AS estado_solicitud, "
+                   + "v.comentario, v.fecha_aprobacion "
+                   + "FROM empleado e "
+                   + "LEFT JOIN vacaciones v ON e.id_empleado = v.empleado_id_empleado "
+                   + "AND (v.estado_solicitud = 'consulta' OR v.estado_solicitud IS NULL)";
+
+        ps = conexion.prepareStatement(sql);
+        rs = ps.executeQuery();
+
+        while (rs.next()) {
+            // Datos del empleado
+            int idEmpleado = rs.getInt("id_empleado");
+            String nombre = rs.getString("nombre");
+            String apellido1 = rs.getString("apellido_1");
+            String apellido2 = rs.getString("apellido_2");
+            Date fechaContratacion = rs.getDate("fecha_contratacion");
+
+            // Llamada al método para calcular y guardar las vacaciones (si no existen)
+            Vacaciones vacacionesCalculadas = calcularYGuardarVacaciones(fechaContratacion, idEmpleado);
+
+            // Datos de vacaciones (si existen en la base de datos)
+            int idVacacion = rs.getInt("id_vacacion");
+            Date fechaSolicitud = rs.getDate("fecha_solicitud");
+            Date fechaInicio = rs.getDate("fecha_inicio");
+            Date fechaFin = rs.getDate("fecha_fin");
+            int diasVacacionesTotal = rs.getInt("dias_vacaciones_total");
+            int diasVacacionesSolicitados = rs.getInt("dias_vacaciones_solicitados");
+            int diasVacacionesRestantes = rs.getInt("dias_vacaciones_restantes");
+            String estadoSolicitud = rs.getString("estado_solicitud");
+            String comentario = rs.getString("comentario");
+            Date fechaAprobacion = rs.getDate("fecha_aprobacion");
+
+            // Crear el objeto Colaborador y Vacaciones
+            Colaborador colaborador = new Colaborador();
+            colaborador.setNombre(nombre);
+            colaborador.setApellido_1(apellido1);
+            colaborador.setApellido_2(apellido2);
+            colaborador.setFecha_contratacion(fechaContratacion);
+
+            Set<String> estadoSolicitudSet = new HashSet<>(Collections.singleton(estadoSolicitud));
+
+            // Si las vacaciones fueron calculadas correctamente, actualizar las vacaciones
+            if (vacacionesCalculadas != null) {
+                diasVacacionesTotal = vacacionesCalculadas.getDiasVacacionesTotal();
+            }
+
+            Vacaciones vacaciones = new Vacaciones(idVacacion, fechaSolicitud, fechaInicio, fechaFin,
+                    diasVacacionesSolicitados, diasVacacionesTotal, diasVacacionesRestantes,
+                    estadoSolicitudSet, comentario, fechaAprobacion, idEmpleado, colaborador);
+
+            listarVacacionesEmpleado.add(vacaciones);
+        }
+    } catch (Exception e) {
+        System.out.println("Error al listar vacaciones: " + e.getMessage());
+    } finally {
+        try {
+            if (rs != null) rs.close();
+            if (ps != null) ps.close();
+        } catch (SQLException ex) {
+            System.out.println("Error al cerrar PreparedStatement o ResultSet: " + ex.getMessage());
+        }
+    }
+    return listarVacacionesEmpleado;
+}
+
+   
+   
+   
 //---------------------------------------------------------------------
     // Método para obtener el saldo actual de vacaciones restantes
 private Integer obtenerDiasVacacionesRestantes(int idEmpleado) {
@@ -513,14 +594,15 @@ private Integer obtenerDiasVacacionesRestantes(int idEmpleado) {
 
             // Configura los parámetros de la consulta
             ps.setInt(1, vacacionAprobada.getDiasVacacionesTotal());
-            ps.setInt(2, diasRestantes); // Actualizamos días restantes
+            ps.setInt(2, diasRestantes); 
             ps.setString(3, "Vacaciones Actualizadas");
             ps.setDate(4, new java.sql.Date(vacacionAprobada.getFechaAprobacion().getTime()));
             ps.setInt(5, idVacacionConsulta);
 
             int filasActualizadas = ps.executeUpdate();
             result = filasActualizadas > 0;
-
+             
+            
             if (!result) {
                 System.out.println("No se encontró una vacación en estado 'consulta' con el ID proporcionado.");
             }
@@ -539,7 +621,294 @@ private Integer obtenerDiasVacacionesRestantes(int idEmpleado) {
 
         return result;
     }
+ //--------------------------------------------------------------
+    public boolean actualizaVacacionDenegar(int idVacacionConsulta, Vacaciones vacacionDenegada) {
+    PreparedStatement ps = null;
+    boolean result = false;
 
+    try {
+        String sql = "UPDATE vacaciones SET "
+            + "comentario = 'Vacaciones Denegadas', "
+            + "estado_solicitud = 'Rechazada' "
+            + "WHERE id_vacacion = ?";
 
-//------------------------------------------------------------------    
+        ps = conexion.prepareStatement(sql);
+
+        // Configura los parámetros de la consulta
+         ps.setInt(1, idVacacionConsulta); 
+         
+        // Ejecuta la actualización
+        int filasActualizadas = ps.executeUpdate();
+        result = filasActualizadas > 0;
+
+        if (!result) {
+            System.out.println("No se encontró una vacación en estado 'consulta' con el ID proporcionado.");
+        }
+
+    } catch (SQLException e) {
+        System.out.println("Error al denegar las vacaciones: " + e.getMessage());
+    } finally {
+        try {
+            if (ps != null) {
+                ps.close();
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al cerrar PreparedStatement: " + e.getMessage());
+        }
+    }
+
+    return result;
+}
+
+//-----------------------------------------------------------------
+    public boolean actualizarVacacionesConsulta(Vacaciones vacacion) {
+        PreparedStatement ps = null;
+        boolean result = false;
+
+        try {
+            // SQL para actualizar las vacaciones en estado 'consulta'
+            String sql = "UPDATE vacaciones SET "
+                    + "dias_vacaciones_total = ?, "
+                    + "dias_vacaciones_restantes = ?, "
+                    + "comentario = ?, "
+                    + "fecha_aprobacion = ?"
+                    + "WHERE id_vacacion = ? AND estado_solicitud = 'consulta'";
+
+            ps = conexion.prepareStatement(sql);
+
+            // Establecer los parámetros del PreparedStatement con los valores de la vacación
+            ps.setInt(1, vacacion.getDiasVacacionesTotal());
+            ps.setInt(2, 0);
+            ps.setString(3, "VACACIONES ACTUALIZADAS");
+            ps.setDate(4, new java.sql.Date(vacacion.getFechaAprobacion().getTime()));
+            ps.setInt(5, vacacion.getIdVacacion()); 
+            
+            // Ejecutar la actualización
+            int rowsUpdated = ps.executeUpdate();
+
+            if (rowsUpdated > 0) {
+                System.out.println("Vacación actualizada correctamente.");
+                result = true;
+            } else {
+                System.out.println("No se encontró la vacación en estado 'consulta' para actualizar.");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al actualizar la vacación: " + e.getMessage());
+        } finally {
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (SQLException e) {
+                System.out.println("Error al cerrar recursos: " + e.getMessage());
+            }
+        }
+
+        return result;
+    }
+
+//-----------------------------------------------------------------
+    public int obtenerIdVacacionEnConsulta(int idEmpleado) {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        int idVacacion = -1;
+
+        try {
+            // Consulta para obtener el id de la vacación en estado "consulta" para el empleado dado
+            String sql = "SELECT * FROM vacaciones "
+                    + "WHERE empleado_id_empleado = ? AND estado_solicitud = 'consulta'";
+
+            ps = conexion.prepareStatement(sql);
+            ps.setInt(1, idEmpleado);
+
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                idVacacion = rs.getInt("id_vacacion");
+                System.out.println("ID de la vacación en estado 'consulta' para el empleado: " + idVacacion);
+            } else {
+                System.out.println("No se encontró ninguna vacación en estado 'consulta' para el empleado con ID proporcionado.");
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error al obtener el ID de la vacación en estado 'consulta': " + e.getMessage());
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (SQLException e) {
+                System.out.println("Error al cerrar recursos: " + e.getMessage());
+            }
+        }
+
+        return idVacacion;
+    }
+ //---------------------------------------------------------------
+    public Vacaciones mostrarVacacionesAprobado(int idVacacion) {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        Vacaciones vacaciones = null;
+        try {
+            // Modificar la consulta para filtrar por el estado 'Aprobada'
+            String sql = "SELECT * FROM vacaciones "
+                    + "WHERE id_vacacion = ? ";
+            
+            ps = conexion.prepareStatement(sql);
+            ps.setInt(1, idVacacion);
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                vacaciones = new Vacaciones();
+                vacaciones.setIdVacacion(rs.getInt("id_vacacion"));
+                vacaciones.setIdEmpleado(rs.getInt("empleado_id_empleado"));
+                vacaciones.setDiasVacacionesSolicitados(rs.getInt("dias_vacaciones_solicitados"));
+                // Puedes continuar con el resto de los campos de la vacación según sea necesario
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return vacaciones;
+    }
+//-----------------------------------------------------
+    
+    public Vacaciones mostrarVacacionesConsulta(int idEmpleado) {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        Vacaciones vacaciones = null;
+        try {
+            // Modificar la consulta para filtrar por el estado 'Aprobada'
+            String sql = "SELECT * FROM vacaciones "
+                    + "WHERE empleado_id_empleado = ? AND estado_solicitud = 'Consulta'";
+            
+            ps = conexion.prepareStatement(sql);
+            ps.setInt(1, idEmpleado);
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                vacaciones = new Vacaciones();
+                vacaciones.setIdVacacion(rs.getInt("id_vacacion"));
+                vacaciones.setIdEmpleado(rs.getInt("empleado_id_empleado"));
+                vacaciones.setDiasVacacionesTotal(rs.getInt("dias_vacaciones_total"));
+                
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return vacaciones;
+    }
+    
+//------------------------------------------------------------------ 
+ /*   public boolean actualizaVacacionConsulta(Vacaciones vacacionAprobada) {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        boolean result = false;
+
+        int idempleadoCon = vacacionAprobada.getIdEmpleado();
+
+        // Llamar al método obtenerIdVacacionEnConsulta para obtener el ID de la vacación
+        int idVacacionconsulta = obtenerIdVacacionEnConsulta(idempleadoCon);
+        int idSolicitud = vacacionAprobada.getIdVacacion();  // Vacación en estado 'Aprobada'
+
+        System.out.println("id vacacion consulta: " + idVacacionconsulta);
+        System.out.println("id vacacion solicitud: " + idSolicitud);
+
+        try {
+            // Primero, obtener los días vacación_total de la vacación en estado 'consulta'
+            String sqlObtenerDiasTotal = "SELECT dias_vacaciones_total "
+                    + "FROM vacaciones WHERE id_vacacion = ?";
+            ps = conexion.prepareStatement(sqlObtenerDiasTotal);
+            ps.setInt(1, idVacacionconsulta);  // Asignamos el valor de idVacacionconsulta a la consulta
+            rs = ps.executeQuery();
+
+            int diasVacacionesTotalConsulta = 0;
+            if (rs.next()) {
+                diasVacacionesTotalConsulta = rs.getInt("dias_vacaciones_total");
+                System.out.println("Total días vacaciones consulta: " + diasVacacionesTotalConsulta);
+            } else {
+                System.out.println("No se encontró la vacación en estado 'consulta'.");
+                return false;
+            }
+
+            // Ahora, obtener los días solicitados de la vacación en estado 'Aprobada'
+            String sqlObtenerDiasSolicitados = "SELECT dias_vacaciones_solicitados "
+                    + "FROM vacaciones WHERE id_vacacion = ?";
+            ps = conexion.prepareStatement(sqlObtenerDiasSolicitados);
+            ps.setInt(1, idSolicitud);  // Vacación 'Aprobada' con el idSolicitud
+            rs = ps.executeQuery();
+
+            int diasVacacionesSolicitados = 0;
+            if (rs.next()) {
+                diasVacacionesSolicitados = rs.getInt("dias_vacaciones_solicitados");
+                System.out.println("Días solicitados en vacación aprobada: " + diasVacacionesSolicitados);
+            } else {
+                System.out.println("No se encontró la vacación aprobada.");
+                return false;
+            }
+
+            // Restar los días solicitados de la vacación en estado 'Aprobada' de los días vacacionales en la vacación en estado 'consulta'
+            int nuevoDiasVacacionesTotal = diasVacacionesTotalConsulta - diasVacacionesSolicitados;
+            System.out.println("Nuevo total de días vacaciones para vacación en estado consulta: " + nuevoDiasVacacionesTotal);
+
+            // Actualizar el valor de dias_vacaciones_total en la vacación en estado 'consulta'
+            String sqlActualizarVacacion = "UPDATE vacaciones SET dias_vacaciones_total = ? "
+                    + "WHERE id_vacacion = ?";
+            
+            ps = conexion.prepareStatement(sqlActualizarVacacion);
+            ps.setInt(1, nuevoDiasVacacionesTotal);
+            ps.setInt(2, idVacacionconsulta);
+            int rowsUpdated = ps.executeUpdate();
+
+            if (rowsUpdated > 0) {
+                System.out.println("Vacación actualizada correctamente.");
+                result = true;
+            } else {
+                System.out.println("No se pudo actualizar la vacación en estado 'consulta'.");
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error al actualizar las vacaciones: " + e.getMessage());
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (SQLException e) {
+                System.out.println("Error al cerrar recursos: " + e.getMessage());
+            }
+        }
+
+        return result;
+    }
+*/
+
+//--------------------------------------------------------------
 }

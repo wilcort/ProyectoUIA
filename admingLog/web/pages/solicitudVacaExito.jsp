@@ -1,8 +1,3 @@
-<%-- 
-    Document   : vacacionesExito
-    Created on : Nov 2, 2024, 7:31:11 PM
-    Author     : Dell
---%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page session="true" %>
 <!DOCTYPE html>

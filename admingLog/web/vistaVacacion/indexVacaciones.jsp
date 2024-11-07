@@ -20,7 +20,7 @@
                     <th>Fecha de Contratación</th> 
                     <th>Días Totales de Vacaciones</th>
                     <th>Ver Solicitud</th>        
-                    <th>  </th>
+                   
                 </tr>
             </thead>
             <tbody>
@@ -35,11 +35,7 @@
                         <td><c:out value="${vacacion.diasVacacionesTotal}" /></td>
                         <td>
                           <a href="SvVacaciones?accion=Ver_Solicitudes_Admin&id_empleado=<c:out value="${vacacion.idEmpleado}" />">Ver Solicitudes</a>
-
-                        </td>
-                        <td>
-                            <a href="">Ver Historial</a>
-                        </td>
+                        </td> 
                     </tr>
                 </c:forEach>
                 <c:if test="${empty listarVacaciones}">
