@@ -573,7 +573,8 @@ private Integer obtenerDiasVacacionesRestantes(int idEmpleado) {
 //-----------------------------------------------------
 //----------------------- APROBAR VACACIONES -------------------
 
-    public boolean actualizaVacacionAprobar(int idVacacionConsulta, Vacaciones vacacionAprobada) {
+    public boolean actualizaVacacionAprobar(int idVacacionConsulta, Vacaciones vacacionAprobada)
+    {
         PreparedStatement ps = null;
         boolean result = false;
 

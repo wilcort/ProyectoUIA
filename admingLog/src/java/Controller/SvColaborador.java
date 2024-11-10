@@ -100,19 +100,13 @@ public class SvColaborador extends HttpServlet {
             fecha_contratacion = java.sql.Date.valueOf(fechaContratacionStr);
         }
 
-        // Convertir el salario base a BigDecimal
-        BigDecimal salario_base = BigDecimal.ZERO; // Valor predeterminado
-        String salarioBaseStr = request.getParameter("salario_base");
-        if (salarioBaseStr != null && !salarioBaseStr.isEmpty()) {
-            salario_base = new BigDecimal(salarioBaseStr);
-        }
 
         // Crear el objeto Colaborador con los datos corregidos
               
         Colaborador colaborador = new Colaborador(0,
                         num_documento, nombre, apellido_1, apellido_2, telefono,
                         direccion, fecha_contratacion, null,
-                        salario_base, usuario, null,null);
+                         usuario, null,null);
                 
         // Validar si el empleado ya existe
         try {
@@ -239,13 +233,6 @@ public class SvColaborador extends HttpServlet {
                 fecha_contratacion = java.sql.Date.valueOf(fechaContratacionStr);
             }
 
-            // Convertir el salario base a BigDecimal
-            BigDecimal salario_base = BigDecimal.ZERO; // Valor predeterminado
-            String salarioBaseStr = request.getParameter("salario_base");
-            if (salarioBaseStr != null && !salarioBaseStr.isEmpty()) {
-                salario_base = new BigDecimal(salarioBaseStr);
-            }
-
             // Crear un nuevo usuario y colaborador
             Usuario usuario = new Usuario();
             usuario.setId_usuario(idUsuario); // Asigna el id_usuario al usuario
@@ -253,7 +240,7 @@ public class SvColaborador extends HttpServlet {
             Colaborador colaborador = new Colaborador(idEmpleado, num_documento, 
                 nombre, apellido_1, apellido_2, telefono, direccion, 
                 fecha_contratacion, null, 
-                salario_base, usuario, null, null);
+                usuario, null, null);
 
             // Manejo del estado del usuario
             boolean modificarEstado = "si".equals(request.getParameter("modificar_estado_usuario"));

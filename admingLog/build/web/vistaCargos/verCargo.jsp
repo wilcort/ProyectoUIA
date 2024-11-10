@@ -34,11 +34,13 @@
             <tr>
                 <th>Id del Cargo:</th>
                 <th>Nombre del Cargo:</th>
+                <th>Salario</th>
                 <th>Estado</th>
             </tr>
             <tr>
-                <td>${cargo.idCargo}</td>
+                <td>${cargo.idCargo}</td>               
                 <td>${cargo.nombreCargo}</td>
+                <td>${cargo.salario}</td>
                 <td>
                     <c:choose>
                         <c:when test="${cargo.estado}">

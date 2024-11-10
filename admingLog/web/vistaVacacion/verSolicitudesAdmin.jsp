@@ -39,7 +39,7 @@
     <body>
 
         <div class="container">
-            <h1>Solicitudes de Vacaciones Pendientes (Administrador)</h1>
+            <h1>Solicitudes de Vacaciones Pendientes (Administrador.)</h1>
 
             <!-- Tabla de Vacaciones Disponibles -->
             <div class="tabla-container-uno">

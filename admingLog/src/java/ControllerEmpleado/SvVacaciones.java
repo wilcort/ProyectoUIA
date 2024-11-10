@@ -79,6 +79,7 @@ public class SvVacaciones extends HttpServlet {
    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
         String accion = request.getParameter("accion");
         System.out.println("Acción recibida en POST: " + accion);  // Traza de impresión
 

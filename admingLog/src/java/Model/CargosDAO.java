@@ -28,7 +28,7 @@ public class CargosDAO {
         List<Cargo> lista = new ArrayList<>();
 
         try {
-            String sql = "SELECT id_cargo, nombre_cargo, estado FROM cargo";
+            String sql = "SELECT id_cargo, nombre_cargo, estado, salario FROM cargo";
             ps = conexion.prepareStatement(sql);
             rs = ps.executeQuery();
 
@@ -36,8 +36,9 @@ public class CargosDAO {
                 int idCargo = rs.getInt("id_cargo");
                 String nombreCargo = rs.getString("nombre_cargo");
                 boolean estado = rs.getBoolean("estado");
+                double salario = rs.getDouble("salario");
 
-                Cargo cargoExistente = new Cargo(idCargo, nombreCargo, estado);
+                Cargo cargoExistente = new Cargo(idCargo, nombreCargo, estado, salario);
                 lista.add(cargoExistente);
             }
         } catch (SQLException e) {
@@ -66,7 +67,7 @@ public class CargosDAO {
 
         try {
             
-            ps = conexion.prepareStatement("SELECT id_cargo, nombre_cargo, estado"
+            ps = conexion.prepareStatement("SELECT id_cargo, nombre_cargo, estado, salario "
                                         + " FROM cargo WHERE id_cargo = ?");
             ps.setInt(1, idCargo);
             rs = ps.executeQuery();
@@ -76,8 +77,9 @@ public class CargosDAO {
                 int idcargo = rs.getInt("id_cargo");
                 String nombreCargo = rs.getString("nombre_cargo");
                 boolean estado = rs.getBoolean("estado");
+                double salario = rs.getDouble("salario");
 
-                cargosExistente = new Cargo(idcargo, nombreCargo, estado);
+                cargosExistente = new Cargo(idcargo, nombreCargo, estado, salario);
 
             }
         } catch (SQLException e) {
@@ -115,12 +117,14 @@ public class CargosDAO {
         }
             
             
-            ps = conexion.prepareStatement ("INSERT INTO cargo(id_cargo, nombre_cargo, estado) "
-                    + " VALUES (?, ?, ?)");
+            ps = conexion.prepareStatement ("INSERT INTO cargo"
+                    + "(id_cargo, nombre_cargo, estado, salario) "
+                    + " VALUES (?, ?, ?, ?)");
                    
             ps.setInt(1, newId);
             ps.setString(2, cargo.getNombreCargo());
             ps.setBoolean(3, cargo.isEstado());
+            ps.setDouble(4, cargo.getSalario());
            
             
             int filasAfectadasEmpleado = ps.executeUpdate();
@@ -155,10 +159,13 @@ public class CargosDAO {
         PreparedStatement ps = null;
         try {
             ps = conexion.prepareStatement("UPDATE cargo SET nombre_cargo = ?,"
-                               + " estado = ? WHERE id_cargo = ?");
+                               + " estado = ? , salario = ? WHERE id_cargo = ?");
+            
             ps.setString(1, cargo.getNombreCargo());
             ps.setBoolean(2, cargo.isEstado());
-            ps.setInt(3, cargo.getIdCargo());
+             ps.setDouble(3, cargo.getSalario());
+            ps.setInt(4, cargo.getIdCargo());
+            
 
             int filasAfectadas = ps.executeUpdate();
 

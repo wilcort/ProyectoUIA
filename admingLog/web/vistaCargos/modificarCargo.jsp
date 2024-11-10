@@ -54,6 +54,10 @@
             <label for="nombre_cargo">Nombre del Cargo:</label>
             <input type="text" id="nombre_cargo" name="nombre_cargo" value="${cargo.nombreCargo}" required>
             
+            <label for="salario">Salario:</label>
+            <input type="text" id="salario" name="salario" value="${cargo.salario}" required>
+            
+            
             <label for="estado">Estado:</label>
             <select id="estado" name="estado">
                 <option value="" disabled selected>Seleccione</option>

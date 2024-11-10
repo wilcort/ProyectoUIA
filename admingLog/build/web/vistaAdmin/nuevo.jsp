@@ -66,11 +66,6 @@
             <input type="date" id="fecha_contratacion" name="fecha_contratacion" required>
             <br/><br/>
 
-            <!-- Campo para el salario base -->
-            <label for="salario_base">Salario Base:</label>
-            <input type="number" id="salario_base" name="salario_base" step="0.01" required>
-            <br/><br/>
-
             <input type="hidden" name="accion" value="insertar">
 
             <button id="guardar" name="guardar" type="submit">Guardar</button>

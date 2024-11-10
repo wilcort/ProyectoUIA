@@ -39,8 +39,7 @@
                 <th>Segundo Apellido</th>
                 <th>Teléfono</th>
                 <th>Dirección</th>
-                <th>Fecha de Contratación</th>
-                <th>Salario Base</th>
+                <th>Fecha de Contratación</th>              
                 
             </tr>
             <tr>
@@ -52,7 +51,6 @@
                 <td>${colaborador.telefono}</td>
                 <td>${colaborador.direccion}</td>
                 <td>${colaborador.fecha_contratacion}</td>
-                <td>${colaborador.salario_base}</td>
                
             </tr>
         </table>

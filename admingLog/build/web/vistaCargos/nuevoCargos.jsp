@@ -18,6 +18,9 @@
             
             <label for="nombre_cargo">Nuevo Cargo</label>
             <input type="text" id="nombre_cargo" name="nombre_cargo" required><br><br>
+            
+             <label for="salario">Salario</label>
+            <input type="text" id="salario" name="salario" required><br><br>
 
             <label for="estado">Estado Cargo:</label>
             <select id="estado" name="estado">

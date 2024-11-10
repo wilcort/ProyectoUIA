@@ -23,7 +23,6 @@ public class Colaborador {
     private String direccion;
     private Date fecha_contratacion;
     private Date fecha_salida;
-    private BigDecimal salario_base;
     private Usuario usuario;
     private Cargo cargo; // Nuevo campo para el id_cargo
     private Horarios horarios;
@@ -36,7 +35,7 @@ public class Colaborador {
     public Colaborador(int id_Empleado, int num_documento,
             String nombre, String apellido_1, String apellido_2,
             int telefono, String direccion, Date fecha_contratacion,
-            Date fecha_salida, BigDecimal salario_base, Usuario usuario,
+            Date fecha_salida, Usuario usuario,
             Cargo cargo, Horarios horarios) {
 
         this.id_Empleado = id_Empleado;
@@ -48,7 +47,6 @@ public class Colaborador {
         this.direccion = direccion;
         this.fecha_contratacion = fecha_contratacion;
         this.fecha_salida = fecha_salida;
-        this.salario_base = salario_base;
         this.usuario = usuario;
         this.cargo = cargo;
         this.horarios = horarios;
@@ -127,13 +125,6 @@ public class Colaborador {
         this.fecha_salida = fecha_salida;
     }
 
-    public BigDecimal getSalario_base() {
-        return salario_base;
-    }
-
-    public void setSalario_base(BigDecimal salario_base) {
-        this.salario_base = salario_base;
-    }
 
     public Usuario getUsuario() {
         return usuario;

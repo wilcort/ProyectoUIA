@@ -48,7 +48,7 @@ public class EmpleadoDAO {
         try {
             ps = conexion.prepareStatement("SELECT e.id_empleado, e.num_documento, e.nombre, "
                     + "e.apellido_1, e.apellido_2, e.telefono, e.direccion, e.fecha_contratacion, "
-                    + "e.salario_base, u.id_usuario, u.nombreUsuario, u.estadoUsuario, "
+                    + "u.id_usuario, u.nombreUsuario, u.estadoUsuario, "
                     + "c.id_cargo, c.nombre_cargo, c.estado, h.id_horario, h.hora_entrada, h.hora_salida, "
                     + "h.horas_laborales, h.dias_laborales "
                     + "FROM empleado e "
@@ -71,8 +71,7 @@ public class EmpleadoDAO {
                 int telefono = rs.getInt("telefono");
                 String direccion = rs.getString("direccion");
                 java.sql.Date fecha_Contratacion = rs.getDate("fecha_contratacion");  // Cambiar a "fecha_contratacion"
-                BigDecimal salario_Base = rs.getBigDecimal("salario_base");  // Cambiar a "salario_base"
-
+               
                 int id_usuario = rs.getInt("id_usuario");
                 String nombreUsuario = rs.getString("nombreUsuario");
                 boolean estadoUsuario = rs.getBoolean("estadoUsuario");
@@ -117,7 +116,7 @@ public class EmpleadoDAO {
                 colaborador = new Colaborador(idEmpleado, num_documento,
                         nombre, apellido_1, apellido_2, telefono, direccion,
                         fecha_Contratacion, fecha_Contratacion, // ¿esto debería ser fechaSalida?
-                        salario_Base, usuario, cargo, horarios);
+                        usuario, cargo, horarios);
 
             } else {
                 System.out.println("No se encontró el colaborador con empleado: " + idUsuario);

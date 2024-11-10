@@ -111,7 +111,7 @@ public class SvAsignar extends HttpServlet {
             Colaborador colaborador = new Colaborador(idEmpleado,
                     0, null, null, null, 0,
                     null, null, null,
-                    null, null, cargo,null);
+                    null, cargo,null);
             
             // Insertar los datos en la base de datos
             boolean exito = asignarDAO.asignarCargo(colaborador, cargo);
@@ -152,7 +152,7 @@ public class SvAsignar extends HttpServlet {
 
              Colaborador colaborador = new Colaborador(idEmpleado, 0, null, 
                      null, null, 0, null, null, 
-                     null, null, null, null, horario);
+                     null, null, null, horario);
             
             // Insertar los datos en la base de datos
             boolean exito = asignarDAO.asignarHorario(colaborador, horario);

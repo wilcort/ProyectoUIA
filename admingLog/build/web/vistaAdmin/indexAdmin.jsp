@@ -24,7 +24,6 @@
                     <th>Teléfono Principal</th>
                     <th>Dirección</th>
                     <th>Fecha de Contratación</th>
-                    <th>Salario Base</th>
                     <th>Id. Usuario</th>
                     <th></th>
                 </tr>
@@ -41,7 +40,6 @@
                         <td><c:out value="${colaborador.telefono}" /></td>
                         <td><c:out value="${colaborador.direccion}" /></td>
                         <td><c:out value="${colaborador.fecha_contratacion}" /></td>
-                        <td><c:out value="${colaborador.salario_base}" /></td>
                         <td><c:out value="${colaborador.usuario.id_usuario}" /></td> 
                        
                         <td>

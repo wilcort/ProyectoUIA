@@ -44,7 +44,6 @@ public class ColaboradorDAO {
                     + "    e.telefono,\n"
                     + "    e.direccion,\n"
                     + "    e.fecha_contratacion,\n"
-                    + "    e.salario_base,\n"
                     + "    u.id_usuario,\n"
                     + "    u.nombreUsuario,\n"
                     + "    u.estadoUsuario\n"
@@ -65,7 +64,6 @@ public class ColaboradorDAO {
                 int telefono = rs.getInt("telefono");
                 String direccion = rs.getString("direccion");
                 Date fecha_contratacion = rs.getDate("fecha_contratacion");
-                BigDecimal salario_base = rs.getBigDecimal("salario_base");
                 int id_usuario = rs.getInt("id_usuario");
 
                 // Obtener el usuario
@@ -76,7 +74,7 @@ public class ColaboradorDAO {
                 Colaborador colaborador = new Colaborador(id_empleado,
                         num_documento, nombre, apellido_1, apellido_2, telefono,
                         direccion, fecha_contratacion, null,
-                        salario_base, usuario, null,null);
+                        usuario, null,null);
 
                 lista.add(colaborador);
             }
@@ -112,7 +110,7 @@ public class ColaboradorDAO {
             
           ps = conexion.prepareStatement("SELECT e.id_empleado, e.num_documento, e.nombre, "
             + "e.apellido_1, e.apellido_2, e.telefono, e.direccion, e.fecha_contratacion, "
-            + "e.salario_base, u.id_usuario, u.nombreUsuario, u.estadoUsuario, "
+            + "u.id_usuario, u.nombreUsuario, u.estadoUsuario, "
             + "c.id_cargo, c.nombre_cargo, c.estado, h.id_horario, h.hora_entrada, h.hora_salida, "
             + "h.horas_laborales, h.dias_laborales "
             + "FROM empleado e "
@@ -138,7 +136,6 @@ public class ColaboradorDAO {
                 int telefono = rs.getInt("telefono");
                 String direccion = rs.getString("direccion");
                 java.sql.Date fecha_Contratacion = rs.getDate("fecha_Contratacion");
-                BigDecimal salario_Base = rs.getBigDecimal("salario_Base");
                                 
                 int id_usuario = rs.getInt("id_usuario");              
                 String nombreUsuario = rs.getString("nombreUsuario"); ///***
@@ -185,7 +182,7 @@ public class ColaboradorDAO {
                 colaborador = new Colaborador(idEmpleado, num_documento,
                         nombre, apellido_1, apellido_2, telefono, direccion,
                         fecha_Contratacion, fecha_Contratacion,
-                        salario_Base, usuario, cargo, horarios);
+                        usuario, cargo, horarios);
                 
                 System.out.println(" se encontró el colaborador con empleado: " + idEmpleado);              
             }
@@ -250,7 +247,7 @@ public class ColaboradorDAO {
             // Insertar empleado
             psEmpleado = conexion.prepareStatement("INSERT INTO empleado(num_Documento, nombre, "
                     + "apellido_1, apellido_2, telefono, direccion, fecha_contratacion, "
-                    + "salario_base, usuario_id_usuario, liquidaciones_id_liquidacion,"
+                    + "usuario_id_usuario, liquidaciones_id_liquidacion,"
                     + "horarios_id_horario) "
                     + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL)");
 
@@ -261,8 +258,7 @@ public class ColaboradorDAO {
             psEmpleado.setInt(5, colaborador.getTelefono());
             psEmpleado.setString(6, colaborador.getDireccion());;
             psEmpleado.setDate(7, new java.sql.Date(colaborador.getFecha_contratacion().getTime())); // Convertir Date a java.sql.Date
-            psEmpleado.setBigDecimal(8, colaborador.getSalario_base());
-            psEmpleado.setInt(9, idUsuarioGenerado);
+            psEmpleado.setInt(8, idUsuarioGenerado);
 
             int filasAfectadasEmpleado = psEmpleado.executeUpdate();
 
@@ -334,7 +330,7 @@ public class ColaboradorDAO {
         try {
             String sql = "UPDATE empleado SET num_documento=?, nombre=?, "
                     + "apellido_1=?, apellido_2=?, telefono=?, direccion=?, fecha_contratacion=?, "
-                    + "salario_base=? WHERE id_empleado=?";
+                    + "WHERE id_empleado=?";
 
             psEmpleado = conexion.prepareStatement(sql);
             psEmpleado.setInt(1, colaborador.getNum_documento());
@@ -351,8 +347,7 @@ public class ColaboradorDAO {
                 psEmpleado.setNull(7, java.sql.Types.DATE);
             }
 
-            psEmpleado.setBigDecimal(8, colaborador.getSalario_base());
-            psEmpleado.setInt(9, colaborador.getId_Empleado());
+            psEmpleado.setInt(8, colaborador.getId_Empleado());
 
             int filasAfectadas = psEmpleado.executeUpdate();
             return filasAfectadas > 0;

@@ -88,10 +88,16 @@ public class SvCargo extends HttpServlet {
         String nombre_cargo = request.getParameter("nombre_cargo");
         boolean estado = "1".equals(request.getParameter("estado"));
         
+        // Convertir salario de String a double
+        double salario = 0.0; // Inicializar la variable salario
+
+        salario = Double.parseDouble(request.getParameter("salario"));
+      
         Cargo nuevoCargo = new Cargo();
         nuevoCargo.setNombreCargo(nombre_cargo);
         nuevoCargo.setEstado(estado);
-
+        nuevoCargo.setSalario(salario);
+        
         boolean insercionExitosa = cargosDAO.crear_Cargos(nuevoCargo);
 
         if (insercionExitosa) {
@@ -132,9 +138,11 @@ public class SvCargo extends HttpServlet {
            System.out.println("cargo " + cargo.getNombreCargo());   
            
         if (cargo != null) {
-            // Si se encuentra el colaborador, establecerlo como atributo de solicitud
+            
             request.setAttribute("cargo", cargo);
             request.setAttribute("cargos", listaCargos);
+            request.setAttribute("salario", cargo.getSalario());
+            
             // Llamar a la página JSP para mostrar los detalles del empleado
             request.getRequestDispatcher("/vistaCargos/modificarCargo.jsp").forward(request, response);
         } else {
@@ -149,8 +157,9 @@ public class SvCargo extends HttpServlet {
             int idcargo = Integer.parseInt(request.getParameter("id_cargo"));
             String nombre_cargo = request.getParameter("nombre_cargo");
             boolean estado = Boolean.parseBoolean(request.getParameter("estado"));
-
-            Cargo cargo = new Cargo(idcargo, nombre_cargo, estado);
+            double salario = Double.parseDouble(request.getParameter("salario"));
+            
+            Cargo cargo = new Cargo(idcargo, nombre_cargo, estado, salario);
 
             boolean exito = cargosDAO.modificar_Cargos(cargo);
 

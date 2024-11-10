@@ -43,7 +43,9 @@ public class AsignarDAO {
                 int id_Cargo = rs.getInt("id_cargo");
                 String nombre_cargo = rs.getString("nombre_cargo");
                 boolean estado = rs.getBoolean("estado");
-                Cargo cargo = new Cargo(id_Cargo, nombre_cargo, estado);
+                double salario = rs.getDouble("salario");
+                
+                Cargo cargo = new Cargo(id_Cargo, nombre_cargo, estado, salario);
                 listaCargos.add(cargo);
             }
         } catch (SQLException e) {
@@ -105,8 +107,9 @@ public class AsignarDAO {
                 int id_Cargo = rs.getInt("id_Cargo");
                 String nombre_cargo = rs.getString("nombre_Cargo");
                 boolean estado = rs.getBoolean("estado");
+                double salario = rs.getDouble("salario");
 
-                cargo = new Cargo(id_Cargo, nombre_cargo, estado);
+                cargo = new Cargo(id_Cargo, nombre_cargo, estado, salario);
 
             }
 

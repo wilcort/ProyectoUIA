@@ -76,11 +76,7 @@
                 <tr>
                     <th>Fecha de Contratción</th>
                     <td><input type="date" name="fecha_contratacion" value="${colaborador.fecha_contratacion}" required></td>
-                </tr>
-                <tr>
-                    <th>Salario Base</th>
-                    <td><input type="number" name="salario_base" step="0.01" value="${colaborador.salario_base}" required></td>
-                </tr>
+                </tr>              
                 <tr>
                     <th>Estado Usuario</th>
                     <td><input type="text" name="estado" value="${colaborador.usuario.estadoUsuario ? 'activo' : 'inactivo'}" required></td>

@@ -13,7 +13,7 @@
     <title>ALMACEN</title>
 </head>
 <body>
-    <h1>COLABORADORES</h1>
+    <h1>COLABORADORES CARGOS</h1>
     <a href="SvCargo?accion=nuevo">Crear Nuevo Cargo</a>
 
     <br/><br/>
@@ -23,7 +23,8 @@
             <tr>
                 <th>ID. Cargo</th>
                 <th>Nombre Cargo</th>
-                <th>Estado del Cargo</th>
+                <th>Salario</th>
+                <th>Estado del Cargo</th>               
                 <th></th>
             </tr>
         </thead>
@@ -33,11 +34,12 @@
                 <tr>
                     <td>${cargo.idCargo}</td>
                     <td>${cargo.nombreCargo}</td>
+                    <td>${cargo.salario}</td>
                     <td><c:choose>
                         <c:when test="${cargo.estado}">Activo</c:when>
                         <c:otherwise>Inactivo</c:otherwise>                        
                     </c:choose>
-                    </td>
+                    </td>                    
                     <td>
                      <a href="SvCargo?accion=Ver_Cargo&id=<c:out value="${cargo.idCargo}" />">Información del Cargo</a>  
                     </td>
