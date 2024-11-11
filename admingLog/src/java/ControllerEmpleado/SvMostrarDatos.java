@@ -36,7 +36,7 @@ public class SvMostrarDatos extends HttpServlet {
             throws ServletException, IOException {
         
         String accion = request.getParameter("accion");
-
+         
         if ("Ver_Empleado".equals(accion)) {
             ver_Empleado(request, response);
             return;
@@ -57,12 +57,15 @@ public class SvMostrarDatos extends HttpServlet {
             throws ServletException, IOException {
 
         String accion = request.getParameter("accion");
+        
         try {
             if ("realizar_Marca".equals(accion)) {
                 realizar_Marca(request, response);
             } else if ("ver_Marcas".equals(accion)) {
                 ver_Marcas(request, response);
-            } else {
+            } else if ("quincena_Uno".equals(accion)) {
+                quincenaUno(request, response);
+            }else {
                 response.sendRedirect("/WEB-INF/error.jsp");
             }
         } catch (Exception e) {
@@ -232,5 +235,12 @@ public class SvMostrarDatos extends HttpServlet {
 
    
   //---------------------------------------------------------
+
+    private void quincenaUno(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException { 
+    
+        System.out.println("hola");
+    
+    }
 
 }

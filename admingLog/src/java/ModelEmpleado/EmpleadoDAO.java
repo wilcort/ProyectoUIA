@@ -350,6 +350,48 @@ public class EmpleadoDAO {
 
         return horas; // Retorna el arreglo con las horas trabajadas
     }
+    
+//------------------------------------------------------------
+//-------------------- 1 QUINCENA -------------------------
+    public List<Marcas> obtenerMarcasPrimeraQuincena(int mes, int año) {
+        List<Marcas> marcas = new ArrayList<>();
+        
+        String sql = "SELECT * FROM marcas WHERE fecha BETWEEN ? AND ?";
 
-//-----------------------------------------------
+        try (PreparedStatement ps = conexion.prepareStatement(sql)) {
+            
+            // Define el rango de fechas
+            LocalDate inicio = LocalDate.of(año, mes, 1);
+            LocalDate fin = LocalDate.of(año, mes, 15);
+
+            // Asigna los valores al PreparedStatement
+            ps.setDate(1, java.sql.Date.valueOf(inicio));
+            ps.setDate(2, java.sql.Date.valueOf(fin));
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    // Crea una nueva instancia de Marcas usando el constructor completo
+                    Marcas marca = new Marcas(
+                            rs.getInt("idMarca"),
+                            rs.getDate("fecha"),
+                            rs.getTime("marcaEntrada"),
+                            rs.getTime("marcaSalida"),
+                            rs.getTime("marcaSalidaAlmuerzo"),
+                            rs.getTime("marcaEntradaAlmuerzo"),
+                            rs.getInt("idEmplado"),
+                            rs.getDouble("horasDia")
+                    );
+
+                    // Agrega la marca a la lista
+                    marcas.add(marca);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();  // Maneja la excepción según tus necesidades
+        }
+
+        return marcas;
+    }
+
+//----------------------------------------------  
 }
