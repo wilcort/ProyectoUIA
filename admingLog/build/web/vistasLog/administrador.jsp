@@ -15,7 +15,7 @@
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                min-height: 80vh;
+                min-height: 100vh;
                 flex-direction: column;
             }
             .container {
@@ -83,6 +83,7 @@
                 background-color: #f39c12;
                 width: 240px;
                 margin-right: 50px;
+            
             }
             .btn-fifth:hover {
                 background-color: #e67e22;
@@ -109,6 +110,13 @@
                 background-color: #e67e22;
                 transform: translateY(-2px);
             }
+            .btn-brands {
+                background-color: #3498db;
+            }
+            .btn-brands:hover {
+                background-color: #2980b9;
+                transform: translateY(-2px);
+            }
             .btn-danger {
                 background-color: #c0392b;
                 margin-top: -30px;
@@ -122,14 +130,13 @@
             }
             .button-container {
                 display: grid;
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
                 gap: 20px;
                 margin-bottom: 20px;
             }
-            /* Estilo para el botón salir fuera del contenedor principal */
             .btn-logout-container {
                 position: fixed;
-                bottom: 180px;
+                bottom: 20px;
                 left: 50%;
                 transform: translateX(-50%);
                 width: auto;
@@ -144,20 +151,25 @@
             <!-- Botones organizados en una cuadrícula -->
             <div class="button-container">
                 <a href="/admingLog/SvColaborador" class="btn btn-one">Empleados</a>
-                <a href="/admingLog/SvCargo" class="btn btn-second"> Cargos</a>
-                <a href="/admingLog/SvHorarios" class="btn btn-third"> Horarios</a>
-                
-            <form action="/admingLog/SvIncapacidades?accion=Ver_Solicitudes_Incap" method="POST">
-                <input type="hidden" name="id_Empleado" value="${sessionScope.id_empleado}">
-                <button type="submit" class="btn btn-fifth">Incapacidades</button>
-            </form>
+                <a href="/admingLog/SvCargo" class="btn btn-second">Cargos</a>
+                <a href="/admingLog/SvHorarios" class="btn btn-third">Horarios</a>
 
-       
+                <form action="/admingLog/SvIncapacidades?accion=Ver_Solicitudes_Incap" method="POST">
+                    <input type="hidden" name="id_Empleado" value="${sessionScope.id_empleado}">
+                    <button type="submit" class="btn btn-fifth">Incapacidades</button>
+                </form>
+                
+                <form action="/admingLog/SvMostrarDatos" method="POST">
+                    <input type="hidden" name="accion" value="Ver_Empleados">
+                    <button type="submit" class="btn btn-brands">Marcas</button>
+                </form>
+
                 <a href="/admingLog/SvAguinaldo" class="btn btn-sixth">Aguinaldo</a>
                 <a href="/admingLog/SvPlanilla" class="btn btn-seventh">Planilla</a>
                 <a href="/admingLog/SvLiquidaciones" class="btn btn-fourth">Liquidaciones</a>
-                <!-- Nuevo botón para Horas Extra -->
                 <a href="/admingLog/SvHorasExtra" class="btn btn-extra">Horas Extra</a>
+                
+               
             </div>
 
             <form action="/admingLog/SvVacaciones?accion=Ver_Vacaciones_Empleados" method="POST">

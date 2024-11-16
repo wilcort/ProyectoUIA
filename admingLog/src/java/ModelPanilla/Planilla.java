@@ -15,24 +15,32 @@ import java.util.logging.Logger;
  */
 public class Planilla {
     
-     private int idPlanilla; // id_planilla
-    private String periodo; // periodo
-    private double salarioBruto; // salario_bruto
-    private double deduccionesCCSS; // deducciones_CCSS
-    private double deduccionesIncapacidades; // deducciones_incapacidades
-    private double deduccionesImpuestos; // deducciones_impuestos
-    private double salarioHorasExtra; // salario_horas_extra
-    private double salarioHorasRegulares; // salario_horas_regulares
-    private double salarioNeto; // salario_neto
-    private Date fechaPago; // fecha_pago
-    private int empleadoIdEmpleado; // empleado_id_empleado
+    private int idPlanilla; 
+    private String periodo;
+    private double salarioBruto;
+    private double deduccionesCCSS;
+    private double deduccionesIncapacidades;
+    private double deduccionesImpuestos;
+    private double salarioHorasExtra;
+    private double salarioHorasRegulares;
+    private double horasExtra;
+    private double horasRegulares;
+    private double salarioNeto;
+    private Date mesPago;
+    private int empleadoIdEmpleado;
+    private Colaborador colaborador;
 
-    public Planilla(int idPlanilla, String periodo, double salarioBruto, 
-            double deduccionesCCSS, double deduccionesIncapacidades, 
-            double deduccionesImpuestos, double salarioHorasExtra, 
-            double salarioHorasRegulares, double salarioNeto, Date fechaPago, 
-            int empleadoIdEmpleado) {
-        
+    public Planilla() {
+    }
+
+    public Planilla(int idPlanilla, String periodo, double salarioBruto,
+            double deduccionesCCSS, double deduccionesIncapacidades,
+            double deduccionesImpuestos, double salarioHorasExtra,
+            double horasExtra, double horasRegulares,
+            double salarioHorasRegulares,
+            double salarioNeto, Date mesPago,
+            int empleadoIdEmpleado, Colaborador colaborador) {
+
         this.idPlanilla = idPlanilla;
         this.periodo = periodo;
         this.salarioBruto = salarioBruto;
@@ -41,12 +49,12 @@ public class Planilla {
         this.deduccionesImpuestos = deduccionesImpuestos;
         this.salarioHorasExtra = salarioHorasExtra;
         this.salarioHorasRegulares = salarioHorasRegulares;
+        this.horasExtra = horasExtra;
+        this.horasRegulares = horasRegulares;
         this.salarioNeto = salarioNeto;
-        this.fechaPago = fechaPago;
+        this.mesPago = mesPago;
         this.empleadoIdEmpleado = empleadoIdEmpleado;
-    }
-
-    public Planilla() {
+        this.colaborador = colaborador;
     }
 
     public int getIdPlanilla() {
@@ -121,12 +129,12 @@ public class Planilla {
         this.salarioNeto = salarioNeto;
     }
 
-    public Date getFechaPago() {
-        return fechaPago;
+    public Date getMesPago() {
+        return mesPago;
     }
 
-    public void setFechaPago(Date fechaPago) {
-        this.fechaPago = fechaPago;
+    public void setMesPago(Date mesPago) {
+        this.mesPago = mesPago;
     }
 
     public int getEmpleadoIdEmpleado() {
@@ -136,23 +144,51 @@ public class Planilla {
     public void setEmpleadoIdEmpleado(int empleadoIdEmpleado) {
         this.empleadoIdEmpleado = empleadoIdEmpleado;
     }
-   
+
+    public Colaborador getColaborador() {
+        return colaborador;
+    }
+
+    public void setColaborador(Colaborador colaborador) {
+        this.colaborador = colaborador;
+    }
+    
+    public double getHorasExtra() {
+        return salarioHorasExtra;
+    }
+
+    public void setHorasExtra(double salarioHorasExtra) {
+        this.salarioHorasExtra = salarioHorasExtra;
+    }
+
+    public double getHorasRegulares() {
+        return salarioHorasRegulares;
+    }
+
+    public void setHorasRegulares(double salarioHorasRegulares) {
+        this.salarioHorasRegulares = salarioHorasRegulares;
+    }
+
+    
     // Método toString (opcional) para mostrar el objeto Planilla de manera legible
     @Override
     public String toString() {
-        return "Planilla{" +
-                "idPlanilla=" + idPlanilla +
-                ", periodo='" + periodo + '\'' +
-                ", salarioBruto=" + salarioBruto +
-                ", deduccionesCCSS=" + deduccionesCCSS +
-                ", deduccionesIncapacidades=" + deduccionesIncapacidades +
-                ", deduccionesImpuestos=" + deduccionesImpuestos +
-                ", salarioHorasExtra=" + salarioHorasExtra +
-                ", salarioHorasRegulares=" + salarioHorasRegulares +
-                ", salarioNeto=" + salarioNeto +
-                ", fechaPago=" + fechaPago +
-                ", empleadoIdEmpleado=" + empleadoIdEmpleado +
-                '}';
-    } 
+        return "Planilla{"
+                + "idPlanilla=" + idPlanilla
+                + ", periodo='" + periodo + '\''
+                + ", salarioBruto=" + salarioBruto
+                + ", deduccionesCCSS=" + deduccionesCCSS
+                + ", deduccionesIncapacidades=" + deduccionesIncapacidades
+                + ", deduccionesImpuestos=" + deduccionesImpuestos
+                + ", salarioHorasExtra=" + salarioHorasExtra
+                + ", salarioHorasRegulares=" + salarioHorasRegulares
+                + ", horasExtra=" + horasExtra
+                + ", horasRegulares=" + horasRegulares
+                + ", salarioNeto=" + salarioNeto
+                + ", mesPago=" + mesPago
+                + ", empleadoIdEmpleado=" + empleadoIdEmpleado
+                + ", colaborador=" + colaborador
+                + '}';
+    }
 
 }

@@ -249,7 +249,7 @@ public class ColaboradorDAO {
                     + "apellido_1, apellido_2, telefono, direccion, fecha_contratacion, "
                     + "usuario_id_usuario, liquidaciones_id_liquidacion,"
                     + "horarios_id_horario) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL)");
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL)");
 
             psEmpleado.setInt(1, colaborador.getNum_documento());
             psEmpleado.setString(2, colaborador.getNombre());

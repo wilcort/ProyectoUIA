@@ -4,6 +4,7 @@
  */
 package ModelEmpleado;
 
+import Model.Colaborador;
 import java.util.Date;
 import java.sql.Time;
 
@@ -20,13 +21,20 @@ public class Marcas {
     private Time marcaSalidaAlmuerzo;
     private Time marcaEntradaAlmuerzo;
     private int idEmpleado;
-    private Double horasDia;
+    private Double horasDiaNormal;
+    private Double horasDiaExtra;
+    private Colaborador colaborador;
     
     public Marcas() {
     // Constructor vacío
-}
-
-    public Marcas(int idMarca, Date fechaMarca, Time marcaEntrada, Time marcaSalida, Time marcaSalidaAlmuerzo, Time marcaEntradaAlmuerzo, int idEmpleado, Double horasDia) {
+    }
+    
+     public Marcas(int idMarca, Date fechaMarca, 
+            Time marcaEntrada, Time marcaSalida, 
+            Time marcaSalidaAlmuerzo, Time marcaEntradaAlmuerzo, 
+            int idEmpleado, Double horasDiaNormal,Double horasDiaExtra,
+            Colaborador colaborador) {
+         
         this.idMarca = idMarca;
         this.fechaMarca = fechaMarca;
         this.marcaEntrada = marcaEntrada;
@@ -34,7 +42,9 @@ public class Marcas {
         this.marcaSalidaAlmuerzo = marcaSalidaAlmuerzo;
         this.marcaEntradaAlmuerzo = marcaEntradaAlmuerzo;
         this.idEmpleado = idEmpleado;
-        this.horasDia = horasDia;
+        this.horasDiaNormal = horasDiaNormal;
+        this.horasDiaExtra = horasDiaExtra;
+        this.colaborador = colaborador;
     }
 
     public int getIdMarca() {
@@ -93,12 +103,45 @@ public class Marcas {
         this.idEmpleado = idEmpleado;
     }
 
-    public Double getHorasDia() {
-        return horasDia;
+    public Double getHorasDiaNormal() {
+        return horasDiaNormal;
     }
 
-    public void setHorasDia(Double horasDia) {
-        this.horasDia = horasDia;
+    public void setHorasDiaNormal(Double horasDiaNormal) {
+        this.horasDiaNormal = horasDiaNormal;
     }
+
+    public Double getHorasDiaExtra() {
+        return horasDiaExtra;
+    }
+
+    public void setHorasDiaExtra(Double horasDiaExtra) {
+        this.horasDiaExtra = horasDiaExtra;
+    }
+
+   
+
+    public Colaborador getColaborador() {
+        return colaborador;
+    }
+
+    public void setColaborador(Colaborador colaborador) {
+        this.colaborador = colaborador;
+    }
+
+   @Override
+    public String toString() {
+    return "Marcas{" +
+           "idMarca=" + idMarca +
+           ", fechaMarca=" + fechaMarca +
+           ", marcaEntrada=" + marcaEntrada +
+           ", marcaSalida=" + marcaSalida +
+           ", marcaSalidaAlmuerzo=" + marcaSalidaAlmuerzo +
+           ", marcaEntradaAlmuerzo=" + marcaEntradaAlmuerzo +
+           ", horasDiaNormal=" + horasDiaNormal +
+           ", horasDiaExtra=" + horasDiaExtra +
+           ", idEmpleado=" + idEmpleado +
+           '}';
+}
 
 }

@@ -14,6 +14,8 @@
 
             h1 {
                 color: #333;
+                text-align: center; /* Centrado del título */
+                margin: 0 0 20px 0;
             }
 
             form {
@@ -21,6 +23,8 @@
                 padding: 20px;
                 border-radius: 5px;
                 box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                max-width: 500px;
+                margin: 0 auto; /* Centrar el formulario */
             }
 
             label {
@@ -30,7 +34,7 @@
 
             input[type="date"],
             input[type="time"] {
-                width: 80%;
+                width: 100%; /* Ajuste al 100% para dispositivos pequeños */
                 padding: 8px;
                 margin-bottom: 10px;
                 border: 1px solid #ccc;
@@ -44,6 +48,8 @@
                 border: none;
                 border-radius: 4px;
                 cursor: pointer;
+                margin-top: 5px;
+                width: 100%; /* Botón de ancho completo */
             }
 
             button:hover {
@@ -53,6 +59,7 @@
             .manual-button {
                 margin-left: 10px;
                 background-color: #0275d8;
+                width: auto; /* No hace falta que sea de ancho completo */
             }
 
             .manual-button:hover {
@@ -63,6 +70,50 @@
                 background-color: #ccc;
                 cursor: not-allowed;
             }
+
+            form[action="http://localhost:8080/admingLog/vistasLog/empleado.jsp"] {
+                display: inline;
+                margin-top: 10px;
+                text-align: center; /* Centrado del botón de regresar */
+                 margin-left: 640px;
+            }
+
+            /* Media Queries para hacer el diseño responsive */
+            @media (max-width: 768px) {
+                form {
+                    width: 90%; /* Ajuste del formulario a pantallas más pequeñas */
+                    padding: 15px;   
+                }
+
+                label,
+                input[type="date"],
+                input[type="time"],
+                button {
+                    width: 100%; /* Ancho completo en pantallas pequeñas */
+                }
+
+                h1 {
+                    font-size: 24px; /* Ajuste del tamaño del título */
+                }
+            }
+
+            /* Estilo para el botón de regresar */
+            .back-button {
+                padding: 10px 50px;
+                background-color: #0275d8;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                margin-top: 10px;              
+                width: auto; /* Ancho ajustado */
+                display: inline-block;
+            }
+
+            .back-button:hover {
+                background-color: #025aa5;
+            }
+
         </style>
     </head>
     <body>
@@ -102,10 +153,10 @@
         </form>
 
         <!-- Formulario para regresar a la página principal -->
-        <form action="http://localhost:8080/admingLog/vistasLog/empleado.jsp" style="display: inline; margin-left: 10px;">
-            <button type="submit">Regresar</button>
-        
-        
+        <form action="http://localhost:8080/admingLog/vistasLog/empleado.jsp">
+            <button type="submit" class="back-button">Regresar</button>
+        </form>
+
         <script>
             // Función para completar automáticamente la fecha y bloquear el botón
             function realizarMarcaManual(campo) {
@@ -164,32 +215,12 @@
                 document.getElementById(botonId).disabled = true;
             }
 
-            // Permitir modificar marcas si la fecha cambia
+            // Permitir modificación de marcas si la fecha cambia
             function permitirModificarMarcas() {
-                const fechaActual = document.getElementById('fecha_marca').value;
-                const marcasGuardadas = JSON.parse(localStorage.getItem('marcas'));
-                if (marcasGuardadas && marcasGuardadas.fecha !== fechaActual) {
-                    localStorage.removeItem('marcas'); // Borrar marcas al cambiar la fecha
-                    document.getElementById('hora_entrada').value = ""; // Limpiar hora entrada
-                    document.getElementById('hora_salida').value = ""; // Limpiar hora salida
-                    document.getElementById('hora_salida_almuerzo').value = ""; // Limpiar hora salida almuerzo
-                    document.getElementById('hora_entrada_almuerzo').value = ""; // Limpiar hora entrada almuerzo
-                    desbloquearBotones(); // Desbloquear botones
-                } else {
-                    bloquearCampos(); // Bloquear campos si la fecha es la misma
-                }
-            }
-
-            // Desbloquear todos los botones
-            function desbloquearBotones() {
                 document.getElementById('fecha_marca_btn').disabled = false;
-                document.getElementById('hora_entrada_btn').disabled = false;
-                document.getElementById('hora_salida_btn').disabled = false;
-                document.getElementById('hora_salida_almuerzo_btn').disabled = false;
-                document.getElementById('hora_entrada_almuerzo_btn').disabled = false;
             }
 
-            // Cargar marcas cuando se cargue la página
+            // Cargar las marcas cuando se carga la página
             window.onload = cargarMarcas;
         </script>
     </body>
