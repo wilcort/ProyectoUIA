@@ -99,7 +99,7 @@
             <label for="horaEntradaAlmuerzo">Hora Entrada Almuerzo:</label>
             <input type="time" name="horaEntradaAlmuerzo" value="${marca.marcaEntradaAlmuerzo}" required>
 
-           <button type="submit" formaction="pages/exitoMarcasUpdate.jsp">Guardar Cambios</button>
+           <button type="submit" >Guardar Cambios</button>
           </form>
         <div class="back-btn">
             <form action="/admingLog/SvMostrarDatos" method="POST">

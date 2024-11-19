@@ -31,19 +31,48 @@ public class prueba {
         // Crear una instancia de la clase PlanillaDAO
         PlanillaDAO planillaDAO = new PlanillaDAO();
 
-        // Crear un Scanner para tomar la entrada del usuario
         Scanner scanner = new Scanner(System.in);
 
-        // Pedir al usuario que ingrese el ID de empleado
+        System.out.println("=== Generar Reporte de Planilla ===");
+        System.out.println("1. Generar reporte quincenal");
+        System.out.println("2. Generar reporte mensual");
+        System.out.print("Selecciona una opción (1 o 2): ");
+        int opcion = scanner.nextInt();
+
+        if (opcion < 1 || opcion > 2) {
+            System.out.println("Opción inválida. Por favor selecciona 1 o 2.");
+            return;
+        }
+
+        // Solicitar los datos necesarios al usuario
         System.out.print("Ingresa el ID del empleado: ");
-        int idEmpleado = scanner.nextInt();  // Leer el número de empleado
+        int idEmpleado = scanner.nextInt();
 
-        // Llamar al método salarioHora con el ID ingresado
-       // planillaDAO.salarioHora(idEmpleado);
-        planillaDAO.horasExtraNormaQuincena(idEmpleado);
-        planillaDAO.horasExtraNormaMensual(idEmpleado);
+        System.out.print("Ingresa el mes del reporte (1-12): ");
+        int mesSeleccionado = scanner.nextInt();
 
-        // Cerrar el scanner después de usarlo
+        System.out.print("Ingresa el año del reporte (por ejemplo, 2024): ");
+        int anioSeleccionado = scanner.nextInt();
+
+        // Validar entrada
+        if (mesSeleccionado < 1 || mesSeleccionado > 12) {
+            System.out.println("El mes ingresado no es válido. Debe estar entre 1 y 12.");
+        } else if (anioSeleccionado < 2000 || anioSeleccionado > 2100) {
+            System.out.println("El año ingresado no es válido. Debe estar entre 2000 y 2100.");
+        } else {
+            // Llamar al método correspondiente según la opción seleccionada
+            if (opcion == 1) {
+                planillaDAO.actualizarOCrearReporteQuincenal(idEmpleado, mesSeleccionado, anioSeleccionado);
+            } else if (opcion == 2) {
+                planillaDAO.actualizarOCrearReporteMensual(idEmpleado, mesSeleccionado, anioSeleccionado);
+            }
+        }
+
         scanner.close();
     }
 }
+// Llamar al método salarioHora con el ID ingresado
+// planillaDAO.salarioHora(idEmpleado);
+// planillaDAO.horasExtraNormaQuincena(idEmpleado);
+//planillaDAO.horasExtraNormaMensuales(idEmpleado);
+        //planillaDAO.incapacidadCalculoQuincena(idEmpleado);

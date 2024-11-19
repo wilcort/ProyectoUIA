@@ -19,7 +19,8 @@ public class Planilla {
     private String periodo;
     private double salarioBruto;
     private double deduccionesCCSS;
-    private double deduccionesIncapacidades;
+    private double pagoIncapacidades;
+    private double pagoVacaciones;
     private double deduccionesImpuestos;
     private double salarioHorasExtra;
     private double salarioHorasRegulares;
@@ -33,19 +34,20 @@ public class Planilla {
     public Planilla() {
     }
 
-    public Planilla(int idPlanilla, String periodo, double salarioBruto,
-            double deduccionesCCSS, double deduccionesIncapacidades,
+    public Planilla(int idPlanilla, String periodo, 
+            double salarioBruto, double deduccionesCCSS,
+            double pagoIncapacidades, double pagoVacaciones, 
             double deduccionesImpuestos, double salarioHorasExtra,
-            double horasExtra, double horasRegulares,
-            double salarioHorasRegulares,
-            double salarioNeto, Date mesPago,
-            int empleadoIdEmpleado, Colaborador colaborador) {
-
+            double salarioHorasRegulares, double horasExtra, 
+            double horasRegulares, double salarioNeto, 
+            Date mesPago, int empleadoIdEmpleado, Colaborador colaborador) {
+        
         this.idPlanilla = idPlanilla;
         this.periodo = periodo;
         this.salarioBruto = salarioBruto;
         this.deduccionesCCSS = deduccionesCCSS;
-        this.deduccionesIncapacidades = deduccionesIncapacidades;
+        this.pagoIncapacidades = pagoIncapacidades;
+        this.pagoVacaciones = pagoVacaciones;
         this.deduccionesImpuestos = deduccionesImpuestos;
         this.salarioHorasExtra = salarioHorasExtra;
         this.salarioHorasRegulares = salarioHorasRegulares;
@@ -89,12 +91,20 @@ public class Planilla {
         this.deduccionesCCSS = deduccionesCCSS;
     }
 
-    public double getDeduccionesIncapacidades() {
-        return deduccionesIncapacidades;
+    public double getPagoIncapacidades() {
+        return pagoIncapacidades;
     }
 
-    public void setDeduccionesIncapacidades(double deduccionesIncapacidades) {
-        this.deduccionesIncapacidades = deduccionesIncapacidades;
+    public void setPagoIncapacidades(double pagoIncapacidades) {
+        this.pagoIncapacidades = pagoIncapacidades;
+    }
+
+    public double getPagoVacaciones() {
+        return pagoVacaciones;
+    }
+
+    public void setPagoVacaciones(double pagoVacaciones) {
+        this.pagoVacaciones = pagoVacaciones;
     }
 
     public double getDeduccionesImpuestos() {
@@ -119,6 +129,22 @@ public class Planilla {
 
     public void setSalarioHorasRegulares(double salarioHorasRegulares) {
         this.salarioHorasRegulares = salarioHorasRegulares;
+    }
+
+    public double getHorasExtra() {
+        return horasExtra;
+    }
+
+    public void setHorasExtra(double horasExtra) {
+        this.horasExtra = horasExtra;
+    }
+
+    public double getHorasRegulares() {
+        return horasRegulares;
+    }
+
+    public void setHorasRegulares(double horasRegulares) {
+        this.horasRegulares = horasRegulares;
     }
 
     public double getSalarioNeto() {
@@ -152,23 +178,9 @@ public class Planilla {
     public void setColaborador(Colaborador colaborador) {
         this.colaborador = colaborador;
     }
+
     
-    public double getHorasExtra() {
-        return salarioHorasExtra;
-    }
-
-    public void setHorasExtra(double salarioHorasExtra) {
-        this.salarioHorasExtra = salarioHorasExtra;
-    }
-
-    public double getHorasRegulares() {
-        return salarioHorasRegulares;
-    }
-
-    public void setHorasRegulares(double salarioHorasRegulares) {
-        this.salarioHorasRegulares = salarioHorasRegulares;
-    }
-
+    
     
     // Método toString (opcional) para mostrar el objeto Planilla de manera legible
     @Override
@@ -178,7 +190,8 @@ public class Planilla {
                 + ", periodo='" + periodo + '\''
                 + ", salarioBruto=" + salarioBruto
                 + ", deduccionesCCSS=" + deduccionesCCSS
-                + ", deduccionesIncapacidades=" + deduccionesIncapacidades
+                + ", pagoIncapacidades=" + pagoIncapacidades
+                + ", pagoVacaciones=" + pagoVacaciones
                 + ", deduccionesImpuestos=" + deduccionesImpuestos
                 + ", salarioHorasExtra=" + salarioHorasExtra
                 + ", salarioHorasRegulares=" + salarioHorasRegulares

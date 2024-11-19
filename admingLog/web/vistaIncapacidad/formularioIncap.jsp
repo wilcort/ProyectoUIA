@@ -73,9 +73,7 @@
                 const fecha_inicio = new Date(document.getElementById('fecha_inicio').value);
                 const fecha_fin = new Date(document.getElementById('fecha_fin').value);
 
-                if (fecha_inicio instanceof Date && !isNaN(fecha_inicio) &&
-                        fecha_fin instanceof Date && !isNaN(fecha_fin)) {
-
+                if (!isNaN(fecha_inicio) && !isNaN(fecha_fin)) {
                     const diferenciaMilisegundos = fecha_fin - fecha_inicio;
                     const diasIncapacidad = Math.ceil(diferenciaMilisegundos / (1000 * 60 * 60 * 24)) + 1;
                     document.getElementById('dias_Incapacidad').value = diasIncapacidad >= 0 ? diasIncapacidad : 0;
@@ -84,90 +82,71 @@
                 }
             }
 
-            function redirigirFormulario(event) {
-                event.preventDefault();  // Evitar que el formulario se envíe inmediatamente
-                const tipoIncapacidad = document.getElementById("tipo_incapacidad").value;
-                let redireccionURL = '';
-
-                if (tipoIncapacidad === "maternidad") {
-                    redireccionURL = "/vistaIncapacidad/formularioMaternidad.jsp";
-                } else if (tipoIncapacidad === "enfermedad") {
-                    redireccionURL = "/vistaIncapacidad/formularioEnfComun.jsp";
-                } else {
-                    alert("Por favor, selecciona un tipo de incapacidad.");
-                    return;
-                }
-
-                // Agrega una breve pausa antes de redirigir
-                setTimeout(() => {
-                    window.location.href = redireccionURL;
-                    // Después de la redirección, envía el formulario
-                    document.getElementById("solicitudForm").submit();
-                }, 500);  // La pausa de 500ms para permitir que la redirección ocurra antes de enviar el formulario
-            }
-
             window.onload = function () {
-                const today = new Date().toISOString().split("T")[0];
-                document.getElementById("fecha_inicio").setAttribute("min", today);
-
+                // Escuchar cambios en el campo fecha_inicio
                 document.getElementById("fecha_inicio").addEventListener("input", function () {
                     const fechaInicio = this.value;
-                    document.getElementById("fecha_fin").setAttribute("min", fechaInicio);
+                    if (fechaInicio) {
+                        // Ajustar la restricción mínima del campo fecha_fin
+                        document.getElementById("fecha_fin").setAttribute("min", fechaInicio);
+                    }
                     calcularDias();
                 });
+
+                // Escuchar cambios en el campo fecha_fin
                 document.getElementById("fecha_fin").addEventListener("input", calcularDias);
             };
         </script>
     </head>
 
     <body>
-    <div class="container">
-        <h1>Solicitud de Incapacidades</h1>
-        <form id="solicitudForm" action="/admingLog/SvIncapacidades" method="POST" onsubmit="redirigirFormulario(event)">
-            <input type="hidden" name="accion" value="Realizar_Solicitud">
+        <div class="container">
+            <h1>Solicitud de Incapacidades</h1>
+            <form id="solicitudForm" action="/admingLog/SvIncapacidades" method="POST">
+                <input type="hidden" name="accion" value="Realizar_Solicitud">
 
-            <input type="text" name="id_empleado" value="${sessionScope.id_empleado != null ? sessionScope.id_empleado : 'ID no disponible'}" readonly>
-            
-            <div class="form-group">
-                <label for="tipo_incapacidad">Tipo de Incapacidad:</label>
-                <select id="tipo_incapacidad" name="tipo_incapacidad">
-                    <option value="" disabled selected>Seleccione el tipo de incapacidad</option>
-                    <option value="maternidad">Maternidad</option>
-                    <option value="enfermedad">Enfermedad</option>
-                </select>
-            </div>
+                <input type="text" name="id_empleado" value="${sessionScope.id_empleado != null ? sessionScope.id_empleado : 'ID no disponible'}" readonly>
 
-            <div class="form-group">
-                <label for="dias_Incapacidad">Días de Incapacidad:</label>
-                <input type="number" id="dias_Incapacidad" name="dias_Incapacidad" readonly>
-            </div>
+                <div class="form-group">
+                    <label for="tipo_incapacidad">Tipo de Incapacidad:</label>
+                    <select id="tipo_incapacidad" name="tipo_incapacidad" required>
+                        <option value="" disabled selected>Seleccione el tipo de incapacidad</option>
+                        <option value="maternidad">Maternidad</option>
+                        <option value="enfermedad">Enfermedad</option>
+                    </select>
+                </div>
 
-            <div class="form-group">
-                <label for="fecha_inicio">Fecha de Inicio de Incapacidad:</label>
-                <input type="date" id="fecha_inicio" name="fecha_inicio">
-            </div>
 
-            <div class="form-group">
-                <label for="fecha_fin">Fecha de Fin de Incapacidad:</label>
-                <input type="date" id="fecha_fin" name="fecha_fin">
-            </div>
-            
-            <input type="hidden" name="id_incapacidad" value="${sessionScope.id_incapacidad != null ? sessionScope.id_incapacidad : 'ID no disponible'}" readonly>  
-            <button type="submit" class="btn-submit">Enviar Solicitud de Incapacidad</button>
-        </form>
+                <div class="form-group">
+                    <label for="dias_Incapacidad">Días de Incapacidad:</label>
+                    <input type="number" id="dias_Incapacidad" name="dias_Incapacidad" readonly>
+                </div>
 
-        <!-- Formulario para ver las solicitudes -->
-        <form action="/admingLog/SvIncapacidades" method="GET" style="display: inline;">
-            <input type="hidden" name="accion" value="Ver_Solicitudes">
-           
+                <div class="form-group">
+                    <label for="fecha_inicio">Fecha de Inicio de Incapacidad:</label>
+                    <input type="date" id="fecha_inicio" name="fecha_inicio">
+                </div>
 
-            <input type="hidden" name="id_empleado" value="${sessionScope.id_empleado != null ? sessionScope.id_incapacidad : 'ID no disponible'}" readonly>             
-            <button type="submit" class="btn-submit">Ver Solicitudes de Incapacidad</button>
-        </form>
+                <div class="form-group">
+                    <label for="fecha_fin">Fecha de Fin de Incapacidad:</label>
+                    <input type="date" id="fecha_fin" name="fecha_fin">
+                </div>
 
-        <!-- Botón de Regreso -->
-        <form action="${pageContext.request.contextPath}/vistasLog/empleado.jsp" style="display: inline;">
-            <button type="submit" class="btn-secondary">Regresar</button>
-        </form>
-    </div>
-</body>
+                <input type="hidden" name="id_incapacidad" value="${sessionScope.id_incapacidad != null ? sessionScope.id_incapacidad : 'ID no disponible'}" readonly>  
+                <button type="submit" class="btn-submit">Enviar Solicitud de Incapacidad</button>
+            </form>
+
+            <!-- Formulario para ver las solicitudes -->
+            <form action="/admingLog/SvIncapacidades" method="GET" style="display: inline;">
+                <input type="hidden" name="accion" value="Ver_Solicitudes">
+                <input type="hidden" name="id_empleado" value="${sessionScope.id_empleado != null ? sessionScope.id_empleado : 'ID no disponible'}" readonly>
+                <button type="submit" class="btn-submit">Ver Solicitudes de Incapacidad</button>
+            </form>
+
+            <!-- Botón de Regreso -->
+            <form action="${pageContext.request.contextPath}/vistasLog/empleado.jsp" style="display: inline;">
+                <button type="submit" class="btn-secondary">Regresar</button>
+            </form>
+        </div>
+    </body>
+</html>

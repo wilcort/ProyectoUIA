@@ -373,20 +373,24 @@ public class SvMostrarDatos extends HttpServlet {
             throws ServletException, IOException {
 
         try {
+            
+            System.out.println("louo");
             // Obtener los parámetros enviados desde el formulario
             String idEmpleadoParam = request.getParameter("id_empleado");
             String idMarcaParam = request.getParameter("id_marca");
-            
-            System.out.println("ID Empleado marca: 555" + idEmpleadoParam);
-            System.out.println("ID Empleado marca:5555 " + idMarcaParam);
-
+                      
             // Validar y convertir los parámetros
             int idEmpleado = Integer.parseInt(idEmpleadoParam);
             int idMarca = Integer.parseInt(idMarcaParam);
+            
+            System.out.println("ide marca " + idMarca);
 
             // Llamar al DAO para obtener la información de la marca
             Marcas marca = empleadoDAO.obtenerMarcaPorId(idMarca);
-
+                    
+            System.out.println("marca id " + marca.getIdMarca());
+            System.out.println("marca id " + marca.getMarcaEntrada());
+            
             if (marca == null) {
                 throw new IllegalArgumentException("No se encontró una marca con el ID especificado.");
             }
@@ -409,7 +413,9 @@ public class SvMostrarDatos extends HttpServlet {
 
     private void guardarModificacion(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+            
+        
+          System.out.println("guardar");
         try {
             // Obtener los parámetros enviados desde el formulario
             String idEmpleadoParam = request.getParameter("id_empleado");
@@ -419,7 +425,7 @@ public class SvMostrarDatos extends HttpServlet {
             String horaSalidaParam = request.getParameter("horaSalida");
             String horaSalidaAlmuerzoParam = request.getParameter("horaSalidaAlmuerzo");
             String horaEntradaAlmuerzoParam = request.getParameter("horaEntradaAlmuerzo");
-
+            
             // Validar y convertir parámetros
             int idEmpleado = Integer.parseInt(idEmpleadoParam);
             int idMarca = Integer.parseInt(idMarcaParam);
@@ -437,22 +443,6 @@ public class SvMostrarDatos extends HttpServlet {
             marca.setMarcaSalidaAlmuerzo(new Time(timeFormat.parse(horaSalidaAlmuerzoParam).getTime()));
             marca.setMarcaEntradaAlmuerzo(new Time(timeFormat.parse(horaEntradaAlmuerzoParam).getTime()));
 
-            // Calcular las horas trabajadas
-            long tiempoEntrada = timeFormat.parse(horaEntradaParam).getTime();
-            long tiempoSalida = timeFormat.parse(horaSalidaParam).getTime();
-            long tiempoAlmuerzoInicio = timeFormat.parse(horaSalidaAlmuerzoParam).getTime();
-            long tiempoAlmuerzoFin = timeFormat.parse(horaEntradaAlmuerzoParam).getTime();
-
-            long totalMilisegundos = (tiempoSalida - tiempoEntrada) - (tiempoAlmuerzoFin - tiempoAlmuerzoInicio);
-            double horasTrabajadas = totalMilisegundos / (1000.0 * 60 * 60); // Convertir a horas
-
-            // Calcular las horas normales y extras
-            double horasNormales = Math.min(horasTrabajadas, 8); // Hasta 8 horas son normales
-            double horasExtras = Math.max(0, horasTrabajadas - 8); // Excedente de 8 horas son extras
-
-            // Asignar las horas normales y extras al objeto marca
-            marca.setHorasDiaNormal(horasNormales);
-            marca.setHorasDiaExtra(horasExtras);
 
             // Llamar al método del DAO para guardar la modificación
             boolean exito = empleadoDAO.modificarMarca(marca);
@@ -461,7 +451,7 @@ public class SvMostrarDatos extends HttpServlet {
             if (exito) {
                 // Redirigir al listado de marcas con un mensaje de éxito
                 request.setAttribute("mensaje", "Marca modificada exitosamente.");
-                request.getRequestDispatcher("/SvMostrarDatos?accion=Listar_Marcas&id_empleado=" + idEmpleado)
+                request.getRequestDispatcher("pages/exitoMarcasUpdate.jsp")
                         .forward(request, response);
             } else {
                 // Mostrar un error si no se pudo modificar

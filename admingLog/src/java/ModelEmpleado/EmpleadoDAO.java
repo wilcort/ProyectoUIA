@@ -488,6 +488,8 @@ public class EmpleadoDAO {
                     + "hora_entrada_almuerzo = ? "
                     + "WHERE id_marca = ?";
 
+            
+            
             ps = conexion.prepareStatement(sql);
 
             // Verificar que la fecha de marca no sea nula
@@ -508,7 +510,7 @@ public class EmpleadoDAO {
 
             // Ejecutar la consulta
             int filasAfectadas = ps.executeUpdate();
-
+           
             // Si se modificó una fila, calcular las horas trabajadas y actualizar la base de datos
             if (filasAfectadas == 1) {
                 calcularHorasTrabajadas(marca);
@@ -558,6 +560,7 @@ public class EmpleadoDAO {
             ps.setInt(1, idMarca);
 
             rs = ps.executeQuery();
+            
 
             if (rs.next()) {
                 Marcas marca = new Marcas();
@@ -567,7 +570,7 @@ public class EmpleadoDAO {
                 marca.setMarcaSalida(rs.getTime("hora_salida"));
                 marca.setMarcaSalidaAlmuerzo(rs.getTime("hora_salida_almuerzo"));
                 marca.setMarcaEntradaAlmuerzo(rs.getTime("hora_entrada_almuerzo"));
-                
+                                  
                 return marca;
             }
         } catch (SQLException e) {

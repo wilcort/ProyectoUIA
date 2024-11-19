@@ -3,16 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/src/java/Controller/SvColaborador.java</file>
-            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/src/java/Model/Colaborador.java</file>
-            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/src/java/ControllerEmpleado/SvMostrarDatos.java</file>
-            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/web/vistasLog/empleado.jsp</file>
-            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/src/java/ModelEmpleado/EmpleadoDAO.java</file>
-            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/web/vistaEmpleado/verMarcas.jsp</file>
-            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/src/java/Model/ColaboradorDAO.java</file>
-            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/web/vistaEmpleado/verMarcasUpdate.jsp</file>
-            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/web/vistaAdmin/nuevo.jsp</file>
-            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/src/java/ModelEmpleado/Marcas.java</file>
+            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/src/java/ControllerPlanilla/Svplanilla.java</file>
+            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/src/java/ModelPanilla/Planilla.java</file>
+            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/src/java/ModelPanilla/PlanillaDAO.java</file>
+            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/src/java/ModelPanilla/prueba.java</file>
         </group>
     </open-files>
 </project-private>
