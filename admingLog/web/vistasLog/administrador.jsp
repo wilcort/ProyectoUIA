@@ -83,7 +83,7 @@
                 background-color: #f39c12;
                 width: 240px;
                 margin-right: 50px;
-            
+
             }
             .btn-fifth:hover {
                 background-color: #e67e22;
@@ -158,18 +158,23 @@
                     <input type="hidden" name="id_Empleado" value="${sessionScope.id_empleado}">
                     <button type="submit" class="btn btn-fifth">Incapacidades</button>
                 </form>
-                
+
                 <form action="/admingLog/SvMostrarDatos" method="POST">
                     <input type="hidden" name="accion" value="Ver_Empleados">
                     <button type="submit" class="btn btn-brands">Marcas</button>
                 </form>
 
+                <form action="/admingLog/Svplanilla" method="GET">
+                    <input type="hidden" name="accion" value="Mostrar_Formulario">
+                    <button type="submit" class="btn btn-seventh">Planilla</button>
+                </form>
+
                 <a href="/admingLog/SvAguinaldo" class="btn btn-sixth">Aguinaldo</a>
-                <a href="/admingLog/SvPlanilla" class="btn btn-seventh">Planilla</a>
+
                 <a href="/admingLog/SvLiquidaciones" class="btn btn-fourth">Liquidaciones</a>
                 <a href="/admingLog/SvHorasExtra" class="btn btn-extra">Horas Extra</a>
-                
-               
+
+
             </div>
 
             <form action="/admingLog/SvVacaciones?accion=Ver_Vacaciones_Empleados" method="POST">

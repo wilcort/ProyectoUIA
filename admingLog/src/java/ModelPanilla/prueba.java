@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.sql.CallableStatement;
 import java.util.Scanner;
+import java.util.stream.IntStream;
 
 /**
  *
@@ -32,15 +33,18 @@ public class prueba {
         PlanillaDAO planillaDAO = new PlanillaDAO();
 
         Scanner scanner = new Scanner(System.in);
+        //   System.out.print("Ingresa el ID del empleado: ");
+        //   int idEmpleado = scanner.nextInt();
 
         System.out.println("=== Generar Reporte de Planilla ===");
         System.out.println("1. Generar reporte quincenal");
         System.out.println("2. Generar reporte mensual");
-        System.out.print("Selecciona una opción (1 o 2): ");
+        System.out.println("3. Reporte Vacaciones");
+        System.out.print("Selecciona una opción (1 al 3): ");
         int opcion = scanner.nextInt();
 
-        if (opcion < 1 || opcion > 2) {
-            System.out.println("Opción inválida. Por favor selecciona 1 o 2.");
+        if (opcion < 1 || opcion > 3) {
+            System.out.println("Opción inválida. Por favor selecciona 1, 2 o 3.");
             return;
         }
 
@@ -60,15 +64,26 @@ public class prueba {
         } else if (anioSeleccionado < 2000 || anioSeleccionado > 2100) {
             System.out.println("El año ingresado no es válido. Debe estar entre 2000 y 2100.");
         } else {
-            // Llamar al método correspondiente según la opción seleccionada
-            if (opcion == 1) {
-                planillaDAO.actualizarOCrearReporteQuincenal(idEmpleado, mesSeleccionado, anioSeleccionado);
-            } else if (opcion == 2) {
-                planillaDAO.actualizarOCrearReporteMensual(idEmpleado, mesSeleccionado, anioSeleccionado);
+            switch (opcion) {
+                case 1:
+                    IntStream.range(0, 2).forEach(i -> planillaDAO.actualizarOCrearReporteQuincenal(idEmpleado, mesSeleccionado, anioSeleccionado));
+                    break;
+                case 2:
+                    IntStream.range(0, 2).forEach(i ->  planillaDAO.actualizarOCrearReporteMensual(idEmpleado, mesSeleccionado, anioSeleccionado));
+                    break;
+                case 3:
+                    System.out.println("Ejecutando Reporte de Vacaciones...");
+                    double vacacionesPago = planillaDAO.obtenerVacacionesMensual(idEmpleado, anioSeleccionado, mesSeleccionado);
+
+                    break;
+                default:
+                    System.out.println("Opción desconocida.");
+                    break;
             }
         }
 
         scanner.close();
+        //   planillaDAO.generarPlanillaQuincenalParaTodos(11,2024);
     }
 }
 // Llamar al método salarioHora con el ID ingresado

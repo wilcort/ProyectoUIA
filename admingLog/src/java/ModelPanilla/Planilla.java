@@ -17,7 +17,7 @@ public class Planilla {
     
     private int idPlanilla; 
     private String periodo;
-    private double salarioBruto;
+    private double salarioReferencia;
     private double deduccionesCCSS;
     private double pagoIncapacidades;
     private double pagoVacaciones;
@@ -26,6 +26,7 @@ public class Planilla {
     private double salarioHorasRegulares;
     private double horasExtra;
     private double horasRegulares;
+    private double salarioBruto;
     private double salarioNeto;
     private Date mesPago;
     private int empleadoIdEmpleado;
@@ -35,16 +36,16 @@ public class Planilla {
     }
 
     public Planilla(int idPlanilla, String periodo, 
-            double salarioBruto, double deduccionesCCSS,
+            double salarioReferencia, double deduccionesCCSS,
             double pagoIncapacidades, double pagoVacaciones, 
             double deduccionesImpuestos, double salarioHorasExtra,
             double salarioHorasRegulares, double horasExtra, 
-            double horasRegulares, double salarioNeto, 
+            double horasRegulares,double salarioBruto, double salarioNeto, 
             Date mesPago, int empleadoIdEmpleado, Colaborador colaborador) {
         
         this.idPlanilla = idPlanilla;
         this.periodo = periodo;
-        this.salarioBruto = salarioBruto;
+        this.salarioReferencia = salarioReferencia;
         this.deduccionesCCSS = deduccionesCCSS;
         this.pagoIncapacidades = pagoIncapacidades;
         this.pagoVacaciones = pagoVacaciones;
@@ -53,12 +54,14 @@ public class Planilla {
         this.salarioHorasRegulares = salarioHorasRegulares;
         this.horasExtra = horasExtra;
         this.horasRegulares = horasRegulares;
+        this.salarioBruto = salarioBruto;
         this.salarioNeto = salarioNeto;
         this.mesPago = mesPago;
         this.empleadoIdEmpleado = empleadoIdEmpleado;
         this.colaborador = colaborador;
     }
 
+  
     public int getIdPlanilla() {
         return idPlanilla;
     }
@@ -75,12 +78,12 @@ public class Planilla {
         this.periodo = periodo;
     }
 
-    public double getSalarioBruto() {
-        return salarioBruto;
+    public double getSalarioReferencia() {
+        return salarioReferencia;
     }
 
-    public void setSalarioBruto(double salarioBruto) {
-        this.salarioBruto = salarioBruto;
+    public void setSalarioReferencia(double salarioReferencia) {
+        this.salarioReferencia = salarioReferencia;
     }
 
     public double getDeduccionesCCSS() {
@@ -138,6 +141,14 @@ public class Planilla {
     public void setHorasExtra(double horasExtra) {
         this.horasExtra = horasExtra;
     }
+    
+      public double getSalarioBruto() {
+        return salarioBruto;
+    }
+
+    public void setSalarioBruto(double salarioBruto) {
+        this.salarioBruto = salarioBruto;
+    }
 
     public double getHorasRegulares() {
         return horasRegulares;
@@ -188,7 +199,7 @@ public class Planilla {
         return "Planilla{"
                 + "idPlanilla=" + idPlanilla
                 + ", periodo='" + periodo + '\''
-                + ", salarioBruto=" + salarioBruto
+                + ", salarioReferencia=" + salarioReferencia
                 + ", deduccionesCCSS=" + deduccionesCCSS
                 + ", pagoIncapacidades=" + pagoIncapacidades
                 + ", pagoVacaciones=" + pagoVacaciones
@@ -197,6 +208,7 @@ public class Planilla {
                 + ", salarioHorasRegulares=" + salarioHorasRegulares
                 + ", horasExtra=" + horasExtra
                 + ", horasRegulares=" + horasRegulares
+                + ", salarioBruto=" + salarioBruto
                 + ", salarioNeto=" + salarioNeto
                 + ", mesPago=" + mesPago
                 + ", empleadoIdEmpleado=" + empleadoIdEmpleado

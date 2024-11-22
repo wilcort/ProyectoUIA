@@ -290,7 +290,8 @@ public class IncapacidadDAO {
     }
 //-------------------------------------------------------------------------------
 //------- LISTAR TODAS LAS SOLICITUDES DE INCAPACIDAD --
-public List<Colaborador> listarEmpleados() {
+
+    public List<Colaborador> listarEmpleados() {
         PreparedStatement ps = null;
         ResultSet rs = null;
         List<Colaborador> listaEmpleados = new ArrayList<>();
@@ -298,7 +299,7 @@ public List<Colaborador> listarEmpleados() {
         try {
             // Consulta para obtener todos los empleados
             String sql = "SELECT id_empleado, nombre, apellido_1, apellido_2 "
-                    + "FROM empleado";  
+                    + "FROM empleado";
 
             ps = conexion.prepareStatement(sql);
             rs = ps.executeQuery();
@@ -341,15 +342,15 @@ public List<Colaborador> listarEmpleados() {
 
 // Método para recuperar el documento de una incapacidad por su ID
     public InputStream obtenerDocumento(int idIncapacidad) throws SQLException {
-        
+
         InputStream documento = null;
-        String query = "SELECT documento FROM incapacidad_enfermedad_comun WHERE id_incapacidad = ? " +
-                   "UNION " +
-                   "SELECT documento FROM incapacidad_maternidad WHERE id_incapacidad = ?";
+        String query = "SELECT documento FROM incapacidad_enfermedad_comun WHERE id_incapacidad = ? "
+                + "UNION "
+                + "SELECT documento FROM incapacidad_maternidad WHERE id_incapacidad = ?";
 
         try (PreparedStatement stmt = conexion.prepareStatement(query)) {
-             stmt.setInt(1, idIncapacidad);
-             stmt.setInt(2, idIncapacidad); 
+            stmt.setInt(1, idIncapacidad);
+            stmt.setInt(2, idIncapacidad);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -380,7 +381,7 @@ public List<Colaborador> listarEmpleados() {
 
             int filasActualizadas = ps.executeUpdate();
             result = filasActualizadas > 0;
-            System.out.println(" enviado " +result );
+            System.out.println(" enviado " + result);
             if (!result) {
                 System.out.println("No se encontró una incapacidad en estado 'Pendiente' con el ID proporcionado.");
             }
@@ -400,8 +401,9 @@ public List<Colaborador> listarEmpleados() {
 
         return result;
     }
- //---------------------------------------------------------------
- //---------------------- DENEGER INCAPACIDADES ------------------------- 
+    //---------------------------------------------------------------
+    //---------------------- DENEGER INCAPACIDADES ------------------------- 
+
     public boolean incapacidadDenegada(int idIncapacidad) {
         PreparedStatement ps = null;
         boolean result = false;
@@ -409,7 +411,7 @@ public List<Colaborador> listarEmpleados() {
         try {
             String sql = "UPDATE incapacidades "
                     + "SET estado = 'Rechazada' WHERE id_incapacidad = ?";
-            
+
             ps = conexion.prepareStatement(sql);
             ps.setInt(1, idIncapacidad);
 
