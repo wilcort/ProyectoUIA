@@ -164,8 +164,8 @@
                     <button type="submit" class="btn btn-brands">Marcas</button>
                 </form>
 
-                <form action="/admingLog/Svplanilla" method="GET">
-                    <input type="hidden" name="accion" value="Mostrar_Formulario">
+                <form action="/admingLog/Svplanilla" method="GET">              
+                    <input type="hidden" name="accion" value="Listar_Empleados">
                     <button type="submit" class="btn btn-seventh">Planilla</button>
                 </form>
 

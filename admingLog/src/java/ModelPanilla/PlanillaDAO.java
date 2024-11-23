@@ -23,9 +23,8 @@ import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
 import java.util.stream.IntStream;
 
-
-
 public class PlanillaDAO {
+
     Connection conexion;
 
     public PlanillaDAO() {
@@ -33,55 +32,55 @@ public class PlanillaDAO {
         conexion = conex.getConectar();
     }
 //---------------------------------------   
-   public double[] salarioHora(int idEmpleado) {
-    PreparedStatement ps = null;
-    ResultSet rs = null;
-    double[] salarioHora = new double[3];  // Array to store normal hourly wage, extra hourly wage, and base salary
 
-    try {
-        String query = "SELECT e.nombre AS nombre_empleado, "
-                + "e.apellido_1, e.apellido_2, "
-                + "c.nombre_cargo, c.salario AS salario_cargo "
-                + "FROM empleado e "
-                + "INNER JOIN cargo c ON e.id_cargo = c.id_cargo "
-                + "WHERE e.id_empleado = ?";
+    public double[] salarioHora(int idEmpleado) {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        double[] salarioHora = new double[3];  // Array to store normal hourly wage, extra hourly wage, and base salary
 
-        ps = conexion.prepareStatement(query);
-        ps.setInt(1, idEmpleado);
-        rs = ps.executeQuery();
-
-        if (rs.next()) {
-            double salarioCargo = rs.getDouble("salario_cargo");
-
-            // Calcula el salario por hora
-            double salarioHoraNormal = (salarioCargo / 30) / 8;  // Assuming 30 working days and 8 hours a day
-            double salarioHoraExtra = salarioHoraNormal * 1.5;  // Extra hourly wage is 1.5 times normal hourly wage
-
-          
-            // Asigna los valores al arreglo
-            salarioHora[0] = salarioCargo;       // Base salary
-            salarioHora[1] = salarioHoraNormal; // Salario por hora
-            salarioHora[2] = salarioHoraExtra;  // Salario por hora extra
-        } else {
-            System.out.println("No se encontró un empleado con ese ID.");
-        }
-    } catch (SQLException e) {
-        e.printStackTrace();
-    } finally {
         try {
-            if (rs != null) {
-                rs.close();
-            }
-            if (ps != null) {
-                ps.close();
+            String query = "SELECT e.nombre AS nombre_empleado, "
+                    + "e.apellido_1, e.apellido_2, "
+                    + "c.nombre_cargo, c.salario AS salario_cargo "
+                    + "FROM empleado e "
+                    + "INNER JOIN cargo c ON e.id_cargo = c.id_cargo "
+                    + "WHERE e.id_empleado = ?";
+
+            ps = conexion.prepareStatement(query);
+            ps.setInt(1, idEmpleado);
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                double salarioCargo = rs.getDouble("salario_cargo");
+
+                // Calcula el salario por hora
+                double salarioHoraNormal = (salarioCargo / 30) / 8;  // Assuming 30 working days and 8 hours a day
+                double salarioHoraExtra = salarioHoraNormal * 1.5;  // Extra hourly wage is 1.5 times normal hourly wage
+
+                // Asigna los valores al arreglo
+                salarioHora[0] = salarioCargo;       // Base salary
+                salarioHora[1] = salarioHoraNormal; // Salario por hora
+                salarioHora[2] = salarioHoraExtra;  // Salario por hora extra
+            } else {
+                System.out.println("No se encontró un empleado con ese ID.");
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
-    }
 
-    return salarioHora;  // Retornamos el array con los valores calculados
-}
+        return salarioHora;  // Retornamos el array con los valores calculados
+    }
 
 //-------------------------------------------------
     public void incapacidadCalculoQuincena(int idEmpleado) {
@@ -134,7 +133,7 @@ public class PlanillaDAO {
                     // Si hay días en la primera quincena, calcula el pago
                     if (diasQuincena1 > 0) {
                         double pagoIncapacidad = calcularPagoIncapacidad(idEmpleado, diasQuincena1, motivo);
-                                           
+
                         // Imprimir resultados
                         System.out.println("Motivo: " + motivo);
                         System.out.println("Tipo: " + tipoIncapacidad);
@@ -168,6 +167,7 @@ public class PlanillaDAO {
     }
 //-----------------------------------------------------------------
     // Método para obtener el pago de incapacidades en la quincena
+
     public double obtenerPagoIncapacidades(int idEmpleado, int anio, int mes) {
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -231,8 +231,9 @@ public class PlanillaDAO {
 
         return totalPagoIncapacidades;
     }
- //-------------------------------------------------------------------   
- // Método para obtener el pago de incapacidades en la quincena
+    //-------------------------------------------------------------------   
+    // Método para obtener el pago de incapacidades en la quincena
+
     public double obtenerPagoIncapacidadesMes(int idEmpleado, int anio, int mes) {
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -298,13 +299,12 @@ public class PlanillaDAO {
     }
 //----------------------------------------------------------------
 // Método para obtener el pago de incapacidades en la quincena
+
     public double obtenerVacacionesQuincena(int idEmpleado, int anio, int mes) {
         double totalPagoVacaciones = 0.0;
 
-        
-        
-         System.out.println("hola");
-         
+        System.out.println("hola");
+
         String query = "SELECT v.id_vacacion, "
                 + "v.fecha_solicitud, "
                 + "v.fecha_inicio, v.fecha_fin, "
@@ -325,26 +325,24 @@ public class PlanillaDAO {
                     Date fechaInicio = rs.getDate("fecha_inicio");
                     Date fechaFin = rs.getDate("fecha_fin");
                     int diasSolicitados = rs.getInt("dias_vacaciones_solicitados");
-                    
+
                     System.out.println("fecha fin " + fechaFin);
                     System.out.println("fecha inicio " + fechaInicio);
-                    System.out.println("dias slicitads " +  diasSolicitados);
+                    System.out.println("dias slicitads " + diasSolicitados);
 
-                      int diasVacaciones1 = calcularDiasQuincena1(fechaInicio, fechaFin);
-                      System.out.println(" diasVacaciones1 : " + diasVacaciones1);
+                    int diasVacaciones1 = calcularDiasQuincena1(fechaInicio, fechaFin);
+                    System.out.println(" diasVacaciones1 : " + diasVacaciones1);
 
-                   if (diasVacaciones1 > 0) {
-                           double pagoVacaciones = calcularPagoVacaciones(idEmpleado, diasVacaciones1);
-                           totalPagoVacaciones += pagoVacaciones;
-                           System.out.println("Pago por vacaciones calculado: " + pagoVacaciones );
-                      }else {
-                   
-                       System.out.println(" NO HAY VACACIONES EN PERIODO QUINCENAL");
-                               
-                               
-                   }
-                   
-                    
+                    if (diasVacaciones1 > 0) {
+                        double pagoVacaciones = calcularPagoVacaciones(idEmpleado, diasVacaciones1);
+                        totalPagoVacaciones += pagoVacaciones;
+                        System.out.println("Pago por vacaciones calculado: " + pagoVacaciones);
+                    } else {
+
+                        System.out.println(" NO HAY VACACIONES EN PERIODO QUINCENAL");
+
+                    }
+
                 }
             }
         } catch (SQLException e) {
@@ -407,6 +405,7 @@ public class PlanillaDAO {
     }
 //------------------------------------------------------------------
     // Método auxiliar para calcular los días en la quincena 1 (1 al 15)
+
     private int calcularDiasQuincena1(Date fechaInicio, Date fechaFin) {
         // Convertir java.sql.Date a LocalDate
         LocalDate inicio = fechaInicio.toLocalDate();
@@ -425,13 +424,14 @@ public class PlanillaDAO {
             // Calculamos la cantidad de días dentro de la quincena
             System.out.println("quincena 1");
             return (int) ChronoUnit.DAYS.between(inicioAjustado, finAjustado) + 1;  // +1 porque es inclusivo
-            
+
         }
 
         // Si no hay solapamiento, devolver 0 días
         return 0;
     }
- //------------------------------------------
+    //------------------------------------------
+
     private int calcularDiasQuincena2(Date fechaInicio, Date fechaFin) {
         // Convertir java.sql.Date a LocalDate
         LocalDate inicio = fechaInicio.toLocalDate();
@@ -457,6 +457,7 @@ public class PlanillaDAO {
         return 0;
     }
 //-----------------------------------------------------------------
+
     public double calcularPagoVacaciones(int idEmpleado, int diasVacaciones) {
         // Obtén el salario y tarifas por hora
         double[] salarioHora = salarioHora(idEmpleado);
@@ -482,8 +483,7 @@ public class PlanillaDAO {
         return diasVacaciones * salarioHoraNormal * 8;
     }
 
-  
- //--------------------------------------
+    //--------------------------------------
     public double calcularPagoIncapacidad(int idEmpleado, int diasIncapacidad, String motivo) {
         // Obtén el salario y tarifas por hora
         double[] salarioHora = salarioHora(idEmpleado);
@@ -526,65 +526,65 @@ public class PlanillaDAO {
         return pagoEmpleador;
     }
 //-----------------------------
-    
+
 //-----------------------------------------------
-   public double calcularDeduccionQuincenaCCSS(int idEmpleado) {
-    double deduccionCCSS = 0; // Variable para almacenar la deducción
+    public double calcularDeduccionQuincenaCCSS(int idEmpleado) {
+        double deduccionCCSS = 0; // Variable para almacenar la deducción
 
-    // Consulta SQL para obtener los datos de la tabla planilla
-    String queryCCSS = "SELECT "
-            + "salario_horas_extra, "
-            + "salario_horas_regulares, "
-            + "horas_extra, "
-            + "horas_regulares "
-            + "FROM planilla "
-            + "WHERE empleado_id_empleado = ? "
-            + "AND periodo = 'Quincena'";
+        // Consulta SQL para obtener los datos de la tabla planilla
+        String queryCCSS = "SELECT "
+                + "salario_horas_extra, "
+                + "salario_horas_regulares, "
+                + "horas_extra, "
+                + "horas_regulares "
+                + "FROM planilla "
+                + "WHERE empleado_id_empleado = ? "
+                + "AND periodo = 'Quincena'";
 
-    try (PreparedStatement ps = conexion.prepareStatement(queryCCSS)) {
-        ps.setInt(1, idEmpleado);
-        try (ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                // Crear una instancia de Planilla
-                Planilla planilla = new Planilla();
+        try (PreparedStatement ps = conexion.prepareStatement(queryCCSS)) {
+            ps.setInt(1, idEmpleado);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    // Crear una instancia de Planilla
+                    Planilla planilla = new Planilla();
 
-                // Asignar valores del ResultSet a la instancia de Planilla
-                planilla.setSalarioHorasExtra(rs.getDouble("salario_horas_extra"));
-                planilla.setSalarioHorasRegulares(rs.getDouble("salario_horas_regulares"));
-                planilla.setHorasExtra(rs.getDouble("horas_extra"));
-                planilla.setHorasRegulares(rs.getDouble("horas_regulares"));
+                    // Asignar valores del ResultSet a la instancia de Planilla
+                    planilla.setSalarioHorasExtra(rs.getDouble("salario_horas_extra"));
+                    planilla.setSalarioHorasRegulares(rs.getDouble("salario_horas_regulares"));
+                    planilla.setHorasExtra(rs.getDouble("horas_extra"));
+                    planilla.setHorasRegulares(rs.getDouble("horas_regulares"));
 
-                // Mostrar los valores para depuración
-                System.out.println("Horas regulares: " + planilla.getHorasRegulares());
-                System.out.println("Horas extra: " + planilla.getHorasExtra());
-                System.out.println("Salario por horas regulares: " + planilla.getSalarioHorasRegulares());
-                System.out.println("Salario por horas extra: " + planilla.getSalarioHorasExtra());
+                    // Mostrar los valores para depuración
+                    System.out.println("Horas regulares: " + planilla.getHorasRegulares());
+                    System.out.println("Horas extra: " + planilla.getHorasExtra());
+                    System.out.println("Salario por horas regulares: " + planilla.getSalarioHorasRegulares());
+                    System.out.println("Salario por horas extra: " + planilla.getSalarioHorasExtra());
 
-                // Calcular el pago por horas regulares y horas extra
-                double pagoHorasRegulares = planilla.getHorasRegulares() * planilla.getSalarioHorasRegulares();
-                double pagoHorasExtra = planilla.getHorasExtra() * planilla.getSalarioHorasExtra();
+                    // Calcular el pago por horas regulares y horas extra
+                    double pagoHorasRegulares = planilla.getHorasRegulares() * planilla.getSalarioHorasRegulares();
+                    double pagoHorasExtra = planilla.getHorasExtra() * planilla.getSalarioHorasExtra();
 
-                System.out.println("Pago por horas regulares: " + pagoHorasRegulares);
-                System.out.println("Pago por horas extra: " + pagoHorasExtra);
+                    System.out.println("Pago por horas regulares: " + pagoHorasRegulares);
+                    System.out.println("Pago por horas extra: " + pagoHorasExtra);
 
-                // Calcular la deducción de la CCSS
-                deduccionCCSS = (pagoHorasRegulares + pagoHorasExtra) * 0.1067;
+                    // Calcular la deducción de la CCSS
+                    deduccionCCSS = (pagoHorasRegulares + pagoHorasExtra) * 0.1067;
 
-                System.out.println("Deducción CCSS: " + deduccionCCSS);
-            } else {
-                System.out.println("No se encontraron datos para el empleado con ID  CCSS: " + idEmpleado);
+                    System.out.println("Deducción CCSS: " + deduccionCCSS);
+                } else {
+                    System.out.println("No se encontraron datos para el empleado con ID  CCSS: " + idEmpleado);
+                }
             }
+        } catch (SQLException e) {
+            // Usar un sistema de logging adecuado en lugar de printStackTrace
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        // Usar un sistema de logging adecuado en lugar de printStackTrace
-        e.printStackTrace();
-    } 
 
-    // Retorna el valor de la deducción o -1 si no se encontraron datos
-    return deduccionCCSS > 0 ? deduccionCCSS : 0;
-}
- //---------------------------------------------------------------
-    
+        // Retorna el valor de la deducción o -1 si no se encontraron datos
+        return deduccionCCSS > 0 ? deduccionCCSS : 0;
+    }
+    //---------------------------------------------------------------
+
     public double calcularDeduccionMensualCCSS(int idEmpleado) {
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -637,12 +637,13 @@ public class PlanillaDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } 
+        }
 
         // Retorna el valor de la deducción o -1 si no se encontraron datos
         return deduccionCCSS > 0 ? deduccionCCSS : 0;
     }
 //---------------------------------------------------------------------------------
+
     public double calcularRenta(int idEmpleado) {
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -652,8 +653,7 @@ public class PlanillaDAO {
             // Consulta SQL corregida
             String queryRenta = "SELECT salario_referencia "
                     + "FROM planilla "
-                    + "WHERE empleado_id_empleado = ? "
-                    ;
+                    + "WHERE empleado_id_empleado = ? ";
 
             ps = conexion.prepareStatement(queryRenta);
             ps.setInt(1, idEmpleado);
@@ -664,26 +664,25 @@ public class PlanillaDAO {
                 double salarioReferencia = rs.getDouble("salario_referencia");
                 System.out.println("Salario referencia: " + salarioReferencia);
 
-                
                 double salarioMensual = salarioReferencia;
                 System.out.println("Salario mensual (estimado): " + salarioMensual);
 
                 // Calcular la deducción por renta según los tramos
                 if (salarioMensual <= 941000) {
                     deduccionRenta = 0; // No aplica deducción
-                    
+
                 } else if (salarioMensual <= 1381000) {
                     deduccionRenta = (salarioMensual - 941000) * 0.10;
-                    
+
                 } else if (salarioMensual <= 2423000) {
                     deduccionRenta = (1381000 - 941000) * 0.10
                             + (salarioMensual - 1381000) * 0.15;
-                    
+
                 } else if (salarioMensual <= 4845000) {
                     deduccionRenta = (1381000 - 941000) * 0.10
                             + (2423000 - 1381000) * 0.15
                             + (salarioMensual - 2423000) * 0.20;
-                    
+
                 } else {
                     deduccionRenta = (1381000 - 941000) * 0.10
                             + (2423000 - 1381000) * 0.15
@@ -702,23 +701,24 @@ public class PlanillaDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace(); // Mostrar el error en caso de excepción
-        } 
-        
+        }
 
         // Retorna la deducción calculada o -1 si no se encontraron datos
         return deduccionRenta > 0 ? deduccionRenta : 0;
     }
 //----------------------------------------------------------------------------
+
     public double[] calcularSalarioQuincenal(int idEmpleado) {
         PreparedStatement ps = null;
         ResultSet rs = null;
         double[] salarios = new double[2]; // Índice 0: Salario bruto, Índice 1: Salario neto
 
         try {
+            // Consulta SQL para obtener la información de la planilla
             String querySalario = "SELECT * FROM planilla "
                     + "WHERE empleado_id_empleado = ? "
                     + "AND periodo = 'Quincena'";
-            
+
             ps = conexion.prepareStatement(querySalario);
             ps.setInt(1, idEmpleado);
             rs = ps.executeQuery();
@@ -745,6 +745,11 @@ public class PlanillaDAO {
                 // Calcular salario neto
                 double salarioNeto = salarioBrutoQuincena - (deduccionRenta + deduccionCCSS);
 
+                // Si el salario neto es menor que 0, asignar 0
+                if (salarioNeto < 0) {
+                    salarioNeto = 0;
+                }
+
                 // Asignar valores al arreglo
                 salarios[0] = salarioBrutoQuincena;
                 salarios[1] = salarioNeto;
@@ -752,16 +757,30 @@ public class PlanillaDAO {
                 // Debug
                 System.out.println("Salario Bruto Quincena: " + salarioBrutoQuincena);
                 System.out.println("Salario Neto Quincena: " + salarioNeto);
+
+                // Actualizar el salario neto en la base de datos si es menor que 0
+                String updateQuery = "UPDATE planilla SET salario_neto = ? "
+                        + "WHERE empleado_id_empleado = ? AND periodo = 'Quincena'";
+
+                try (PreparedStatement updatePs = conexion.prepareStatement(updateQuery)) {
+                    updatePs.setDouble(1, salarioNeto);
+                    updatePs.setInt(2, idEmpleado);
+                    updatePs.executeUpdate();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
             } else {
                 System.out.println("No se encontraron datos para el empleado con ID salario: " + idEmpleado);
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } 
+        }
 
         // Retornar el arreglo con los valores
         return salarios;
     }
+
 //--------------------------------------------------------------------
     public double[] calcularSalarioMensual(int idEmpleado) {
         PreparedStatement ps = null;
@@ -772,7 +791,7 @@ public class PlanillaDAO {
             String querySalario = "SELECT * FROM planilla "
                     + "WHERE empleado_id_empleado = ? "
                     + "AND periodo = 'Mensual'";
-            
+
             ps = conexion.prepareStatement(querySalario);
             ps.setInt(1, idEmpleado);
             rs = ps.executeQuery();
@@ -789,7 +808,7 @@ public class PlanillaDAO {
                 double pagoHorasRegulares = horasRegulares * salarioHorasRegulares;
                 double pagoHorasExtra = horasExtra * salarioHorasExtra;
 
-                // Calcular salario bruto quincenal
+                // Calcular salario bruto mensual
                 double salarioBrutoMes = pagoHorasExtra + pagoHorasRegulares + pagoVacaciones + pagoIncapacidades;
 
                 // Obtener deducciones
@@ -799,24 +818,40 @@ public class PlanillaDAO {
                 // Calcular salario neto
                 double salarioNeto = salarioBrutoMes - (deduccionRenta + deduccionCCSS);
 
+                // Si el salario neto es menor que 0, asignar 0
+                if (salarioNeto < 0) {
+                    salarioNeto = 0;
+                }
+
                 // Asignar valores al arreglo
                 salarios[0] = salarioBrutoMes;
                 salarios[1] = salarioNeto;
 
                 // Debug
-                System.out.println("Salario Bruto Quincena: " + salarioBrutoMes);
-                System.out.println("Salario Neto Quincena: " + salarioNeto);
+                System.out.println("Salario Bruto Mensual: " + salarioBrutoMes);
+                System.out.println("Salario Neto Mensual: " + salarioNeto);
+
+                // Actualizar el salario neto en la base de datos si es menor que 0
+                String updateQuery = "UPDATE planilla SET salario_neto = ? WHERE empleado_id_empleado = ? AND periodo = 'Mensual'";
+                try (PreparedStatement updatePs = conexion.prepareStatement(updateQuery)) {
+                    updatePs.setDouble(1, salarioNeto);
+                    updatePs.setInt(2, idEmpleado);
+                    updatePs.executeUpdate();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
             } else {
                 System.out.println("No se encontraron datos para el empleado con ID: " + idEmpleado);
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } 
+        }
 
         // Retornar el arreglo con los valores
         return salarios;
     }
-  
+
 //--------------------------*****--------------------------------------
 //-------------------------------------------------------------------------    
     public void actualizarOCrearReporteQuincenal(int idEmpleado, int mesSeleccionado, int anioSeleccionado) {
@@ -853,21 +888,19 @@ public class PlanillaDAO {
             double salarioCargo = salarioPorHora[0];
             double salarioHoraNormal = salarioPorHora[1];
             double salarioHoraExtra = salarioPorHora[2];
-                 
+
 //---------------------------------------------------------------------------
-            double [] calcularSalarioQuincenal = calcularSalarioQuincenal(idEmpleado);
+            double[] calcularSalarioQuincenal = calcularSalarioQuincenal(idEmpleado);
             double pagoSalarioBruto = calcularSalarioQuincenal[0];
             double pagoSalarioNeto = calcularSalarioQuincenal[1];
 
             // Obtener pago por incapacidades
             double pagoIncapacidades = obtenerPagoIncapacidades(idEmpleado, anioSeleccionado, mesSeleccionado);
             double pagoVacacionesQuincena = obtenerVacacionesQuincena(idEmpleado, anioSeleccionado, mesSeleccionado);
-                 
-            
+
             double deduccionesCCSSQuincena = calcularDeduccionQuincenaCCSS(idEmpleado);
             double deduccionesRenta = calcularRenta(idEmpleado);
-            
-        
+
             System.out.println("incapacidades ** pago: " + pagoIncapacidades);
             System.out.println("vacaciones mes PAGO * " + pagoVacacionesQuincena);
             System.out.println("deducciones CCSS " + deduccionesCCSSQuincena);
@@ -889,10 +922,9 @@ public class PlanillaDAO {
             ps.setInt(2, mesSeleccionado);
             ps.setInt(3, idEmpleado);
             rs = ps.executeQuery();
-            
 
             if (rs.next()) {
-                
+
                 System.out.println("nuevo  actializareporte");
                 // Actualizar reporte mensual existente
                 int idPlanillaQuincenal = rs.getInt("id_planilla");
@@ -933,19 +965,16 @@ public class PlanillaDAO {
                 System.out.println("incapacidades  " + planilla.getPagoIncapacidades());
                 System.out.println("vacacciones " + planilla.getPagoVacaciones());
 
-                
             } else {
- //-----------------------------------------------------------
-  System.out.println("incapacidades ** inser: " + pagoIncapacidades);
-            System.out.println("vacaciones mes inser * " + pagoVacacionesQuincena);
-            System.out.println("deducciones CCSS inser " + deduccionesCCSSQuincena);
-            System.out.println("deducciones Renta inser " + deduccionesRenta);
-            System.out.println("salario bruto inser " + pagoSalarioBruto);
-            System.out.println("salario neto inser " + pagoSalarioNeto);
- 
- 
- //---------------------------------------------------------
-                
+                //-----------------------------------------------------------
+                System.out.println("incapacidades ** inser: " + pagoIncapacidades);
+                System.out.println("vacaciones mes inser * " + pagoVacacionesQuincena);
+                System.out.println("deducciones CCSS inser " + deduccionesCCSSQuincena);
+                System.out.println("deducciones Renta inser " + deduccionesRenta);
+                System.out.println("salario bruto inser " + pagoSalarioBruto);
+                System.out.println("salario neto inser " + pagoSalarioNeto);
+
+                //---------------------------------------------------------
                 // Crear nuevo reporte mensual
                 String queryInsertarQuincenal = "INSERT INTO planilla "
                         + "(empleado_id_empleado, "
@@ -993,12 +1022,13 @@ public class PlanillaDAO {
 
         } catch (SQLException e) {
             e.printStackTrace();
-        } 
+        }
     }
 //----------------------------------------------------------------------------
 //----------------------------------------------------------
 //------------------------*****
 //------------------------------------------------------------
+
     public void actualizarOCrearReporteMensual(int idEmpleado, int mesSeleccionado, int anioSeleccionado) {
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -1039,17 +1069,17 @@ public class PlanillaDAO {
             double deduccionesCCSSMes = calcularDeduccionMensualCCSS(idEmpleado);
             double pagoVacacionesMes = obtenerVacacionesMensual(idEmpleado, anioSeleccionado, mesSeleccionado);
             double deduccionesRenta = calcularRenta(idEmpleado);
-            
-            double [] calcularSalarioMensual = calcularSalarioMensual(idEmpleado);
+
+            double[] calcularSalarioMensual = calcularSalarioMensual(idEmpleado);
             double pagoSalarioBruto = calcularSalarioMensual[0];
             double pagoSalarioNeto = calcularSalarioMensual[1];
-            
+
             System.out.println("incapacidades **: " + pagoIncapacidades);
             System.out.println("vacaciones mes PAGO * " + pagoVacacionesMes);
             System.out.println("deducciones CCSS " + deduccionesCCSSMes);
-            System.out.println("deducciones Renta " + deduccionesRenta); 
+            System.out.println("deducciones Renta " + deduccionesRenta);
             System.out.println("salario  bruto " + pagoSalarioBruto);
-            System.out.println("salario neto " + pagoSalarioNeto); 
+            System.out.println("salario neto " + pagoSalarioNeto);
 //--------------------------------------------------------------------            
             // Asignar fecha de pago (16 al 31)
             String mesPagoMensual = String.format("%d-%02d-16", anioSeleccionado, mesSeleccionado);
@@ -1101,11 +1131,11 @@ public class PlanillaDAO {
 
                 int filasActualizadas = ps.executeUpdate();
                 System.out.println(filasActualizadas > 0 ? "Reporte mensual actualizado correctamente." : "Error al actualizar el reporte mensual.");
-                
+
                 Planilla planilla = new Planilla();
                 System.out.println("incapacidades  " + planilla.getPagoIncapacidades());
                 System.out.println("vacacciones " + planilla.getPagoVacaciones());
-            
+
             } else {
                 // Crear nuevo reporte mensual
                 String queryInsertarMensual = "INSERT INTO planilla "
@@ -1142,23 +1172,23 @@ public class PlanillaDAO {
                 ps.setString(14, "Mensual");
 
                 int filasInsertadas = ps.executeUpdate();
-                
+
                 System.out.println(filasInsertadas + " filas insertadas. MES");
                 System.out.println(filasInsertadas > 0 ? "Reporte mensual creado correctamente." : "Error al crear el reporte mensual.");
-            
+
                 Planilla planilla = new Planilla();
                 System.out.println("incapacidades  " + planilla.getPagoIncapacidades());
                 System.out.println("vacacciones " + planilla.getPagoVacaciones());
-                        
+
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
-        } 
+        }
     }
 //------------------------------------------------------------------   
 //---------------------------------------------------------------------
-    
+
 //--------------------- INGRESAR DATOS A PLANILLA ------------------------------      
 //-----------------------------------------------------------------------------
     public void generarPlanillaQuincenalParaTodos(int mesSeleccionado, int anioSeleccionado) {
@@ -1168,8 +1198,8 @@ public class PlanillaDAO {
         try {
             // Consultar todos los empleados activos
             String queryEmpleados = "SELECT id_empleado "
-                    + "FROM empleado " ;
-            
+                    + "FROM empleado ";
+
             ps = conexion.prepareStatement(queryEmpleados);
             rs = ps.executeQuery();
 
@@ -1177,9 +1207,8 @@ public class PlanillaDAO {
                 int idEmpleado = rs.getInt("id_empleado");
 
                 // Generar o actualizar la planilla quincenal para el empleado actual
-               
                 IntStream.range(0, 2).forEach(i -> actualizarOCrearReporteQuincenal(idEmpleado, mesSeleccionado, anioSeleccionado));
-                   
+
             }
 
             System.out.println("Planilla quincenal generada para todos los empleados.");
@@ -1194,24 +1223,23 @@ public class PlanillaDAO {
                 if (ps != null) {
                     ps.close();
                 }
-                if (conexion != null) {
-                    conexion.close();
-                }
+
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
     }
- //-------------------------------------------------------------------------
- public void generarPlanillaMenasualParaTodos(int mesSeleccionado, int anioSeleccionado) {
+    //-------------------------------------------------------------------------
+
+    public void generarPlanillaMensualParaTodos(int mesSeleccionado, int anioSeleccionado) {
         PreparedStatement ps = null;
         ResultSet rs = null;
 
         try {
             // Consultar todos los empleados activos
             String queryEmpleados = "SELECT id_empleado "
-                    + "FROM empleado " ;
-            
+                    + "FROM empleado ";
+
             ps = conexion.prepareStatement(queryEmpleados);
             rs = ps.executeQuery();
 
@@ -1219,10 +1247,8 @@ public class PlanillaDAO {
                 int idEmpleado = rs.getInt("id_empleado");
 
                 // Generar o actualizar la planilla quincenal para el empleado actual
-                
-           IntStream.range(0, 2).forEach(i -> actualizarOCrearReporteMensual(idEmpleado, mesSeleccionado, anioSeleccionado));
-                
-            
+                IntStream.range(0, 2).forEach(i -> actualizarOCrearReporteMensual(idEmpleado, mesSeleccionado, anioSeleccionado));
+
             }
 
             System.out.println("Planilla quincenal generada para todos los empleados.");
@@ -1237,14 +1263,123 @@ public class PlanillaDAO {
                 if (ps != null) {
                     ps.close();
                 }
-                if (conexion != null) {
-                    conexion.close();
-                }
+
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
     }
+//----------------------------------------------------------------
+    public List<Planilla> verPlanillaEmpleado(int idEmpleado) {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        List<Planilla> planillas = new ArrayList<>();
+
+        try {
+            String queryEmpleado = " SELECT "
+                    + "    p.id_planilla AS ID_Planilla, "
+                    + "    p.mes_pago AS MesPago,"
+                    + "    p.periodo AS TipoPeriodo,"
+                    + "    p.empleado_id_empleado AS ID_Empleado,"
+                    + "    SUM(p.salario_neto) AS SalarioNetoTotal,"
+                    + "    COUNT(*) AS TotalRegistros"
+                    + " FROM "
+                    + "    planilla p"
+                    + " WHERE "
+                    + "    p.empleado_id_empleado = ? "
+                    + " GROUP BY "
+                    + "    p.id_planilla, "
+                    + "    p.mes_pago, "
+                    + "    p.periodo, "
+                    + "    p.empleado_id_empleado"
+                    + " ORDER BY "
+                    + "    p.empleado_id_empleado, "
+                    + "    p.mes_pago ";
+
+            ps = conexion.prepareStatement(queryEmpleado);
+            ps.setInt(1, idEmpleado);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Planilla planilla = new Planilla();
+
+                // Asignar los valores del resultado de la consulta a la Planilla
+                planilla.setIdPlanilla(rs.getInt("ID_Planilla"));
+                planilla.setMesPago(rs.getDate("MesPago")); 
+                planilla.setPeriodo(rs.getString("TipoPeriodo"));
+                planilla.setEmpleadoIdEmpleado(rs.getInt("ID_Empleado"));
+                planilla.setSalarioNeto(rs.getDouble("SalarioNetoTotal")); 
+
+                planillas.add(planilla);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Imprime el error de la excepción (o puedes usar un logger)
+        } finally {
+            // Cerrar los recursos
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return planillas;
+    }
+//---------------------------------------------------------------------------
+    public Planilla detallePlanilla(int idPlanilla) {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        Planilla planilla = null; // Objeto Planilla para almacenar los datos
+
+        try {
+            String queryPlanilla = "SELECT * FROM planilla WHERE id_planilla = ?";
+            ps = conexion.prepareStatement(queryPlanilla);
+            ps.setInt(1, idPlanilla);
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                // Crear un objeto Planilla y mapear los datos
+                planilla = new Planilla();
+                planilla.setIdPlanilla(rs.getInt("id_planilla"));
+                planilla.setPeriodo(rs.getString("periodo"));
+                planilla.setSalarioReferencia(rs.getDouble("salario_referencia"));
+                planilla.setDeduccionesCCSS(rs.getDouble("deducciones_CCSS"));
+                planilla.setPagoIncapacidades(rs.getDouble("pago_incapacidades"));
+                planilla.setPagoVacaciones(rs.getDouble("pago_vacaciones"));
+                planilla.setDeduccionesImpuestos(rs.getDouble("deducciones_impuestos"));
+                planilla.setSalarioHorasExtra(rs.getDouble("salario_horas_extra"));
+                planilla.setSalarioHorasRegulares(rs.getDouble("salario_horas_regulares"));
+                planilla.setHorasExtra(rs.getDouble("horas_extra"));
+                planilla.setHorasRegulares(rs.getDouble("horas_regulares"));
+                planilla.setSalarioBruto(rs.getDouble("salario_bruto"));
+                planilla.setSalarioNeto(rs.getDouble("salario_neto"));
+                planilla.setMesPago(rs.getDate("mes_pago"));
+                planilla.setEmpleadoIdEmpleado(rs.getInt("empleado_id_empleado"));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al obtener detalles de la planilla: " + e.getMessage());
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (SQLException ex) {
+                System.err.println("Error al cerrar recursos: " + ex.getMessage());
+            }
+        }
+        
+
+        return planilla; // Devuelve el objeto Planilla o null si no se encontró
+    }
+
 
 //-----------------------
 }

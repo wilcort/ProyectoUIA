@@ -33,10 +33,10 @@ public class prueba {
         PlanillaDAO planillaDAO = new PlanillaDAO();
 
         Scanner scanner = new Scanner(System.in);
-        //   System.out.print("Ingresa el ID del empleado: ");
-        //   int idEmpleado = scanner.nextInt();
+           System.out.print("Ingresa el ID del empleado: ");
+           int idEmpleado = scanner.nextInt();
 
-        System.out.println("=== Generar Reporte de Planilla ===");
+    /*    System.out.println("=== Generar Reporte de Planilla ===");
         System.out.println("1. Generar reporte quincenal");
         System.out.println("2. Generar reporte mensual");
         System.out.println("3. Reporte Vacaciones");
@@ -82,8 +82,8 @@ public class prueba {
             }
         }
 
-        scanner.close();
-        //   planillaDAO.generarPlanillaQuincenalParaTodos(11,2024);
+        scanner.close();*/
+          planillaDAO.verPlanillaEmpleado(idEmpleado);
     }
 }
 // Llamar al método salarioHora con el ID ingresado
