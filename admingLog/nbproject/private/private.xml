@@ -3,10 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/src/java/ControllerPlanilla/Svplanilla.java</file>
-            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/src/java/ModelPanilla/Planilla.java</file>
-            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/src/java/ModelPanilla/PlanillaDAO.java</file>
-            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/src/java/ModelPanilla/prueba.java</file>
+            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/web/vistaAguinaldo/aguinaldoEmplReporte.jsp</file>
+            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/web/vistasLog/empleado.jsp</file>
+            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/web/pages/error_cedula.jsp</file>
         </group>
     </open-files>
 </project-private>

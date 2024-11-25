@@ -69,7 +69,8 @@ public class SvMostrarDatos extends HttpServlet {
             return;
         } else if ("ver_Marcas_Update".equals(accion)) {
             verMarcasUpdate(request, response);
-        }  else {
+            return;
+       }else {
             // Si la acción no coincide con ninguna de las anteriores, redirige a una página de error
             response.sendRedirect("/WEB-INF/error.jsp");
             return;

@@ -59,7 +59,7 @@
     </head>
     <body>
         <div class="container mt-5">
-            <h1 class="text-center">Reportes de Planilla de Empleado</h1>
+            <h1 class="text-center">Reportes de Planilla de Empleado </h1>
 
             <!-- Verificación de si hay datos -->
             <c:if test="${empty listarPlanillas}">

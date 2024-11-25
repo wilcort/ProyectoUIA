@@ -168,8 +168,13 @@
                     <input type="hidden" name="accion" value="Listar_Empleados">
                     <button type="submit" class="btn btn-seventh">Planilla</button>
                 </form>
+                    
+                <form action="/admingLog/SvAguinaldo" method="GET">              
+                    <input type="hidden" name="accion" value="Listar_Empleados">
+                    <button type="submit" class="btn btn-sixth">Aguinaldo</button>
+                </form>
 
-                <a href="/admingLog/SvAguinaldo" class="btn btn-sixth">Aguinaldo</a>
+             
 
                 <a href="/admingLog/SvLiquidaciones" class="btn btn-fourth">Liquidaciones</a>
                 <a href="/admingLog/SvHorasExtra" class="btn btn-extra">Horas Extra</a>

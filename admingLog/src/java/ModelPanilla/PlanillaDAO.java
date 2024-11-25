@@ -52,11 +52,20 @@ public class PlanillaDAO {
 
             if (rs.next()) {
                 double salarioCargo = rs.getDouble("salario_cargo");
-
+//---------------------------------------------------------------------------------------
+                 
+        
+                // Número de horas trabajadas al mes (48 horas por semana, 4.33 semanas al mes)
+                double horasPorMes = 48 * 2;
+                
                 // Calcula el salario por hora
-                double salarioHoraNormal = (salarioCargo / 30) / 8;  // Assuming 30 working days and 8 hours a day
-                double salarioHoraExtra = salarioHoraNormal * 1.5;  // Extra hourly wage is 1.5 times normal hourly wage
-
+                double salarioHoraNormal = salarioCargo/ 2 / horasPorMes;
+                
+                // Calcula el salario por hora extra (1.5 veces el salario normal)
+                double salarioHoraExtra = salarioHoraNormal * 1.5;
+                
+        
+//-----------------------------------------------------------------------------------                
                 // Asigna los valores al arreglo
                 salarioHora[0] = salarioCargo;       // Base salary
                 salarioHora[1] = salarioHoraNormal; // Salario por hora
@@ -816,7 +825,7 @@ public class PlanillaDAO {
                 double deduccionRenta = rs.getDouble("deducciones_impuestos");
 
                 // Calcular salario neto
-                double salarioNeto = salarioBrutoMes - (deduccionRenta + deduccionCCSS);
+                double salarioNeto = salarioBrutoMes - deduccionRenta - deduccionCCSS;
 
                 // Si el salario neto es menor que 0, asignar 0
                 if (salarioNeto < 0) {
@@ -890,16 +899,15 @@ public class PlanillaDAO {
             double salarioHoraExtra = salarioPorHora[2];
 
 //---------------------------------------------------------------------------
+            double pagoIncapacidades = obtenerPagoIncapacidades(idEmpleado, anioSeleccionado, mesSeleccionado);
+            double deduccionesCCSSQuincena = calcularDeduccionQuincenaCCSS(idEmpleado);
+            double pagoVacacionesQuincena = obtenerVacacionesQuincena(idEmpleado, anioSeleccionado, mesSeleccionado);
+            double deduccionesRenta = calcularRenta(idEmpleado);
+            
             double[] calcularSalarioQuincenal = calcularSalarioQuincenal(idEmpleado);
             double pagoSalarioBruto = calcularSalarioQuincenal[0];
             double pagoSalarioNeto = calcularSalarioQuincenal[1];
-
-            // Obtener pago por incapacidades
-            double pagoIncapacidades = obtenerPagoIncapacidades(idEmpleado, anioSeleccionado, mesSeleccionado);
-            double pagoVacacionesQuincena = obtenerVacacionesQuincena(idEmpleado, anioSeleccionado, mesSeleccionado);
-
-            double deduccionesCCSSQuincena = calcularDeduccionQuincenaCCSS(idEmpleado);
-            double deduccionesRenta = calcularRenta(idEmpleado);
+        
 
             System.out.println("incapacidades ** pago: " + pagoIncapacidades);
             System.out.println("vacaciones mes PAGO * " + pagoVacacionesQuincena);
@@ -1207,7 +1215,7 @@ public class PlanillaDAO {
                 int idEmpleado = rs.getInt("id_empleado");
 
                 // Generar o actualizar la planilla quincenal para el empleado actual
-                IntStream.range(0, 2).forEach(i -> actualizarOCrearReporteQuincenal(idEmpleado, mesSeleccionado, anioSeleccionado));
+                IntStream.range(0, 3).forEach(i -> actualizarOCrearReporteQuincenal(idEmpleado, mesSeleccionado, anioSeleccionado));
 
             }
 
@@ -1247,7 +1255,7 @@ public class PlanillaDAO {
                 int idEmpleado = rs.getInt("id_empleado");
 
                 // Generar o actualizar la planilla quincenal para el empleado actual
-                IntStream.range(0, 2).forEach(i -> actualizarOCrearReporteMensual(idEmpleado, mesSeleccionado, anioSeleccionado));
+                IntStream.range(0, 3).forEach(i -> actualizarOCrearReporteMensual(idEmpleado, mesSeleccionado, anioSeleccionado));
 
             }
 

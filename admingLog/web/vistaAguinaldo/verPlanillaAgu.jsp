@@ -40,11 +40,26 @@
             .btn-back {
                 margin-top: 20px;
             }
+
+            .btn-ver-planilla {
+               background-color: #007bff;
+               border-color: #0056b3;
+               color: white;
+            }
+
+            .btn-ver-planilla:hover {
+                background-color: #0056b3;
+                border-color: #003d82;
+            }
+
+            .btn-ver-planilla i {
+                margin-right: 5px; /* Añadir espacio entre el icono y el texto */
+            }
         </style>
     </head>
     <body>
         <div class="container mt-5">
-            <h1 class="text-center">Reportes de Planilla de Empleado  </h1>
+            <h1 class="text-center">Reportes de Planilla de Empleado </h1>
 
             <!-- Verificación de si hay datos -->
             <c:if test="${empty listarPlanillas}">
@@ -56,12 +71,11 @@
                                 <th>Mes de Pago</th>
                                 <th>Tipo de Periodo</th>
                                 <th>Salario Neto Total</th>
-                                <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td colspan="4" class="no-data">No hay reportes de planilla disponibles para este empleado.</td>
+                                <td colspan="3" class="no-data">No hay reportes de planilla disponibles para este empleado.</td>
                             </tr>
                         </tbody>
                     </table>
@@ -78,7 +92,6 @@
                                 <th>Mes de Pago</th>
                                 <th>Tipo de Periodo</th>
                                 <th>Salario Neto Total</th>
-                                <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -89,16 +102,7 @@
                                     <td>${planilla.mesPago}</td>
                                     <td>${planilla.periodo}</td>
                                     <td>${planilla.salarioNeto}</td>
-                                    <<td>
-                                        <form action="/admingLog/Svplanilla" method="POST">
-                                            <input type="hidden" name="accion" value="Ver_Detalle_Planilla">
-                                            <input type="hidden" name="id_planilla" value="${planilla.idPlanilla}">
-                                            <button type="submit" class="btn btn-primary btn-sm btn-ver-planilla">
-                                                <i class="bi bi-eye"></i> Ver Planilla
-                                            </button>
-</form>
-                                        </form>
-                                    </td>
+                                   
                                 </tr>
                             </c:forEach>
                         </tbody>
@@ -108,7 +112,7 @@
 
             <!-- Botón de regresar -->
             <div class="text-center">
-                <a href="http://localhost:8080/admingLog/vistasLog/empleado.jsp" class="btn btn-secondary btn-back">Regresar al inicio</a>
+                <a href="http://localhost:8080/admingLog/SvAguinaldo?accion=Listar_Empleados" class="btn btn-secondary btn-back">Regresar al inicio</a>
             </div>
         </div>
     </body>

@@ -24,7 +24,7 @@
 
             table {
                 width: 80%;
-                margin: 0 auto;
+                margin: 20px auto;
                 border-collapse: collapse;
                 background-color: #fff;
                 box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -86,7 +86,7 @@
 
         <h2>Detalle de la Planilla</h2>
 
-        <!-- Mostrar información de la planilla -->
+        <!-- Tabla 1: Información Básica de la Planilla -->
         <table>
             <tr>
                 <th>ID Planilla</th>
@@ -97,35 +97,23 @@
                 <td>${planilla.periodo}</td>
             </tr>
             <tr>
+                <th>Mes de Pago</th>
+                <td>${planilla.mesPago}</td>
+            </tr>
+            <tr>
+                <th>ID Empleado</th>
+                <td>${planilla.empleadoIdEmpleado}</td>
+            </tr>
+            <tr>
                 <th>Salario Referencia</th>
                 <td class="currency-cell">
                     <fmt:formatNumber value="${planilla.salarioReferencia}" type="currency" currencySymbol="₡" groupingUsed="true" minFractionDigits="2" maxFractionDigits="2" />
                 </td>
             </tr>
-            <tr>
-                <th>Deducciones CCSS</th>
-                <td class="currency-cell">
-                    <fmt:formatNumber value="${planilla.deduccionesCCSS}" type="currency" currencySymbol="₡" groupingUsed="true" minFractionDigits="2" maxFractionDigits="2" />
-                </td>
-            </tr>
-            <tr>
-                <th>Pago por Incapacidades</th>
-                <td class="currency-cell">
-                    <fmt:formatNumber value="${planilla.pagoIncapacidades}" type="currency" currencySymbol="₡" groupingUsed="true" minFractionDigits="2" maxFractionDigits="2" />
-                </td>
-            </tr>
-            <tr>
-                <th>Pago por Vacaciones</th>
-                <td class="currency-cell">
-                    <fmt:formatNumber value="${planilla.pagoVacaciones}" type="currency" currencySymbol="₡" groupingUsed="true" minFractionDigits="2" maxFractionDigits="2" />
-                </td>
-            </tr>
-            <tr>
-                <th>Deducciones Impuestos</th>
-                <td class="currency-cell">
-                    <fmt:formatNumber value="${planilla.deduccionesImpuestos}" type="currency" currencySymbol="₡" groupingUsed="true" minFractionDigits="2" maxFractionDigits="2" />
-                </td>
-            </tr>
+        </table>
+
+        <!-- Tabla 2: Salarios y Pagos Adicionales -->
+        <table>
             <tr>
                 <th>Salario por Horas Extra</th>
                 <td class="currency-cell">
@@ -151,24 +139,48 @@
                 </td>
             </tr>
             <tr>
+                <th>Pago por Vacaciones</th>
+                <td class="currency-cell">
+                    <fmt:formatNumber value="${planilla.pagoVacaciones}" type="currency" currencySymbol="₡" groupingUsed="true" minFractionDigits="2" maxFractionDigits="2" />
+                </td>
+            </tr>
+            <tr>
+                <th>Pago por Incapacidades</th>
+                <td class="currency-cell">
+                    <fmt:formatNumber value="${planilla.pagoIncapacidades}" type="currency" currencySymbol="₡" groupingUsed="true" minFractionDigits="2" maxFractionDigits="2" />
+                </td>
+            </tr>
+            <tr>
                 <th>Salario Bruto</th>
                 <td class="currency-cell">
                     <fmt:formatNumber value="${planilla.salarioBruto}" type="currency" currencySymbol="₡" groupingUsed="true" minFractionDigits="2" maxFractionDigits="2" />
                 </td>
             </tr>
+        </table>
+
+        <!-- Tabla 3: Deducciones -->
+        <table>
+            <tr>
+                <th>Deducciones CCSS</th>
+                <td class="currency-cell">
+                    <fmt:formatNumber value="${planilla.deduccionesCCSS}" type="currency" currencySymbol="₡" groupingUsed="true" minFractionDigits="2" maxFractionDigits="2" />
+                </td>
+            </tr>
+            <tr>
+                <th>Deducciones Impuestos</th>
+                <td class="currency-cell">
+                    <fmt:formatNumber value="${planilla.deduccionesImpuestos}" type="currency" currencySymbol="₡" groupingUsed="true" minFractionDigits="2" maxFractionDigits="2" />
+                </td>
+            </tr>
+        </table>
+
+        <!-- Tabla 4: Salario Neto -->
+        <table>
             <tr>
                 <th>Salario Neto</th>
                 <td class="currency-cell">
                     <fmt:formatNumber value="${planilla.salarioNeto}" type="currency" currencySymbol="₡" groupingUsed="true" minFractionDigits="2" maxFractionDigits="2" />
                 </td>
-            </tr>
-            <tr>
-                <th>Mes de Pago</th>
-                <td>${planilla.mesPago}</td>
-            </tr>
-            <tr>
-                <th>ID Empleado</th>
-                <td>${planilla.empleadoIdEmpleado}</td>
             </tr>
         </table>
 
