@@ -29,7 +29,7 @@
     <body>
         <h1>Detalles del Empleado</h1>
 
-        <h2>Información del Colaborador</h2>
+        <h2>Información del Colaborador </h2>
         <table>
             <tr>
                 <th>Numero Empleado</th>

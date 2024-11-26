@@ -3,9 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/web/vistaAguinaldo/aguinaldoEmplReporte.jsp</file>
-            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/web/vistasLog/empleado.jsp</file>
-            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/web/pages/error_cedula.jsp</file>
+            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/web/asignaciones/asignarHorario.jsp</file>
+            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/src/java/Model/HorariosDAO.java</file>
+            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/src/java/ModelEmpleado/Horarios.java</file>
+            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/web/vistaAdmin/verEmpleado.jsp</file>
+            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/web/asignaciones/asignarCargo.jsp</file>
+            <file>file:/C:/Users/Dell/Desktop/TFG/FinalProyecto/admingLog/src/java/Controller/SvHorarios.java</file>
         </group>
     </open-files>
 </project-private>
