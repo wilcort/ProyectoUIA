@@ -29,7 +29,7 @@
     <body>
         <h1>Lista de Cargos</h1>
 
-        <h2>Información de los Cargos</h2>
+        <h2>Información de los Cargos v</h2>
         <table>
             <tr>
                 <th>Id del Cargo:</th>

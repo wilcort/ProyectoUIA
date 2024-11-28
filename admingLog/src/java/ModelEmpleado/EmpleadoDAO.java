@@ -68,7 +68,7 @@ public class EmpleadoDAO {
                 String nombre = rs.getString("nombre");
                 String apellido_1 = rs.getString("apellido_1");
                 String apellido_2 = rs.getString("apellido_2");
-                int telefono = rs.getInt("telefono");
+                String telefono = rs.getString("telefono");
                 String direccion = rs.getString("direccion");
                 java.sql.Date fecha_Contratacion = rs.getDate("fecha_contratacion");  // Cambiar a "fecha_contratacion"
 

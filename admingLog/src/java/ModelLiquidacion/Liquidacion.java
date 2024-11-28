@@ -4,6 +4,7 @@
  */
 package ModelLiquidacion;
 
+import Model.Colaborador;
 import java.util.Date;
 
 /**
@@ -14,35 +15,42 @@ public class Liquidacion {
 
     // Atributos
     private int idLiquidacion;
-    private Date fechaLiquidacion;
+    private Date fechaFinContrato;
     private String motivo;
     private double montoCesantias;
     private double montoAguinaldo;
     private double montoVacaciones;
+    private double responsabilidadPatronal;
+    private double preaviso;
     private double montoTotal;
     private String estadoPago; // Enum values: "Pendiente", "Pagado"
-    private double preaviso;
     private int empleadoIdEmpleado;
-
-    public Liquidacion() {
+    private Colaborador  colaborador;
+    
+    
+        public Liquidacion() {
     }
 
-    public Liquidacion(int idLiquidacion, Date fechaLiquidacion,
-            String motivo, double montoCesantias,
-            double montoAguinaldo, double montoVacaciones,
-            double montoTotal, String estadoPago,
-            double preaviso, int empleadoIdEmpleado) {
-
+    public Liquidacion(int idLiquidacion, 
+            Date fechaFinContrato, String motivo,
+            double montoCesantias, double montoAguinaldo,
+            double montoVacaciones, double responsabilidadPatronal,
+            double preaviso, double montoTotal, String estadoPago,
+            int empleadoIdEmpleado, Colaborador colaborador) {
+        
+        
         this.idLiquidacion = idLiquidacion;
-        this.fechaLiquidacion = fechaLiquidacion;
+        this.fechaFinContrato = fechaFinContrato;
         this.motivo = motivo;
         this.montoCesantias = montoCesantias;
         this.montoAguinaldo = montoAguinaldo;
         this.montoVacaciones = montoVacaciones;
+        this.responsabilidadPatronal = responsabilidadPatronal;
+        this.preaviso = preaviso;
         this.montoTotal = montoTotal;
         this.estadoPago = estadoPago;
-        this.preaviso = preaviso;
         this.empleadoIdEmpleado = empleadoIdEmpleado;
+        this.colaborador = colaborador;
     }
 
     public int getIdLiquidacion() {
@@ -53,12 +61,12 @@ public class Liquidacion {
         this.idLiquidacion = idLiquidacion;
     }
 
-    public Date getFechaLiquidacion() {
-        return fechaLiquidacion;
+    public Date getFechaFinContrato() {
+        return fechaFinContrato;
     }
 
-    public void setFechaLiquidacion(Date fechaLiquidacion) {
-        this.fechaLiquidacion = fechaLiquidacion;
+    public void setFechaFinContrato(Date fechaLiquidacion) {
+        this.fechaFinContrato = fechaFinContrato;
     }
 
     public String getMotivo() {
@@ -93,6 +101,22 @@ public class Liquidacion {
         this.montoVacaciones = montoVacaciones;
     }
 
+    public double getResponsabilidadPatronal() {
+        return responsabilidadPatronal;
+    }
+
+    public void setResponsabilidadPatronal(double responsabilidadPatronal) {
+        this.responsabilidadPatronal = responsabilidadPatronal;
+    }
+
+    public double getPreaviso() {
+        return preaviso;
+    }
+
+    public void setPreaviso(double preaviso) {
+        this.preaviso = preaviso;
+    }
+
     public double getMontoTotal() {
         return montoTotal;
     }
@@ -109,14 +133,6 @@ public class Liquidacion {
         this.estadoPago = estadoPago;
     }
 
-    public double getPreaviso() {
-        return preaviso;
-    }
-
-    public void setPreaviso(double preaviso) {
-        this.preaviso = preaviso;
-    }
-
     public int getEmpleadoIdEmpleado() {
         return empleadoIdEmpleado;
     }
@@ -125,19 +141,28 @@ public class Liquidacion {
         this.empleadoIdEmpleado = empleadoIdEmpleado;
     }
 
+    public Colaborador getColaborador() {
+        return colaborador;
+    }
+
+    public void setColaborador(Colaborador colaborador) {
+        this.colaborador = colaborador;
+    }
+
     // Método toString
     @Override
     public String toString() {
         return "Liquidacion{"
                 + "idLiquidacion=" + idLiquidacion
-                + ", fechaLiquidacion=" + fechaLiquidacion
-                + ", motivo='" + motivo + '\''
+                + ", fechaFinContrato=" + fechaFinContrato
+                + ", motivo='" + motivo 
                 + ", montoCesantias=" + montoCesantias
                 + ", montoAguinaldo=" + montoAguinaldo
                 + ", montoVacaciones=" + montoVacaciones
-                + ", montoTotal=" + montoTotal
-                + ", estadoPago='" + estadoPago + '\''
+                + ", responsabilidadPatronal=" + responsabilidadPatronal
                 + ", preaviso=" + preaviso
+                + ", montoTotal=" + montoTotal
+                + ", estadoPago='" + estadoPago 
                 + ", empleadoIdEmpleado=" + empleadoIdEmpleado
                 + '}';
 

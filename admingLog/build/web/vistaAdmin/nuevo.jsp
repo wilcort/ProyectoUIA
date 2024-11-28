@@ -19,7 +19,7 @@
             }
             .form-container {
                 background-color: #fff;
-                padding: 20px; /* Reduce padding */
+                padding: 20px;
                 border-radius: 8px;
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
                 width: 100%;
@@ -28,41 +28,55 @@
             h2 {
                 text-align: center;
                 color: #333;
-                margin-bottom: 15px; /* Reduce margin */
+                margin-bottom: 15px;
             }
             label {
-                font-size: 13px; /* Slightly smaller text */
+                font-size: 13px;
                 color: #333;
-                margin-bottom: 5px; /* Reduce margin */
+                margin-bottom: 5px;
                 display: block;
             }
             input[type="text"], input[type="password"], input[type="tel"], input[type="date"], select {
                 width: 100%;
-                padding: 8px; /* Reduce padding */
-                margin-bottom: 10px; /* Reduce margin */
+                padding: 8px;
+                margin-bottom: 10px;
                 border: 1px solid #ccc;
                 border-radius: 4px;
-                font-size: 13px; /* Slightly smaller text */
+                font-size: 13px;
             }
             button {
                 background-color: #4CAF50;
                 color: white;
-                padding: 10px 18px; /* Reduce padding */
+                padding: 10px 18px;
                 border: none;
                 border-radius: 4px;
                 cursor: pointer;
                 width: 100%;
-                font-size: 15px; /* Slightly smaller font */
-                margin-top: 15px; /* Reduce margin */
+                font-size: 15px;
+                margin-top: 15px;
             }
             button:hover {
                 background-color: #45a049;
             }
             .form-footer {
                 text-align: center;
-                margin-top: 15px; /* Reduce margin */
+                margin-top: 15px;
                 font-size: 12px;
                 color: #666;
+            }
+            .btn-regresar {
+                background-color: #f44336;
+                color: white;
+                padding: 10px 18px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                width: 100%;
+                font-size: 15px;
+                margin-top: 10px;
+            }
+            .btn-regresar:hover {
+                background-color: #e53935;
             }
         </style>
     </head>
@@ -79,14 +93,13 @@
                 </select>
 
                 <label for="nombreUsuario">Nombre de Usuario:</label>
-                <input type="text" id="nombreUsuario" name="nombreUsuario" required>
+                <input type="text" id="nombreUsuario" name="nombreUsuario" required pattern="^[A-Za-záéíóúÁÉÍÓÚüÜÑñ ]+$" title="El nombre solo debe contener letras">
 
                 <label for="claveUsuario">Clave:</label>
                 <input type="password" id="claveUsuario" name="claveUsuario" required>
 
                 <label for="num_documento">Número Documento:</label>
                 <input id="num_documento" name="num_documento" type="text" required pattern="^\d+$" title="El número de documento debe contener solo números">
-
 
                 <label for="nombre">Nombre:</label>
                 <input id="nombre" name="nombre" type="text" required pattern="^[A-Za-záéíóúÁÉÍÓÚüÜÑñ ]+$" title="El nombre solo debe contener letras">
@@ -109,6 +122,8 @@
                 <input type="hidden" name="accion" value="insertar">
 
                 <button id="guardar" name="guardar" type="submit">Guardar</button>
+                <!-- Botón Regresar -->
+                <button type="button" class="btn-regresar" onclick="window.history.back()">Regresar</button>
             </form>
             <div class="form-footer">
                 <p>© 2024 Todos los derechos reservados.</p>
@@ -116,3 +131,4 @@
         </div>
     </body>
 </html>
+

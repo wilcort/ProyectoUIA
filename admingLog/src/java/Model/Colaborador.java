@@ -19,7 +19,7 @@ public class Colaborador {
     private String nombre;
     private String apellido_1;
     private String apellido_2;
-    private int telefono;
+    private String telefono;
     private String direccion;
     private Date fecha_contratacion;
     private Date fecha_salida;
@@ -34,7 +34,7 @@ public class Colaborador {
     //constructor
     public Colaborador(int id_Empleado, int num_documento,
             String nombre, String apellido_1, String apellido_2,
-            int telefono, String direccion, Date fecha_contratacion,
+            String telefono, String direccion, Date fecha_contratacion,
             Date fecha_salida, Usuario usuario,
             Cargo cargo, Horarios horarios) {
 
@@ -93,11 +93,11 @@ public class Colaborador {
         this.apellido_2 = apellido_2;
     }
 
-    public int getTelefono() {
+    public String getTelefono() {
         return telefono;
     }
 
-    public void setTelefono(int telefono) {
+    public void setTelefono(String telefono) {
         this.telefono = telefono;
     }
 

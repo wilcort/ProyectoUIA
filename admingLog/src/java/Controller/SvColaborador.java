@@ -92,7 +92,7 @@ public class SvColaborador extends HttpServlet {
         String nombre = request.getParameter("nombre");
         String apellido_1 = request.getParameter("apellido_1");
         String apellido_2 = request.getParameter("apellido_2");
-        int telefono = Integer.parseInt(request.getParameter("telefono"));
+        String telefono = request.getParameter("telefono");
         String direccion = request.getParameter("direccion");
         String fechaContratacionStr = request.getParameter("fecha_contratacion");
         java.sql.Date fecha_contratacion = null;
@@ -224,7 +224,7 @@ public class SvColaborador extends HttpServlet {
             String nombre = request.getParameter("nombre");
             String apellido_1 = request.getParameter("apellido_1");
             String apellido_2 = request.getParameter("apellido_2");
-            int telefono = Integer.parseInt(request.getParameter("telefono"));
+            String telefono =request.getParameter("telefono");
             String direccion = request.getParameter("direccion");
 
             String fechaContratacionStr = request.getParameter("fecha_contratacion");

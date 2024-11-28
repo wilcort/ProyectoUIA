@@ -61,7 +61,7 @@ public class ColaboradorDAO {
                 String nombre = rs.getString("empleado_nombre");  // Alias utilizado aquí
                 String apellido_1 = rs.getString("apellido_1");
                 String apellido_2 = rs.getString("apellido_2");
-                int telefono = rs.getInt("telefono");
+                String telefono = rs.getString("telefono");
                 String direccion = rs.getString("direccion");
                 Date fecha_contratacion = rs.getDate("fecha_contratacion");
                 int id_usuario = rs.getInt("id_usuario");
@@ -133,7 +133,7 @@ public class ColaboradorDAO {
                 String nombre = rs.getString("nombre");
                 String apellido_1 = rs.getString("apellido_1");
                 String apellido_2 = rs.getString("apellido_2");
-                int telefono = rs.getInt("telefono");
+                String telefono = rs.getString("telefono");
                 String direccion = rs.getString("direccion");
                 java.sql.Date fecha_Contratacion = rs.getDate("fecha_Contratacion");
                                 
@@ -255,7 +255,7 @@ public class ColaboradorDAO {
             psEmpleado.setString(2, colaborador.getNombre());
             psEmpleado.setString(3, colaborador.getApellido_1());
             psEmpleado.setString(4, colaborador.getApellido_2());
-            psEmpleado.setInt(5, colaborador.getTelefono());
+            psEmpleado.setString(5, colaborador.getTelefono());
             psEmpleado.setString(6, colaborador.getDireccion());;
             psEmpleado.setDate(7, new java.sql.Date(colaborador.getFecha_contratacion().getTime())); // Convertir Date a java.sql.Date
             psEmpleado.setInt(8, idUsuarioGenerado);
@@ -307,6 +307,28 @@ public class ColaboradorDAO {
         PreparedStatement ps;
 
         try {
+            
+            // Eliminar registros dependientes de otras tablas
+        ps = conexion.prepareStatement("DELETE FROM aguinaldo WHERE id_empleado = ?");
+        ps.setInt(1, idEmpleado);
+        ps.execute();
+
+        ps = conexion.prepareStatement("DELETE FROM incapacidades WHERE empleado_id_empleado = ?");
+        ps.setInt(1, idEmpleado);
+        ps.execute();
+
+        ps = conexion.prepareStatement("DELETE FROM marcas WHERE id_empleado = ?");
+        ps.setInt(1, idEmpleado);
+        ps.execute();
+
+        ps = conexion.prepareStatement("DELETE FROM planilla WHERE empleado_id_empleado = ?");
+        ps.setInt(1, idEmpleado);
+        ps.execute();
+
+        ps = conexion.prepareStatement("DELETE FROM vacaciones WHERE empleado_id_empleado = ?");
+        ps.setInt(1, idEmpleado);
+        ps.execute();
+            
             ps = conexion.prepareStatement("DELETE  e, u\n"
                     + "FROM empleado e  \n"
                     + "JOIN usuario u \n"
@@ -329,15 +351,15 @@ public class ColaboradorDAO {
 
         try {
             String sql = "UPDATE empleado SET num_documento=?, nombre=?, "
-                    + "apellido_1=?, apellido_2=?, telefono=?, direccion=?, fecha_contratacion=?, "
-                    + "WHERE id_empleado=?";
+                    + "apellido_1=?, apellido_2=?, telefono=?, direccion=?, fecha_contratacion=? "
+                    + "WHERE id_empleado = ?";
 
             psEmpleado = conexion.prepareStatement(sql);
             psEmpleado.setInt(1, colaborador.getNum_documento());
             psEmpleado.setString(2, colaborador.getNombre());
             psEmpleado.setString(3, colaborador.getApellido_1());
             psEmpleado.setString(4, colaborador.getApellido_2());
-            psEmpleado.setInt(5, colaborador.getTelefono());
+            psEmpleado.setString(5, colaborador.getTelefono());
             psEmpleado.setString(6, colaborador.getDireccion());
 
             // Verifica si la fecha es nula antes de convertirla

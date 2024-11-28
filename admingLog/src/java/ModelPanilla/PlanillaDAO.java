@@ -1387,7 +1387,49 @@ public class PlanillaDAO {
 
         return planilla; // Devuelve el objeto Planilla o null si no se encontró
     }
+//---------------------------------------------------------
+    
+   public void generarPlanillaQuincenalParaEmpleado(int idEmpleado, int mesSeleccionado, int anioSeleccionado) {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
 
+        try {
+            // Verificar si el empleado existe y está activo (opcional)
+            String queryEmpleadoActivo = 
+                    "SELECT COUNT(*) AS existe "
+                    + "FROM empleado WHERE id_empleado = ?";
+            
+            ps = conexion.prepareStatement(queryEmpleadoActivo);
+            ps.setInt(1, idEmpleado);
+            rs = ps.executeQuery();
+
+            if (rs.next() && rs.getInt("existe") == 0) {
+                System.out.println("El empleado con ID " + idEmpleado + " no existe o no está activo.");
+                return;
+            }
+
+            // Generar o actualizar la planilla quincenal para el empleado especificado
+            for (int i = 1; i <= 2; i++) { // Primera y segunda quincena
+                actualizarOCrearReporteQuincenal(idEmpleado, mesSeleccionado, anioSeleccionado);
+            }
+
+            System.out.println("Planilla quincenal generada para el empleado con ID: " + idEmpleado);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    } 
 
 //-----------------------
 }

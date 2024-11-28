@@ -109,7 +109,7 @@ public class SvAsignar extends HttpServlet {
             cargo.setIdCargo(idCargo);
 
             Colaborador colaborador = new Colaborador(idEmpleado,
-                    0, null, null, null, 0,
+                    0, null, null, null, null,
                     null, null, null,
                     null, cargo,null);
             
@@ -151,7 +151,7 @@ public class SvAsignar extends HttpServlet {
             
 
              Colaborador colaborador = new Colaborador(idEmpleado, 0, null, 
-                     null, null, 0, null, null, 
+                     null, null, null, null, null, 
                      null, null, null, horario);
             
             // Insertar los datos en la base de datos

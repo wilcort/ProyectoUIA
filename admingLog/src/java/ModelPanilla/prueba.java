@@ -83,7 +83,8 @@ public class prueba {
         }
 
         scanner.close();*/
-          planillaDAO.verPlanillaEmpleado(idEmpleado);
+          planillaDAO.calcularSalarioQuincenal(idEmpleado);
+         
     }
 }
 // Llamar al método salarioHora con el ID ingresado
