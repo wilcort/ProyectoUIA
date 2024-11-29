@@ -1389,47 +1389,136 @@ public class PlanillaDAO {
     }
 //---------------------------------------------------------
     
-   public void generarPlanillaQuincenalParaEmpleado(int idEmpleado, int mesSeleccionado, int anioSeleccionado) {
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+  public void actualizarReporteMensual(int idEmpleado, int mesSeleccionado, int anioSeleccionado) {
+    String queryHoras = "SELECT SUM(horas_dia_normal) AS total_horas_normales, "
+            + "SUM(horas_dia_extra) AS total_horas_extras "
+            + "FROM marcas "
+            + "WHERE DAY(fecha_marca) BETWEEN 16 AND 31 "
+            + "AND id_empleado = ? "
+            + "AND YEAR(fecha_marca) = ? "
+            + "AND MONTH(fecha_marca) = ?";
+    
+    String queryVerificarMensual = "SELECT id_planilla FROM planilla "
+            + "WHERE YEAR(mes_pago) = ? AND MONTH(mes_pago) = ? "
+            + "AND empleado_id_empleado = ? AND periodo = 'Mensual'";
 
-        try {
-            // Verificar si el empleado existe y está activo (opcional)
-            String queryEmpleadoActivo = 
-                    "SELECT COUNT(*) AS existe "
-                    + "FROM empleado WHERE id_empleado = ?";
-            
-            ps = conexion.prepareStatement(queryEmpleadoActivo);
-            ps.setInt(1, idEmpleado);
-            rs = ps.executeQuery();
+    String queryActualizarMensual = "UPDATE planilla SET "
+            + "salario_referencia = ?, "
+            + "deducciones_CCSS = ?, "
+            + "deducciones_impuestos = ?, "
+            + "salario_horas_extra = ?, "
+            + "salario_horas_regulares = ?, "
+            + "horas_extra = ?, "
+            + "horas_regulares = ?, "
+            + "pago_incapacidades = ?, "
+            + "pago_vacaciones = ?, "
+            + "salario_bruto = ?, "
+            + "salario_neto = ?, "
+            + "mes_pago = ? "
+            + "WHERE id_planilla = ?";
 
-            if (rs.next() && rs.getInt("existe") == 0) {
-                System.out.println("El empleado con ID " + idEmpleado + " no existe o no está activo.");
+    String queryInsertarMensual = "INSERT INTO planilla "
+            + "(empleado_id_empleado, salario_referencia, "
+            + "deducciones_CCSS, deducciones_impuestos, salario_horas_extra, "
+            + "salario_horas_regulares, horas_extra, horas_regulares, "
+            + "pago_incapacidades, pago_vacaciones, salario_bruto, "
+            + "salario_neto, mes_pago, periodo) "
+            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+    try (PreparedStatement psHoras = conexion.prepareStatement(queryHoras);
+         PreparedStatement psVerificar = conexion.prepareStatement(queryVerificarMensual)) {
+
+        // Consultar horas del 16 al 31
+        psHoras.setInt(1, idEmpleado);
+        psHoras.setInt(2, anioSeleccionado);
+        psHoras.setInt(3, mesSeleccionado);
+        try (ResultSet rsHoras = psHoras.executeQuery()) {
+            if (!rsHoras.next()) {
+                System.out.println("No hay datos para la segunda quincena.");
                 return;
             }
 
-            // Generar o actualizar la planilla quincenal para el empleado especificado
-            for (int i = 1; i <= 2; i++) { // Primera y segunda quincena
-                actualizarOCrearReporteQuincenal(idEmpleado, mesSeleccionado, anioSeleccionado);
-            }
+            double totalHorasNormalesMensual = rsHoras.getDouble("total_horas_normales");
+            double totalHorasExtrasMensual = rsHoras.getDouble("total_horas_extras");
 
-            System.out.println("Planilla quincenal generada para el empleado con ID: " + idEmpleado);
+            // Obtener salario por hora
+            double[] salarioPorHora = salarioHora(idEmpleado);
+            double salarioCargo = salarioPorHora[0];
+            double salarioHoraNormal = salarioPorHora[1];
+            double salarioHoraExtra = salarioPorHora[2];
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
+            // Obtener pagos por incapacidades, deducciones, y vacaciones
+            double pagoIncapacidades = obtenerPagoIncapacidadesMes(idEmpleado, anioSeleccionado, mesSeleccionado);
+            double deduccionesCCSSMes = calcularDeduccionMensualCCSS(idEmpleado);
+            double pagoVacacionesMes = obtenerVacacionesMensual(idEmpleado, anioSeleccionado, mesSeleccionado);
+            double deduccionesRenta = calcularRenta(idEmpleado);
+
+            double[] calcularSalarioMensual = calcularSalarioMensual(idEmpleado);
+            double pagoSalarioBruto = calcularSalarioMensual[0];
+            double pagoSalarioNeto = calcularSalarioMensual[1];
+
+            // Asignar fecha de pago (16 al 31)
+            String mesPagoMensual = String.format("%d-%02d-16", anioSeleccionado, mesSeleccionado);
+            java.sql.Date dateMesPagoMensual = java.sql.Date.valueOf(mesPagoMensual);
+
+            // Verificar si ya existe un reporte mensual
+            psVerificar.setInt(1, anioSeleccionado);
+            psVerificar.setInt(2, mesSeleccionado);
+            psVerificar.setInt(3, idEmpleado);
+            try (ResultSet rsVerificar = psVerificar.executeQuery()) {
+
+                if (rsVerificar.next()) {
+                    // Actualizar reporte mensual existente
+                    int idPlanillaMensual = rsVerificar.getInt("id_planilla");
+
+                    try (PreparedStatement psActualizar = conexion.prepareStatement(queryActualizarMensual)) {
+                        psActualizar.setDouble(1, salarioCargo);
+                        psActualizar.setDouble(2, deduccionesCCSSMes);
+                        psActualizar.setDouble(3, deduccionesRenta);
+                        psActualizar.setDouble(4, salarioHoraExtra);
+                        psActualizar.setDouble(5, salarioHoraNormal);
+                        psActualizar.setDouble(6, totalHorasExtrasMensual);
+                        psActualizar.setDouble(7, totalHorasNormalesMensual);
+                        psActualizar.setDouble(8, pagoIncapacidades);
+                        psActualizar.setDouble(9, pagoVacacionesMes);
+                        psActualizar.setDouble(10, pagoSalarioBruto);
+                        psActualizar.setDouble(11, pagoSalarioNeto);
+                        psActualizar.setDate(12, dateMesPagoMensual);
+                        psActualizar.setInt(13, idPlanillaMensual);
+
+                        int filasActualizadas = psActualizar.executeUpdate();
+                        System.out.println(filasActualizadas > 0 ? "Reporte mensual actualizado correctamente." : "Error al actualizar el reporte mensual.");
+                    }
+
+                } else {
+                    // Crear nuevo reporte mensual
+                    try (PreparedStatement psInsertar = conexion.prepareStatement(queryInsertarMensual)) {
+                        psInsertar.setInt(1, idEmpleado);
+                        psInsertar.setDouble(2, salarioCargo);
+                        psInsertar.setDouble(3, deduccionesCCSSMes);
+                        psInsertar.setDouble(4, deduccionesRenta);
+                        psInsertar.setDouble(5, salarioHoraExtra);
+                        psInsertar.setDouble(6, salarioHoraNormal);
+                        psInsertar.setDouble(7, totalHorasExtrasMensual);
+                        psInsertar.setDouble(8, totalHorasNormalesMensual);
+                        psInsertar.setDouble(9, pagoIncapacidades);
+                        psInsertar.setDouble(10, pagoVacacionesMes);
+                        psInsertar.setDouble(11, pagoSalarioBruto);
+                        psInsertar.setDouble(12, pagoSalarioNeto);
+                        psInsertar.setDate(13, dateMesPagoMensual);
+                        psInsertar.setString(14, "Mensual");
+
+                        int filasInsertadas = psInsertar.executeUpdate();
+                        System.out.println(filasInsertadas > 0 ? "Reporte mensual creado correctamente." : "Error al crear el reporte mensual.");
+                    }
                 }
-                if (ps != null) {
-                    ps.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
             }
         }
-    } 
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+  }
 
 //-----------------------
 }

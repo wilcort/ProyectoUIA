@@ -21,7 +21,7 @@ public class Liquidacion {
     private double montoAguinaldo;
     private double montoVacaciones;
     private double responsabilidadPatronal;
-    private double preaviso;
+    private double montoSalario;
     private double montoTotal;
     private String estadoPago; // Enum values: "Pendiente", "Pagado"
     private int empleadoIdEmpleado;
@@ -35,7 +35,7 @@ public class Liquidacion {
             Date fechaFinContrato, String motivo,
             double montoCesantias, double montoAguinaldo,
             double montoVacaciones, double responsabilidadPatronal,
-            double preaviso, double montoTotal, String estadoPago,
+            double montoSalario, double montoTotal, String estadoPago,
             int empleadoIdEmpleado, Colaborador colaborador) {
         
         
@@ -46,7 +46,7 @@ public class Liquidacion {
         this.montoAguinaldo = montoAguinaldo;
         this.montoVacaciones = montoVacaciones;
         this.responsabilidadPatronal = responsabilidadPatronal;
-        this.preaviso = preaviso;
+        this.montoSalario = montoSalario;
         this.montoTotal = montoTotal;
         this.estadoPago = estadoPago;
         this.empleadoIdEmpleado = empleadoIdEmpleado;
@@ -109,12 +109,12 @@ public class Liquidacion {
         this.responsabilidadPatronal = responsabilidadPatronal;
     }
 
-    public double getPreaviso() {
-        return preaviso;
+    public double getMontoSalario() {
+        return montoSalario;
     }
 
-    public void setPreaviso(double preaviso) {
-        this.preaviso = preaviso;
+    public void setMontoSalario(double montoSalario) {
+        this.montoSalario = montoSalario;
     }
 
     public double getMontoTotal() {
@@ -160,7 +160,7 @@ public class Liquidacion {
                 + ", montoAguinaldo=" + montoAguinaldo
                 + ", montoVacaciones=" + montoVacaciones
                 + ", responsabilidadPatronal=" + responsabilidadPatronal
-                + ", preaviso=" + preaviso
+                + ", montoSalario=" + montoSalario
                 + ", montoTotal=" + montoTotal
                 + ", estadoPago='" + estadoPago 
                 + ", empleadoIdEmpleado=" + empleadoIdEmpleado

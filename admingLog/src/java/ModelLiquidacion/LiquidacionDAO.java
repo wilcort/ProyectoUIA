@@ -178,8 +178,50 @@ public class LiquidacionDAO {
         return totalDiasRestantes;
     }
 //-----------------------------------------------------
-   
-    
+    public double obtenerSalarioBrutoPromedio(int idEmpleado) {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        double salarioPromedioMensual = 0;
+
+        try {
+            // Consulta para obtener los datos de salario bruto, meses y promedio mensual
+            String query = "SELECT "
+                    + "SUM(salario_bruto) AS total_salario_bruto, "
+                    + "COUNT(DISTINCT MONTH(mes_pago)) AS total_meses, "
+                    + "SUM(salario_bruto) / COUNT(DISTINCT MONTH(mes_pago)) AS salario_promedio_mensual "
+                    + "FROM planilla "
+                    + "WHERE empleado_id_empleado = ?";
+
+            ps = conexion.prepareStatement(query);
+            ps.setInt(1, idEmpleado); // Pasa el id del empleado
+
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                // Obtener el salario promedio mensual
+                salarioPromedioMensual = rs.getDouble("salario_promedio_mensual");
+            } else {
+                System.out.println("No se encontraron registros para el empleado con ID: " + idEmpleado);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al ejecutar la consulta: " + e.getMessage());
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (SQLException e) {
+                System.err.println("Error al cerrar recursos: " + e.getMessage());
+            }
+        }
+
+        // Retornar el valor del salario promedio mensual
+        return salarioPromedioMensual;
+    }
+//-----------------------------------------------------------------------------------------  
     
     
 //-----------------------------------------------------------------------------------------  
@@ -212,10 +254,8 @@ public class LiquidacionDAO {
 
             } else if (diaFinalizacion >= 16 && diaFinalizacion <= 31) {
                 System.out.println("La fecha está en el rango del 16 al 31.");
+             
                 
-                planillaDAO.actualizarOCrearReporteMensual(idEmpleado, mesIngresado, anioIngresado);
-
-
                 System.out.println("Generando reporte mensual para el empleado con ID: " + idEmpleado);
 
             } else {
@@ -226,8 +266,83 @@ public class LiquidacionDAO {
         }
     }
 
-
+//----------------------------------------------------------------
+    
+    
+    
+    
 //--------------------------------------------------------
- 
+ public void calculoCesantias(int idEmpleado, String fechaFinalizacionContrato) {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+         long mesesTrabajados = 0;
+         double cesantias =0;
+         
+        try {
+            // Consulta SQL para obtener los datos de nombre, apellidos y fecha de ingreso
+            String query = "SELECT nombre, apellido_1, apellido_2, fecha_contratacion "
+                    + "FROM empleado "
+                    + "WHERE id_empleado = ?";
+
+            // Preparar la consulta
+            ps = conexion.prepareStatement(query);
+            ps.setInt(1, idEmpleado);  // Establecer el id del empleado como parámetro de la consulta
+
+            // Ejecutar la consulta
+            rs = ps.executeQuery();
+
+            // Verificar si el resultado contiene datos
+            if (rs.next()) {
+                String nombre = rs.getString("nombre");
+                String apellido1 = rs.getString("apellido_1");
+                String apellido2 = rs.getString("apellido_2");
+                Date fechaContratacion = rs.getDate("fecha_contratacion");
+                
+                // Convertir las fechas a LocalDate para poder restarlas
+            LocalDate fechaContratacionLocal = fechaContratacion.toLocalDate();
+            LocalDate fechaFinalizacion = LocalDate.parse(fechaFinalizacionContrato);
+
+             // Calcular la diferencia entre la fecha de finalización y la fecha de contratación en meses
+            mesesTrabajados = ChronoUnit.MONTHS.between(fechaContratacionLocal, fechaFinalizacion) + 1;
+
+            // Mostrar los resultados por pantalla
+            System.out.println("Nombre: " + nombre);
+            System.out.println("Apellido 1: " + apellido1);
+            System.out.println("Apellido 2: " + apellido2);
+            System.out.println("Fecha de Ingreso: " + fechaContratacion);
+            System.out.println("Fecha de Finalización del Contrato: " + fechaFinalizacion);
+            System.out.println("Meses trabajados: " + mesesTrabajados);
+            } else {
+                System.out.println("Empleado con ID " + idEmpleado + " no encontrado.");
+            }
+            
+            // Obtener el salario promedio mensual
+            double salarioPromedioMensual = obtenerSalarioBrutoPromedio(idEmpleado);
+             
+            System.out.println("salala "+ salarioPromedioMensual);
+            System.out.println(" meses trababjados "+ mesesTrabajados);
+            
+           cesantias = (double) mesesTrabajados / 12 * salarioPromedioMensual;
+            
+               System.out.println("Cesantías: " + cesantias);
+             
+        } catch (SQLException e) {
+            e.printStackTrace();  // Imprimir el error si ocurre algún problema
+        } finally {
+            try {
+                // Cerrar el ResultSet y PreparedStatement
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+//-----------------------------------------------------
+
 //-----------------------------------------------
 }

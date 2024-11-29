@@ -47,10 +47,9 @@ public class prueba {
               int anioSeleccionado = fechaFin.getYear();
               
             // Llamar al método para generar la planilla
-          //  liquidacionDAO.generarReportePorContrato(idEmpleado, fechaInput);
+           liquidacionDAO.obtenerSalarioBrutoPromedio(idEmpleado);
             
-           
-            
+           liquidacionDAO.calculoCesantias(idEmpleado,fechaInput);
         } catch (Exception e) {
             // Manejar errores si la fecha es inválida o el ID no es un número
             System.err.println("Error: Entrada no válida. " + e.getMessage());
